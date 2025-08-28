@@ -1,0 +1,76 @@
+Name,Type,Mag,Best Local Time,Best Alt (°),Best Dir,Best Az (°),Notes
+Saturn,Planet,,01:00,37.8,SSE,147.2,
+Moon,Moon,,20:00,16.2,SSW,196.9,
+Mars,Planet,,20:00,12.3,WSW,248.8,
+M92,Globular cluster,6.4,20:00,88.1,SSW,204.3,NGC 6341
+M13,Globular cluster,5.8,20:00,78.8,SW,225.1,Great Hercules Cluster NGC 6205
+M56,Globular cluster,8.3,21:56,75.4,S,180.7,NGC 6779
+NGC 7000,Emission Nebula,4.0,23:34,89.8,S,168.8,North America Nebula (widefield)
+IC 5070,Emission Nebula,7.5,23:34,89.6,S,174.1,Pelican Nebula (widefield)
+NGC 6992,Supernova Remnant,6.0,23:38,76.3,S,180.6,Veil East
+M71,Globular cluster,8.2,22:32,64.0,S,179.8,Angelfish Cluster NGC 6838
+NGC 6960,Supernova Remnant,5.0,23:16,76.0,S,180.0,Veil West (Witch's Broom)
+Neptune,Planet,,01:00,38.9,SE,145.6,
+Uranus,Planet,,01:00,18.5,E,79.5,
+M57,Planetary nebula,8.8,21:32,78.3,S,179.8,Ring Nebula NGC 6720
+M15,Globular cluster,6.2,00:08,57.5,S,179.8,Great Pegasus Cluster NGC 7078
+NGC 7635,Emission Nebula,8.4,01:00,71.1,NNE,23.4,Bubble Nebula
+M27,Planetary nebula,7.4,22:38,68.0,S,179.9,Dumbbell Nebula NGC 6853
+M39,Open cluster,4.6,00:10,86.3,N,359.6,Pyramid Cluster NGC 7092
+M2,Globular cluster,6.5,00:12,44.5,S,180.0,NGC 7089
+M3,Globular cluster,6.2,20:00,44.0,W,268.2,NGC 5272
+NGC 281,Emission Nebula,7.4,01:00,63.8,NE,49.4,Pacman Nebula
+M29,Open cluster,7.1,23:02,83.8,S,179.5,Cooling Tower Cluster NGC 6913
+M12,Globular cluster,6.7,20:00,42.6,SSW,191.4,NGC 6218
+M14,Globular cluster,7.6,20:16,41.9,S,179.7,NGC 6402
+M10,Globular cluster,6.6,20:00,40.8,S,187.8,NGC 6254
+M5,Globular cluster,5.6,20:00,39.4,SW,221.1,Rose Cluster NGC 5904
+M53,Globular cluster,7.6,20:00,32.3,W,263.5,NGC 5024
+M52,Open cluster,7.3,01:00,70.8,NNE,22.8,Scorpion Cluster NGC 7654
+M31,Spiral galaxy,3.4,01:00,64.2,E,85.0,Andromeda Galaxy NGC 224
+M75,Globular cluster,8.5,22:46,23.3,S,180.2,NGC 6864
+M30,Globular cluster,7.2,00:20,22.1,S,180.2,Jellyfish Cluster NGC 7099
+M22,Globular cluster,5.1,21:16,21.3,S,180.1,Great Sagittarius Cluster NGC 6656
+M28,Globular cluster,6.8,21:04,20.3,S,180.0,NGC 6626
+M103,Open cluster,7.4,01:00,57.9,NE,42.9,NGC 581
+M101,Spiral galaxy,7.9,20:00,57.3,NW,304.7,Pinwheel Galaxy NGC 5457
+M16,H II region nebula with cluster,6.4,20:58,31.4,S,180.0,Eagle Nebula NGC 6611
+M51,Spiral galaxy,8.4,20:00,50.7,WNW,294.6,"Whirlpool Galaxy NGC 5194, NGC 5195"
+M33,Spiral galaxy,5.7,01:00,50.2,E,93.7,Triangulum/Pinwheel Galaxy NGC 598
+M17,H II region nebula with cluster,6.0,21:00,29.0,S,180.1,"Omega, Swan, Horseshoe, Lobster, or Checkmark Nebula NGC 6618"
+M63,Spiral galaxy,8.6,20:00,46.4,WNW,288.8,Sunflower Galaxy NGC 5055
+M34,Open cluster,5.5,01:00,44.2,ENE,68.2,Spiral Cluster NGC 1039
+NGC 6826,Planetary Nebula,8.8,22:20,84.2,N,1.4,Blinking
+M20,H II region nebula with cluster,6.3,20:42,22.2,S,180.1,Trifid Nebula NGC 6514
+M94,Spiral galaxy,8.2,20:00,41.8,WNW,290.6,Crocodile Eye or Cat's Eye Galaxy NGC 4736
+M8,Nebula with cluster,4.6,20:42,20.8,S,179.8,Lagoon Nebula NGC 6523
+M106,Spiral galaxy,8.4,20:00,39.6,WNW,301.3,NGC 4258
+M11,Open cluster,5.8,21:30,39.0,S,180.0,Wild Duck Cluster NGC 6705
+M24,Milky Way star cloud,2.5,20:56,26.6,S,179.9,Small Sagittarius Star Cloud IC 4715
+M26,Open cluster,8.0,21:24,35.8,S,179.9,NGC 6694
+M81,Spiral galaxy,6.9,20:00,34.5,NNW,336.0,Bode's Galaxy NGC 3031
+IC 342,Galaxy,8.4,01:00,43.9,NNE,30.7,Hidden Galaxy
+M64,Spiral galaxy,8.5,20:00,31.8,W,269.6,Black Eye Galaxy NGC 4826
+NGC 7789,Open Cluster,6.7,01:00,70.9,NE,42.4,Caroline's Rose
+M82,Starburst galaxy,8.4,20:00,34.8,NNW,336.6,Cigar Galaxy NGC 3034
+NGC 6543,Planetary Nebula,8.1,20:36,68.2,N,0.1,Cat's Eye
+M18,Open cluster,7.5,21:00,28.1,S,180.2,Black Swan Cluster NGC 6613
+M23,Open cluster,5.5,20:36,26.2,S,180.0,NGC 6494
+M25,Open cluster,4.6,21:10,26.0,S,179.8,IC 4725
+M110,Dwarf elliptical galaxy,8.5,01:00,64.8,E,84.4,Andromeda Satellite #2 NGC 205
+M32,Dwarf elliptical galaxy,8.1,01:00,64.1,E,85.9,Andromeda Satellite #1 NGC 221
+M21,Open cluster,6.5,20:44,22.7,S,180.0,Webb's Cross Cluster NGC 6531
+M45,Open cluster,1.6,01:00,22.6,ENE,77.8,"Pleiades, Seven Sisters or Subaru"
+NGC 457,Open Cluster,6.4,01:00,59.9,NE,47.1,Owl/ET Cluster
+NGC 663,Open Cluster,7.1,01:00,56.2,NE,42.3,Perseus
+NGC 2403,Galaxy,8.9,01:00,24.8,NNE,17.4,Camelopardalis
+NGC 6934,Globular Cluster,8.8,23:12,52.7,S,179.7,Delphinus
+NGC 869,Open Cluster,4.3,01:00,52.0,NE,49.1,Double Cluster component
+NGC 884,Open Cluster,4.4,01:00,51.9,NE,49.2,Double Cluster component
+NGC 752,Open Cluster,5.7,01:00,49.7,E,80.3,Sprawling cluster in Andromeda
+M73,Asterism,9.0,23:38,32.7,S,180.1,NGC 6994
+M60,Elliptical galaxy,8.8,20:00,22.7,W,263.5,NGC 4649
+M87,Elliptical galaxy,8.6,20:00,21.0,W,266.5,Virgo A NGC 4486
+NGC 7009,Planetary Nebula,8.0,23:42,33.9,S,179.7,Saturn Nebula
+M40,Optical Double,8.4,20:00,44.2,NW,314.5,Winnecke 4
+M86,Lenticular galaxy,8.9,20:00,20.5,W,267.8,NGC 4406

@@ -1,0 +1,20 @@
+name,ra_deg,dec_deg,type,mag,notes
+M31 Andromeda Galaxy,10.6846,41.2692,Galaxy,3.4,Huge; best at low power
+M13 Hercules Globular,250.425,36.461,Globular Cluster,5.8,Resolving stars at medium/high power
+M57 Ring Nebula,283.394,33.03,Planetary Nebula,8.8,Small; high power; look for central star
+M27 Dumbbell Nebula,299.9,22.72,Planetary Nebula,7.4,Bright; filters help
+M51 Whirlpool Galaxy,202.4696,47.1953,Galaxy (pair),8.4,Spiral arms in dark skies
+M81 Bode's Galaxy,148.888,69.065,Galaxy,6.9,Pair with M82
+M82 Cigar Galaxy,149.001,69.6797,Galaxy,8.4,Dark lane visible
+M101 Pinwheel Galaxy,210.803,54.349,Galaxy,7.9,Face-on; needs dark sky
+M11 Wild Duck Cluster,282.771,-6.2667,Open Cluster,6.3,Rich open cluster
+M22 Sagittarius Globular,279.1,-23.903,Globular Cluster,5.1,Large and bright; low altitude up north
+M8 Lagoon Nebula,270.904,-24.3867,Emission Nebula,6.0,Use UHC/OIII if available
+M20 Trifid Nebula,270.675,-23.0267,Emission/Reflection Nebula,6.3,Dark lanes
+M17 Swan/Omega Nebula,275.196,-16.1717,Emission Nebula,6.0,Distinct swan shape
+M16 Eagle Nebula,274.7,-13.783,Open Cluster + Nebula,6.5,Pillars require big scopes/photography
+M42 Orion Nebula,83.821,-5.391,Emission Nebula,4.0,Trapezium stars
+M45 Pleiades,56.85,24.1167,Open Cluster,1.6,Best in binoculars or low power
+Double Cluster NGC 869,34.75,57.15,Open Cluster,4.3,Pair with NGC 884
+Double Cluster NGC 884,35.5,57.133,Open Cluster,4.4,Pair with NGC 869
+Albireo (β Cyg),292.679,27.959,Double Star,3.1,Lovely color contrast

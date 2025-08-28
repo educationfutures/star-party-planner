@@ -1,0 +1,153 @@
+name,ra_deg,dec_deg,type,mag,notes
+M73[89],314.725000,-12.633333,Asterism,9.000000,— NGC 6994
+M83[100],204.253750,-29.865833,Barred Spiral galaxy,7.600000,Southern Pinwheel Galaxy NGC 5236
+M66[82],170.062500,12.991667,Barred Spiral galaxy,8.900000,Leo Triplet NGC 3627
+M65[81],169.732917,13.092222,Barred Spiral galaxy,9.300000,Leo Triplet NGC 3623
+M58[74],189.431250,11.818056,Barred Spiral galaxy,9.700000,— NGC 4579
+M95[112],160.990417,11.703889,Barred Spiral galaxy,9.700000,— NGC 3351
+M109[126],179.400000,53.374444,Barred Spiral galaxy,9.800000,Vacuum Cleaner Galaxy NGC 3992
+M108[125],167.879167,55.674167,Barred Spiral galaxy,10.000000,Surfboard Galaxy NGC 3556
+M91[108],188.860000,14.496389,Barred Spiral galaxy,10.200000,— NGC 4548
+M78[95],86.694583,0.013889,Diffuse nebula,8.300000,— NGC 2068
+M32[48],10.674167,40.865278,Dwarf elliptical galaxy,8.100000,Andromeda Satellite #1 NGC 221
+M110[127],10.092083,41.685278,Dwarf elliptical galaxy,8.500000,Andromeda Satellite #2 NGC 205
+M49[65],187.444583,8.000556,Elliptical galaxy,8.400000,— NGC 4472
+M87[104],187.705833,12.391111,Elliptical galaxy,8.600000,Virgo A NGC 4486
+M60[76],190.915000,11.552500,Elliptical galaxy,8.800000,— NGC 4649
+M105[122],161.956667,12.581667,Elliptical galaxy,9.300000,— NGC 3379
+M59[75],190.509583,11.646944,Elliptical galaxy,9.600000,— NGC 4621
+M89[106],188.915833,12.556389,Elliptical galaxy,9.800000,— NGC 4552
+NGC 7000,314.000000,44.500000,Emission Nebula,4.000000,North America Nebula (widefield)
+NGC 281,13.000000,56.600000,Emission Nebula,7.400000,Pacman Nebula
+IC 5070,314.000000,44.300000,Emission Nebula,7.500000,Pelican Nebula (widefield)
+NGC 7635,351.000000,61.200000,Emission Nebula,8.400000,Bubble Nebula
+NGC 253,11.888000,-25.288000,Galaxy,7.100000,Sculptor Galaxy
+IC 342,56.702000,68.102000,Galaxy,8.400000,Hidden Galaxy
+NGC 2403,114.214000,65.601000,Galaxy,8.900000,Camelopardalis
+NGC 7331,339.267000,34.415000,Galaxy,9.400000,Deer Lick
+NGC 3628,170.067000,13.588000,Galaxy,9.500000,Hamburger (Leo Triplet)
+NGC 6946,308.717000,60.153000,Galaxy,9.600000,Fireworks Galaxy
+NGC 2683,133.904000,33.422000,Galaxy,9.700000,UFO Galaxy
+NGC 4631,190.533000,32.541000,Galaxy,9.800000,Whale Galaxy
+NGC 4216,183.989000,13.155000,Galaxy,10.000000,Virgo Cluster
+NGC 4565,189.086000,25.987000,Galaxy,10.400000,Needle Galaxy
+NGC 7814,0.877000,16.146000,Galaxy,10.600000,Little Sombrero
+NGC 925,36.822000,33.579000,Galaxy,10.700000,Triangulum region
+NGC 891,35.638000,42.349000,Galaxy,10.800000,"Edge-on, Andromeda"
+NGC 2905,143.050000,21.500000,Galaxy,12.000000,Knot in NGC 2903 arm
+NGC 6934,308.547000,7.404000,Globular Cluster,8.800000,Delphinus
+NGC 5466,211.363000,28.534000,Globular Cluster,9.100000,High latitude
+NGC 6229,251.744000,47.528000,Globular Cluster,9.400000,Hercules
+NGC 2419,114.535000,38.881000,Globular Cluster,10.300000,Intergalactic Wanderer
+NGC 7006,315.372000,16.187000,Globular Cluster,10.600000,Delphinus
+M22[38],279.099583,-23.904750,Globular cluster,5.100000,Great Sagittarius Cluster NGC 6656
+M4[20],245.896667,-26.525750,Globular cluster,5.600000,Spider Globular Cluster NGC 6121
+M5[21],229.638333,2.081028,Globular cluster,5.600000,Rose Cluster NGC 5904
+M13[29],250.421667,36.459861,Globular cluster,5.800000,Great Hercules Cluster NGC 6205
+M3[19],205.548333,28.377278,Globular cluster,6.200000,— NGC 5272
+M15[31],322.492917,12.167000,Globular cluster,6.200000,Great Pegasus Cluster NGC 7078
+M55[71],294.998750,-30.964750,Globular cluster,6.300000,Specter Cluster NGC 6809
+M92[109],259.280833,43.135944,Globular cluster,6.400000,— NGC 6341
+M2[18],323.362500,-0.823250,Globular cluster,6.500000,— NGC 7089
+M62[78],255.302500,-30.112361,Globular cluster,6.500000,Flickering Globular NGC 6266
+M10[26],254.287083,-4.099472,Globular cluster,6.600000,— NGC 6254
+M12[28],251.809167,-1.948528,Globular cluster,6.700000,— NGC 6218
+M19[35],255.657083,-26.267944,Globular cluster,6.800000,— NGC 6273
+M28[44],276.137083,-24.869833,Globular cluster,6.800000,— NGC 6626
+M30[46],325.092083,-23.179861,Globular cluster,7.200000,Jellyfish Cluster NGC 7099
+M80[97],244.260000,-22.976083,Globular cluster,7.300000,— NGC 6093
+M14[30],264.400833,-3.245917,Globular cluster,7.600000,— NGC 6402
+M53[69],198.230417,18.168167,Globular cluster,7.600000,— NGC 5024
+M54[70],283.763750,-30.479861,Globular cluster,7.600000,— NGC 6715
+M69[85],277.846250,-32.348083,Globular cluster,7.600000,— NGC 6637
+M9[25],259.799167,-18.516250,Globular cluster,7.700000,— NGC 6333
+M79[96],81.044167,-24.524250,Globular cluster,7.700000,— NGC 1904
+M68[84],189.866667,-26.744056,Globular cluster,7.800000,— NGC 4590
+M70[86],280.803333,-32.292111,Globular cluster,7.900000,— NGC 6681
+M107[124],248.132917,-13.053778,Globular cluster,7.900000,Crucifix Cluster NGC 6171
+M71[87],298.443750,18.779194,Globular cluster,8.200000,Angelfish Cluster NGC 6838
+M56[72],289.148333,30.183472,Globular cluster,8.300000,— NGC 6779
+M75[92],301.520000,-21.921167,Globular cluster,8.500000,— NGC 6864
+M72[88],313.365417,-12.537306,Globular cluster,9.300000,— NGC 6981
+M42[58],83.822083,-5.391111,H II region nebula,4.000000,Great Orion Nebula NGC 1976
+M43[59],83.900000,-5.266667,H II region nebula (part of the Orion Nebula),9.000000,De Mairan's Nebula NGC 1982
+M17[33],275.108333,-16.176667,H II region nebula with cluster,6.000000,"Omega, Swan, Horseshoe, Lobster, or Checkmark Nebula NGC 6618"
+M20[36],270.595833,-23.030000,H II region nebula with cluster,6.300000,Trifid Nebula NGC 6514
+M16[32],274.700000,-13.816667,H II region nebula with cluster,6.400000,Eagle Nebula NGC 6611
+M86[103],186.548750,12.946111,Lenticular galaxy,8.900000,— NGC 4406
+M84[101],186.265417,12.886944,Lenticular galaxy,9.100000,— NGC 4374
+M85[102],186.350000,18.191111,Lenticular galaxy,9.100000,— NGC 4382
+M102[119],226.622917,55.763333,Lenticular galaxy,9.900000,Spindle Galaxy NGC 5866
+M24[40],274.250000,-18.550000,Milky Way star cloud,2.500000,Small Sagittarius Star Cloud IC 4715
+M8[24],270.904167,-24.386667,Nebula with cluster,4.600000,Lagoon Nebula NGC 6523
+NGC 2264,100.255000,9.896000,Open Cluster,3.900000,Christmas Tree Cone region
+NGC 869,34.780000,57.147000,Open Cluster,4.300000,Double Cluster component
+NGC 884,34.800000,57.117000,Open Cluster,4.400000,Double Cluster component
+NGC 752,29.287000,37.789000,Open Cluster,5.700000,Sprawling cluster in Andromeda
+NGC 2244,97.950000,4.950000,Open Cluster,6.000000,In Rosette Nebula
+NGC 457,19.863000,58.303000,Open Cluster,6.400000,Owl/ET Cluster
+NGC 7789,359.287000,56.734000,Open Cluster,6.700000,Caroline's Rose
+NGC 663,26.585000,61.214000,Open Cluster,7.100000,Perseus
+M45[61],56.850000,24.116667,Open cluster,1.600000,"Pleiades, Seven Sisters or Subaru —"
+M7[23],268.463333,-34.792778,Open cluster,3.300000,Ptolemy's Cluster NGC 6475
+M44[60],130.100000,19.983333,Open cluster,3.700000,Beehive Cluster or Praesepe NGC 2632
+M6[22],265.025000,-32.216667,Open cluster,4.200000,Butterfly Cluster NGC 6405
+M47[63],114.150000,-14.500000,Open cluster,4.400000,— NGC 2422
+M41[57],101.500000,-20.766667,Open cluster,4.500000,Little Beehive Cluster NGC 2287
+M25[41],277.900000,-19.250000,Open cluster,4.600000,— IC 4725
+M39[55],322.925000,48.433333,Open cluster,4.600000,Pyramid Cluster NGC 7092
+M35[51],92.275000,24.350000,Open cluster,5.300000,Shoe-Buckle Cluster NGC 2168
+M23[39],269.200000,-19.016667,Open cluster,5.500000,— NGC 6494
+M34[50],40.525000,42.766667,Open cluster,5.500000,Spiral Cluster NGC 1039
+M48[64],123.425000,-5.750000,Open cluster,5.500000,— NGC 2548
+M11[27],282.775000,-6.266667,Open cluster,5.800000,Wild Duck Cluster NGC 6705
+M50[66],105.800000,-8.333333,Open cluster,5.900000,Heart-Shaped Cluster NGC 2323
+M46[62],115.450000,-14.816667,Open cluster,6.000000,— NGC 2437
+M93[110],116.150000,-23.866667,Open cluster,6.000000,Critter Cluster NGC 2447
+M67[83],132.825000,11.816667,Open cluster,6.100000,King Cobra or Golden Eye Cluster NGC 2682
+M37[53],88.075000,32.550556,Open cluster,6.200000,Salt and Pepper Cluster NGC 2099
+M36[52],84.050000,34.134444,Open cluster,6.300000,Pinwheel Cluster NGC 1960
+M21[37],271.150000,-22.500000,Open cluster,6.500000,Webb's Cross Cluster NGC 6531
+M29[45],305.983333,38.523333,Open cluster,7.100000,Cooling Tower Cluster NGC 6913
+M52[68],351.050000,61.583333,Open cluster,7.300000,Scorpion Cluster NGC 7654
+M38[54],82.175000,35.855000,Open cluster,7.400000,Starfish Cluster NGC 1912
+M103[120],23.300000,60.700000,Open cluster,7.400000,— NGC 581
+M18[34],274.975000,-17.133333,Open cluster,7.500000,Black Swan Cluster NGC 6613
+M26[42],281.300000,-9.400000,Open cluster,8.000000,— NGC 6694
+M40[56],185.552083,58.083056,Optical Double,8.400000,Winnecke 4 —
+NGC 3242,156.190000,-18.643000,Planetary Nebula,7.800000,Ghost of Jupiter
+NGC 7009,316.045000,-11.363000,Planetary Nebula,8.000000,Saturn Nebula
+NGC 6543,269.639000,66.633000,Planetary Nebula,8.100000,Cat's Eye
+NGC 6826,295.670000,50.525000,Planetary Nebula,8.800000,Blinking
+NGC 2392,112.288000,20.911000,Planetary Nebula,9.200000,Eskimo
+IC 418,82.147000,-12.701000,Planetary Nebula,9.300000,Spirograph
+IC 2149,92.259000,46.113000,Planetary Nebula,10.600000,Auriga
+NGC 40,3.257000,72.522000,Planetary Nebula,10.700000,Bow-Tie
+NGC 7008,315.403000,54.954000,Planetary Nebula,10.700000,Fetus Nebula
+M27[43],299.901250,22.721139,Planetary nebula,7.400000,Dumbbell Nebula NGC 6853
+M57[73],283.396250,33.029167,Planetary nebula,8.800000,Ring Nebula NGC 6720
+M97[114],168.698750,55.019028,Planetary nebula,9.900000,Owl Nebula NGC 3587
+M76[93],25.600000,51.575278,Planetary nebula,10.100000,"Little Dumbbell Nebula NGC 650, NGC 651"
+M31[47],10.684583,41.269167,Spiral galaxy,3.400000,Andromeda Galaxy NGC 224
+M33[49],23.458333,30.660194,Spiral galaxy,5.700000,Triangulum/Pinwheel Galaxy NGC 598
+M81[98],148.888333,69.065278,Spiral galaxy,6.900000,Bode's Galaxy NGC 3031
+M101[118],210.802500,54.349167,Spiral galaxy,7.900000,Pinwheel Galaxy NGC 5457
+M104[121],189.997500,-11.623056,Spiral galaxy,8.000000,Sombrero Galaxy NGC 4594
+M94[111],192.721250,41.120556,Spiral galaxy,8.200000,Crocodile Eye or Cat's Eye Galaxy NGC 4736
+M51[67],202.469583,47.195278,Spiral galaxy,8.400000,"Whirlpool Galaxy NGC 5194, NGC 5195"
+M106[123],184.739583,47.303889,Spiral galaxy,8.400000,— NGC 4258
+M64[80],194.182083,21.682778,Spiral galaxy,8.500000,Black Eye Galaxy NGC 4826
+M63[79],198.955417,42.029167,Spiral galaxy,8.600000,Sunflower Galaxy NGC 5055
+M77[94],40.669583,-0.013333,Spiral galaxy,8.900000,Cetus A or Squid Galaxy NGC 1068
+M96[113],161.690417,11.820000,Spiral galaxy,9.200000,— NGC 3368
+M100[117],185.728750,15.822500,Spiral galaxy,9.300000,Mirror Galaxy NGC 4321
+M74[90],24.174167,15.783611,Spiral galaxy,9.400000,Phantom Galaxy[91] NGC 628
+M90[107],189.207500,13.162778,Spiral galaxy,9.500000,— NGC 4569
+M88[105],187.996667,14.420556,Spiral galaxy,9.600000,— NGC 4501
+M61[77],185.478750,4.473611,Spiral galaxy,9.700000,Swelling Spiral Galaxy NGC 4303
+M99[116],184.706667,14.416389,Spiral galaxy,9.900000,St. Catherine's Wheel NGC 4254
+M98[115],183.451250,14.900472,Spiral galaxy,10.100000,— NGC 4192
+M82[99],148.967500,69.679722,Starburst galaxy,8.400000,Cigar Galaxy NGC 3034
+NGC 6960,309.392000,30.731000,Supernova Remnant,5.000000,Veil West (Witch's Broom)
+NGC 6992,314.740000,31.000000,Supernova Remnant,6.000000,Veil East
+M1[17],83.632917,22.014500,Super­nova remnant,8.400000,Crab Nebula NGC 1952
