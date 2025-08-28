@@ -111,7 +111,7 @@ python starparty_planner.py \
 
 ---
 
-## 📂 Input Catalogs
+## Input Catalogs
 
 - Catalogs are **CSV files** with required columns:
 
@@ -139,7 +139,7 @@ python starparty_planner.py \
 
 ---
 
-## ⚡ Tips & Tricks
+## Tips & Tricks
 
 - Use `--top_n_per_hour` to control list length (e.g., 5 for a tight schedule).
 - Adjust `--moon_sep_min` to relax/tighten Moon glare filtering.
