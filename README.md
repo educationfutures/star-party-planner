@@ -149,7 +149,7 @@ python starparty_planner.py \
 
 ---
 
-## 🔭 Example Workflow
+## Example Workflow
 
 1. Prepare your DSO catalog (`messier_caldwell.csv`).
 2. Download ephemeris (`de440s.bsp`).
