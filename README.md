@@ -1,4 +1,4 @@
-# 🌌 Star Party Planner
+# 🪐 Star Party Planner
 
 **Plan an observing night with confidence!**  
 This tool generates observing lists tailored to your site, date, and time window. It prioritizes crowd-pleasers such as Saturn and Jupiter, filters by altitude and Moon separation, and outputs **night-vision-friendly HTML**, CSV tables, and console listings.
@@ -159,7 +159,7 @@ python starparty_planner.py \
 
 ---
 
-## 🪐 Development Notes
+## Development Notes
 
 - Written in **Python**
 - No network access is attempted by Skyfield; all data is local
@@ -177,4 +177,4 @@ Created to help star parties run smoothly and maximize “wow” factor objects 
 
 ---
 
-✨  *Clear skies and good seeing!*
+✨  *Clear skies!*
