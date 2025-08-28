@@ -157,6 +157,8 @@ python starparty_planner.py \
 4. Open `starparty.html` on your phone/tablet in night mode.
 5. Enjoy your observing session!
 
+💡 Pro tip: Set up a daily cron job that regenerates the HTML and publishes it to your web server. This way, you and your friends will always have a fresh plan ready before sunset.
+
 ---
 
 ## Development Notes
