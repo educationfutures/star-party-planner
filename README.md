@@ -106,7 +106,7 @@ python starparty_planner.py \
 
 - If `--date` is missing → defaults to **today**
 - If `--start` is missing → defaults to **local sunset (rounded to nearest hour)**
-- If `--end` is missing → defaults to **01:00**
+- If `--end` is missing → defaults to **hour of local sunrise**
 - If `--min_alt_planets` or `--min_alt_moon` are missing → uses safer low defaults (10° and 5° respectively)
 
 ---
