@@ -329,13 +329,13 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       .small { font-size: 0.9rem; color: #f66; }
       .warn { color:#f77; font-style: italic; }
 
-      /* Tables */
-      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
-      th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
-      th { background: #100; position: sticky; top: 100px; z-index: 1; } /* stick under navbar */
-      tr:nth-child(even) { background: #070707; }
-      tr:hover { background: #111; }
+        /* Tables */
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
+        th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
+        th { background: #100; position: static; top: auto; z-index: auto; } /* non-sticky */
+        tr:nth-child(even) { background: #070707; }
+        tr:hover { background: #111; }
 
       /* Meta (non-sticky) */
       .meta-bar { position: static; padding: 0.5rem 0; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
@@ -373,116 +373,137 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
       .hidden { display:none; }
 
-      /* Phone tweaks */
-      @media (max-width: 640px) {
+        /* Phone tweaks */
+        @media (max-width: 640px) {
         body { font-size: 15px; }
         th, td { padding: 0.35rem 0.45rem; }
         .pill { font-size: 0.85rem; }
         .tab { padding:0.3rem 0.55rem; }
-        /* Make table headers non-sticky on very small screens to avoid overlay issues */
-        th { position: static !important; top: auto !important; z-index: auto !important; }
-      }
+        /* Disable sticky headers on very small screens to avoid overlay issues */
+        table thead th { position: static !important; top: auto !important; z-index: auto !important; }
+        }
     </style>
     """
 
     # JS: search filter + tab switching + hour link handling (works with tabs or accordions)
     js = """
-    <script>
+   <script>
     function filterTables(q) {
-      const needle = q.trim().toLowerCase();
-      const tables = document.querySelectorAll('table');
-      tables.forEach(tbl => {
+        const needle = q.trim().toLowerCase();
+        document.querySelectorAll('table').forEach(tbl => {
         const rows = tbl.tBodies[0]?.rows || [];
         for (let r of rows) {
-          const txt = r.innerText.toLowerCase();
-          r.style.display = (!needle || txt.includes(needle)) ? '' : 'none';
+            const txt = r.innerText.toLowerCase();
+            r.style.display = (!needle || txt.includes(needle)) ? '' : 'none';
         }
-      });
+        });
     }
 
     function activateMainTab(targetId) {
-      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
-      const tabBtn = document.querySelector('.tab[data-tab="' + targetId + '"]');
-      if (tabBtn) tabBtn.classList.add('active');
-      const panel = document.getElementById(targetId);
-      if (panel) panel.classList.remove('hidden');
+        document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+        const tabBtn = document.querySelector('.tab[data-tab="' + targetId + '"]');
+        if (tabBtn) tabBtn.classList.add('active');
+        const panel = document.getElementById(targetId);
+        if (panel) panel.classList.remove('hidden');
+    }
+
+    // --- Sticky offset helpers ---
+    function setStickyTopFromNavbar() {
+        const nav = document.querySelector('.navbar');
+        const h = nav ? nav.offsetHeight : 0;
+        document.documentElement.style.setProperty('--sticky-top', (h + 8) + 'px');
+    }
+    function currentStickyOffsetPx() {
+        const nav = document.querySelector('.navbar');
+        return (nav ? nav.offsetHeight : 0) + 8;
     }
 
     function showHourPanel(hourId) {
-      activateMainTab('panel-hourly');
-      const all = document.querySelectorAll('.hour-tab-panel');
-      all.forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById(hourId);
-      if (target) {
+        activateMainTab('panel-hourly');
+        document.querySelectorAll('.hour-tab-panel').forEach(el => el.classList.add('hidden'));
+        const target = document.getElementById(hourId);
+        if (target) {
         target.classList.remove('hidden');
-        const y = target.getBoundingClientRect().top + window.scrollY - 110; // account for sticky navbar
+        const y = target.getBoundingClientRect().top + window.scrollY - currentStickyOffsetPx();
         window.scrollTo({ top: y, behavior: 'instant' });
-      }
+        }
     }
 
     function openAccordion(hourId) {
-      const det = document.getElementById(hourId);
-      if (det && det.tagName.toLowerCase() === 'details') {
+        const det = document.getElementById(hourId);
+        if (det && det.tagName.toLowerCase() === 'details') {
         det.open = true;
-        const y = det.getBoundingClientRect().top + window.scrollY - 110;
+        const y = det.getBoundingClientRect().top + window.scrollY - currentStickyOffsetPx();
         window.scrollTo({ top: y, behavior: 'instant' });
-      }
+        }
     }
 
     function handleHourNavClick(e) {
-      const href = e.currentTarget.getAttribute('href') || '';
-      if (!href.startsWith('#')) return;
-      e.preventDefault();
-      const id = href.slice(1);
-      if (document.getElementById('panel-hourly')) {
+        const href = e.currentTarget.getAttribute('href') || '';
+        if (!href.startsWith('#')) return;
+        e.preventDefault();
+        const id = href.slice(1);
+        if (document.getElementById('panel-hourly')) {
         showHourPanel(id);
-      } else {
+        } else {
         openAccordion(id);
-      }
-      history.replaceState(null, '', href);
+        }
+        history.replaceState(null, '', href);
     }
 
     function initTabsBehavior() {
-      const tabs = document.querySelectorAll('[data-tab]');
-      tabs.forEach(tab => {
+        const tabs = document.querySelectorAll('[data-tab]');
+        tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          const target = tab.getAttribute('data-tab');
-          activateMainTab(target);
-          if (target === 'panel-hourly') {
+            const target = tab.getAttribute('data-tab');
+            activateMainTab(target);
+            if (target === 'panel-hourly') {
             const first = document.querySelector('.hour-tab-panel');
             if (first) {
-              document.querySelectorAll('.hour-tab-panel').forEach(el => el.classList.add('hidden'));
-              first.classList.remove('hidden');
+                document.querySelectorAll('.hour-tab-panel').forEach(el => el.classList.add('hidden'));
+                first.classList.remove('hidden');
             }
-          }
+            }
+            // navbar height can change when tabs switch; recalc after layout
+            setTimeout(setStickyTopFromNavbar, 0);
         });
-      });
+        });
     }
 
     function initHourLinks() {
-      document.querySelectorAll('.navbar .hours a').forEach(a => {
+        document.querySelectorAll('.navbar .hours a').forEach(a => {
         a.addEventListener('click', handleHourNavClick);
-      });
+        });
     }
 
     function handleHashOnLoad() {
-      const hash = window.location.hash;
-      if (!hash) return;
-      const id = hash.slice(1);
-      if (document.getElementById('panel-hourly')) {
+        const hash = window.location.hash;
+        if (!hash) return;
+        const id = hash.slice(1);
+        if (document.getElementById('panel-hourly')) {
         showHourPanel(id);
-      } else {
+        } else {
         openAccordion(id);
-      }
+        }
+    }
+
+    function onResizeRecalc() {
+        setStickyTopFromNavbar();
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const input = document.getElementById('q');
-      if (input) input.addEventListener('input', () => filterTables(input.value));
-      initTabsBehavior();
-      initHourLinks();
-      handleHashOnLoad();
+        const input = document.getElementById('q');
+        if (input) input.addEventListener('input', () => filterTables(input.value));
+
+        initTabsBehavior();
+        initHourLinks();
+        handleHashOnLoad();
+
+        // Compute sticky offset from actual navbar height
+        setStickyTopFromNavbar();
+        window.addEventListener('resize', onResizeRecalc);
+        window.addEventListener('orientationchange', onResizeRecalc);
     });
     </script>
     """
@@ -493,17 +514,13 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     # Build the main content depending on UI mode
     if ui_mode == "tabs":
         content = f"""
-          <div class="tabs">
-            <div class="tab active" data-tab="panel-master">Master List</div>
-            <div class="tab" data-tab="panel-hourly">By Hour</div>
-          </div>
-          <section id="panel-master" class="tab-panel">
+        <section id="panel-master" class="tab-panel">
             {master_html}
-          </section>
-          <section id="panel-hourly" class="tab-panel hidden">
+        </section>
+        <section id="panel-hourly" class="tab-panel hidden">
             <p class="small">Top targets each hour, prioritized by interest score. Directions are compass points.</p>
             {hourly_html}
-          </section>
+        </section>
         """
     else:
         content = f"""
