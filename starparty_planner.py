@@ -507,7 +507,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         """
     else:
         content = f"""
-          <h2>Master List (by interest)</h2>
+          <h2>Master List (by interest)</h2> 
           {master_html}
           <hr class="hr">
           <h2>Hourly “Point Your Scope Now”</h2>
