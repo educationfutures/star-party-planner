@@ -5,7 +5,7 @@ This tool generates observing lists tailored to your site, date, and time window
 
 ---
 
-## ✨ Features
+## Features
 
 - Planets + Moon + **custom deep-sky catalog** (CSV, e.g. Messier + Caldwell)
 - Filters by **minimum altitude**, **maximum magnitude**, and **Moon separation**
@@ -21,7 +21,7 @@ This tool generates observing lists tailored to your site, date, and time window
 
 ---
 
-## 📦 Installation
+## Installation
 
 Requires **Python 3.10+**.
 
@@ -45,7 +45,7 @@ Requires **Python 3.10+**.
 
 ---
 
-## 🪐 Ephemeris Data (`de440s.bsp`)
+## Ephemeris Data (`de440s.bsp`)
 
 This script **requires a local planetary ephemeris file**.  
 We recommend **`de440s.bsp`** (~31 MB, accurate 1550–2650 CE).
@@ -78,7 +78,7 @@ We recommend **`de440s.bsp`** (~31 MB, accurate 1550–2650 CE).
 
 ---
 
-## 📊 Usage
+## Usage
 
 ### Example: Eagle Lake Observatory, Minnesota
 
@@ -129,7 +129,7 @@ python starparty_planner.py \
 
 ---
 
-## 🌙 HTML Output
+## HTML Output
 
 - Fully **night-vision safe** (red on black; no white autofill)
 - **Searchable tables** (instant filtering by name, type, or notes)
@@ -159,7 +159,7 @@ python starparty_planner.py \
 
 ---
 
-## 🧑‍💻 Development Notes
+## 🪐 Development Notes
 
 - Written in **Python**
 - No network access is attempted by Skyfield; all data is local
@@ -170,11 +170,11 @@ python starparty_planner.py \
 
 ---
 
-## 📜 License
+## License
 
 MIT License.  
 Created to help star parties run smoothly and maximize “wow” factor objects in the eyepiece.
 
 ---
 
-🚀 *Clear skies and good seeing!*
+✨  *Clear skies and good seeing!*
