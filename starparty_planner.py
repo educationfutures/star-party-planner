@@ -333,7 +333,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
         th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
-        th { background: #100; position: static; top: auto; z-index: auto; } /* non-sticky */
+        th { background: #100; text-align: center; position: static; top: auto; z-index: auto; } /* non-sticky + centered */
         tr:nth-child(even) { background: #070707; }
         tr:hover { background: #111; }
 
