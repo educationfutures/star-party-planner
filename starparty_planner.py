@@ -294,7 +294,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
             anchor = f"hour-{hour.replace(' ','_').replace(':','')}"
             hour_label = _hour_anchor_label(hour)
             hour_links.append(f'<a href="#{anchor}">{hour_label}</a>')
-            tbl = df_to_html_table(sub[['Name','Type','Alt (°)','Dir','Az (°)']], id_attr=f"tbl-{anchor}")
+            tbl = df_to_html_table(sub[['Name','Type','Alt (°)','Az (°)','Dir']], id_attr=f"tbl-{anchor}")
             if ui_mode == "accordion":
                 hourly_sections.append(f"""
                 <details id="{anchor}" class="acc">
@@ -750,10 +750,10 @@ def plan_for_site(args):
             "Name": t["name"],
             "Type": t["type"],
             "Mag": t["mag"] if t["mag"] is not None else "",
-            "Best Local Time": t["best_time"].strftime("%H:%M"),  # time only
-            "Best Alt (°)": t["best_alt"],
-            "Best Dir": t["best_dir"],
-            "Best Az (°)": t["best_az"],
+            "Best Time": t["best_time"].strftime("%H:%M"),  # time only
+            "Alt (°)": t["best_alt"],
+            "Az (°)": t["best_az"],
+            "Dir": t["best_dir"],
             "Notes": t["notes"],
             "_Priority": t["priority"],
             "_BestDT": t["best_time"],
@@ -773,8 +773,8 @@ def plan_for_site(args):
                 "Name": t["name"],
                 "Type": t["type"],
                 "Alt (°)": round(alt_h,1),
-                "Dir": dir_h,
                 "Az (°)": round(az_h,1),
+                "Dir": dir_h,
                 "_Priority": prio,
             }
             if t["name"] == "Moon" and rest:
