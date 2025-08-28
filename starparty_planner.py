@@ -52,10 +52,13 @@ def parse_args():
     p.add_argument("--lat", type=float, required=True, help="Latitude in decimal degrees (N+)")
     p.add_argument("--lon", type=float, required=True, help="Longitude in decimal degrees (E+)")
     p.add_argument("--elev", type=float, default=0.0, help="Elevation meters (optional)")
-    p.add_argument("--date", type=str, required=True, help="Local date YYYY-MM-DD")
-    p.add_argument("--start", type=str, default="20:00", help="Local start time HH:MM (default 20:00)")
-    p.add_argument("--end", type=str, default="01:00", help="Local end time HH:MM (default 01:00)")
+
+    # Optional, with smart defaults resolved later
+    p.add_argument("--date", type=str, default="", help="Local date YYYY-MM-DD (default: today)")
+    p.add_argument("--start", type=str, default="", help="Local start time HH:MM (default: rounded local sunset)")
+    p.add_argument("--end", type=str, default="", help="Local end time HH:MM (default: 01:00)")
     p.add_argument("--tz", type=str, default="UTC", help="IANA timezone, e.g., America/Chicago")
+
     p.add_argument("--catalog", type=str, default="objects_sample.csv", help="CSV of DSOs")
     p.add_argument("--min_alt", type=float, default=20.0, help="Minimum altitude for DSOs (deg)")
     p.add_argument("--max_mag", type=float, default=9.0, help="Max magnitude (fainter=larger) for DSOs")
@@ -178,7 +181,6 @@ def planet_altaz(eph, ts, observer, earth, name: str) -> Tuple[float,float,float
             continue
     if target is None:
         raise KeyError(f"No suitable target in BSP for {name}")
-
     app = (earth + observer).at(ts).observe(target).apparent()
     alt, az, _ = app.altaz()
     return alt.degrees, az.degrees, None
@@ -217,6 +219,44 @@ def compute_dark_window(eph, ts, tzname: str, local_date: str, lat: float, lon: 
     else:
         return day.replace(hour=21, minute=0), (day+timedelta(days=1)).replace(hour=4, minute=0)
 
+# ---- Sunset helpers ----
+
+def _round_to_nearest_hour(dt: datetime) -> datetime:
+    """Round to nearest hour; :30 and above rounds up."""
+    base = dt.replace(minute=0, second=0, microsecond=0)
+    if dt.minute >= 30:
+        base += timedelta(hours=1)
+    return base
+
+def compute_local_sunset(eph, ts, lat: float, lon: float, elev: float, tzname: str, local_date: str) -> Optional[datetime]:
+    """
+    Return local sunset datetime for the given date (if found), else None.
+    Sunset is chosen as the first 'sun below horizon' transition after local noon.
+    """
+    T = tz.gettz(tzname)
+    site = wgs84.latlon(lat, lon, elevation_m=elev)
+    day = datetime.strptime(local_date, "%Y-%m-%d").replace(tzinfo=T)
+
+    start = day.replace(hour=0, minute=0, second=0, microsecond=0)
+    end = start + timedelta(days=1)
+    ts0 = ts.from_datetime(start)
+    ts1 = ts.from_datetime(end)
+
+    f = almanac.sunrise_sunset(eph, site)  # boolean: True when sun is above horizon
+    times, events = almanac.find_discrete(ts0, ts1, f)
+
+    for t, e in zip(times, events):
+        local = t.utc_datetime().astimezone(T)
+        # pick the evening transition (after noon) where it becomes night (False)
+        if local.date() == day.date() and local.hour >= 12 and (e is False):
+            return local
+    # fallback: pick the last event of the day if it is False
+    if len(times):
+        local = times[-1].utc_datetime().astimezone(T)
+        if local.date() == day.date() and (events[-1] is False):
+            return local
+    return None
+
 
 # ---------------------------- Interest scoring ----------------------------
 
@@ -249,7 +289,6 @@ def interest_score(name: str, typ: str, best_alt: float, alt_now: Optional[float
 def df_to_html_table(df: pd.DataFrame, id_attr: str = "") -> str:
     if df.empty:
         return "<p>No data.</p>"
-    # Wrap in a scroller for mobile
     return f'<div class="table-wrap">{df.to_html(index=False, escape=True, border=0, table_id=id_attr)}</div>'
 
 def _hour_anchor_label(hour_str: str) -> str:
@@ -262,7 +301,6 @@ def _hour_anchor_label(hour_str: str) -> str:
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
                ui_mode: str = "accordion"):
-    # Group hourly sections
     hourly_sections = []
     hour_links = []
     if not hourly_df.empty:
@@ -291,10 +329,10 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
     master_html = df_to_html_table(master_df, id_attr="tbl-master") if not master_df.empty else "<p>No targets passed the filters. Try adjusting filters.</p>"
 
-    # Night-vision CSS + mobile fixes (no white anywhere; disable sticky header on phones)
+    # Night-vision CSS + sticky fixes
     css = """
     <style>
-      :root { color-scheme: dark; }
+      :root { color-scheme: dark; --ctrl-h: 52px; } /* updated dynamically via JS */
       html, body { background: #000; color: #f33; }
       body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; line-height: 1.35; }
       ::selection { background: #400; color: #fdd; }
@@ -306,22 +344,15 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       .small { font-size: 0.9rem; color: #f66; }
       .warn { color:#f77; font-style: italic; }
 
-      /* Tables */
-      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
-      th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
-      th { background: #100; position: sticky; top: 48px; z-index: 1; }
-      tr:nth-child(even) { background: #070707; }
-      tr:hover { background: #111; }
-      th.sortable { cursor: pointer; }
-      th.sortable:after { content: " ⇅"; color:#f66; font-weight: normal; }
-
-      /* Toolbar */
-      .toolbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap;}
+      /* Non-sticky meta bar (scrolls away): location/date/window/generated */
+      .meta-bar { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; margin-bottom: 0.5rem; }
       .pill { border:1px solid #700; padding:0.25rem 0.5rem; border-radius:999px; color:#f66; }
-      input[type="search"] { background: #160000; border: 1px solid #700; color: #f55; padding: 0.4rem 0.6rem; border-radius: 6px; min-width: 220px; caret-color: #f55; outline: none; }
-      input[type="search"]::placeholder { color:#f66; }
-      input[type="search"]:focus { box-shadow: 0 0 0 2px #500 inset; border-color:#900; }
+
+      /* Sticky control bar: search + hour links + (tabs) */
+      .control-bar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; overflow: visible; }
+      .control-bar input[type="search"] { background: #160000; border: 1px solid #700; color: #f55; padding: 0.4rem 0.6rem; border-radius: 6px; min-width: 220px; caret-color: #f55; outline: none; }
+      .control-bar input[type="search"]::placeholder { color:#f66; }
+      .control-bar input[type="search"]:focus { box-shadow: 0 0 0 2px #500 inset; border-color:#900; }
       * { -webkit-tap-highlight-color: rgba(255, 0, 0, 0.2); }
 
       /* Prevent white autofill on iOS/Safari/Chrome */
@@ -334,10 +365,21 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         border: 1px solid #700;
       }
 
-      /* Hour links */
-      .hours { display:flex; gap:0.35rem; flex-wrap:wrap; max-height: 2.3rem; overflow:auto; }
+      /* Hour links — wrap to new lines (no scroll) */
+      .hours { display:flex; gap:0.35rem; flex-wrap:wrap; overflow: visible; max-height: none; }
       .hours a { display:inline-block; padding: 0.25rem 0.55rem; border:1px solid #500; border-radius:6px; text-decoration:none; }
       .hours a:focus { outline:none; box-shadow: 0 0 0 2px #500 inset; }
+
+      /* Tables */
+      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
+      th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
+      /* Header sticks directly below the current control bar height */
+      th { background: #100; position: sticky; top: var(--ctrl-h); z-index: 1; }
+      tr:nth-child(even) { background: #070707; }
+      tr:hover { background: #111; }
+      th.sortable { cursor: pointer; }
+      th.sortable:after { content: " ⇅"; color:#f66; font-weight: normal; }
 
       /* Accordions */
       .acc { border: 1px solid #400; border-radius: 8px; margin: 0.5rem 0; background:#050505; }
@@ -347,10 +389,10 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       .acc-time { font-weight:600; color:#f55; }
       .acc-count { font-size:0.9rem; color:#f77; }
 
-      /* Tabs */
-      .tabs { display:flex; gap:0.4rem; margin: 0.6rem 0 0.8rem; }
+      /* Tabs (inside sticky control bar) */
+      .tabs { display:flex; gap:0.4rem; }
       .tab { padding:0.35rem 0.7rem; border:1px solid #500; border-radius:8px; cursor:pointer; user-select:none; color:#f66; background:#0a0000; }
-      .tab.active { background:#180000; border-color:#700; color:#f66; } /* no white */
+      .tab.active { background:#180000; border-color:#700; color:#f66; }
 
       .hidden { display:none; }
 
@@ -359,16 +401,16 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         body { font-size: 15px; }
         th, td { padding: 0.35rem 0.45rem; }
         .pill { font-size: 0.85rem; }
+        .control-bar { gap:0.5rem; }
         .tabs { gap:0.3rem; }
         .tab { padding:0.3rem 0.55rem; }
-        .toolbar { gap:0.5rem; }
-        /* Disable sticky headers on phones to avoid overlay issues */
+        /* Disable sticky table headers on phones to avoid overlay issues */
         th { position: static !important; top: auto !important; z-index: auto !important; }
       }
     </style>
     """
 
-    # JS: search filter + tab/hour navigation + sortable master table
+    # JS: filtering, tabs/hour navigation, sortable master table, and dynamic sticky offset
     js = """
     <script>
     function filterTables(q) {
@@ -390,6 +432,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       if (tabBtn) tabBtn.classList.add('active');
       const panel = document.getElementById(targetId);
       if (panel) panel.classList.remove('hidden');
+      updateStickyOffset(); // in case height of control bar changed
     }
 
     function showHourPanel(hourId) {
@@ -444,7 +487,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     }
 
     function initHourLinks() {
-      document.querySelectorAll('.toolbar .hours a').forEach(a => {
+      document.querySelectorAll('.control-bar .hours a').forEach(a => {
         a.addEventListener('click', handleHourNavClick);
       });
     }
@@ -462,7 +505,6 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
     // ---- Sortable Master Table ----
     function parseHHMM(s) {
-      // expects "HH:MM"
       const m = /^\\s*(\\d{1,2}):(\\d{2})\\s*$/.exec(s || "");
       if (!m) return NaN;
       return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
@@ -497,9 +539,8 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       const tbl = document.getElementById('tbl-master');
       if (!tbl) return;
 
-      // Find the columns we want clickable
       const headers = Array.from(tbl.tHead?.rows[0]?.cells || []);
-      const colMap = {}; // name -> (idx, opts)
+      const colMap = {};
       headers.forEach((th, i) => {
         const label = (th.innerText || "").trim().toLowerCase();
         if (["name","type"].includes(label)) {
@@ -511,8 +552,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         }
       });
 
-      // Mark sortable headers and attach listeners
-      Object.entries(colMap).forEach(([key, cfg]) => {
+      Object.entries(colMap).forEach(([_, cfg]) => {
         const th = headers[cfg.idx];
         th.classList.add('sortable');
         let asc = true;
@@ -523,26 +563,42 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       });
     }
 
+    // ---- Dynamic sticky offset so table headers sit below the control bar
+    function updateStickyOffset() {
+      const bar = document.querySelector('.control-bar');
+      const h = bar ? bar.offsetHeight : 52;
+      document.documentElement.style.setProperty('--ctrl-h', h + 'px');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const input = document.getElementById('q');
       if (input) input.addEventListener('input', () => filterTables(input.value));
+
       initTabsBehavior();
       initHourLinks();
       makeMasterTableSortable();
+      updateStickyOffset();
       handleHashOnLoad();
     });
+
+    window.addEventListener('resize', updateStickyOffset);
     </script>
     """
 
     now = datetime.now(tz.gettz(tzname)).strftime("%Y-%m-%d %H:%M %Z")
-    hour_links_html = " &middot; ".join(hour_links) if hour_links else "No hourly targets"
+    hour_links_html = " ".join(hour_links) if hour_links else "No hourly targets"
 
+    tabs_html = ""
     if ui_mode == "tabs":
-        content = f"""
+        tabs_html = """
           <div class="tabs">
             <div class="tab active" data-tab="panel-master">Master List</div>
             <div class="tab" data-tab="panel-hourly">By Hour</div>
           </div>
+        """
+
+    if ui_mode == "tabs":
+        content = f"""
           <section id="panel-master" class="tab-panel">
             {master_html}
           </section>
@@ -570,13 +626,19 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 <div class="container">
   <h1>Star Party Planner</h1>
 
-  <div class="toolbar">
+  <!-- Non-sticky meta bar -->
+  <div class="meta-bar">
     <span class="pill">Location: {site_lat:.6f}, {site_lon:.6f}</span>
     <span class="pill">Date: {date_str}</span>
     <span class="pill">Window: {start}–{end} {tzname}</span>
     <span class="pill">Generated: {now}</span>
+  </div>
+
+  <!-- Sticky controls -->
+  <div class="control-bar">
     <input id="q" type="search" placeholder="Search targets… (name, type, notes)" aria-label="Search">
     <span class="hours">{hour_links_html}</span>
+    {tabs_html}
   </div>
 
   {content}
@@ -596,8 +658,28 @@ def plan_for_site(args):
     earth = eph['earth']
     site = build_observer(load, ts, args.lat, args.lon, args.elev)
 
-    hours = hours_list(args.date, args.start, args.end, args.tz)
+    # Resolve defaults for date/start/end using local timezone
     T = tz.gettz(args.tz)
+
+    # DATE default: today
+    date_str = args.date.strip() or datetime.now(T).strftime("%Y-%m-%d")
+
+    # END default: 01:00 if missing
+    end_str = args.end.strip() or "01:00"
+
+    # START default: rounded local sunset
+    start_str = args.start.strip()
+    if not start_str:
+        sunset = compute_local_sunset(eph, ts, args.lat, args.lon, args.elev, args.tz, date_str)
+        if sunset is not None:
+            rounded = _round_to_nearest_hour(sunset)
+            start_str = rounded.strftime("%H:%M")
+        else:
+            # Fallback if no sunset (polar) or computation failed
+            start_str = "20:00"
+
+    # Build hour list from resolved strings
+    hours = hours_list(date_str, start_str, end_str, args.tz)
 
     # Minute sampling grid to find "best time"
     start_dt = hours[0]
@@ -728,10 +810,10 @@ def plan_for_site(args):
             })
 
     # Add Moon (context & crowd-pleaser) using moon-specific min altitude
-    alts = []; azs = []; phases = []
+    alts = []; azs = []
     for t in ts_minute:
-        alt, az, phase = moon_altaz_phase(eph, t, site, earth)
-        alts.append(alt); azs.append(az); phases.append(phase)
+        alt, az, _ = moon_altaz_phase(eph, t, site, earth)
+        alts.append(alt); azs.append(az)
     alts = np.array(alts); azs = np.array(azs)
     if np.any(alts >= args.min_alt_moon):
         idx_best = best_time_in_window(ts_minute, alts)
@@ -769,7 +851,7 @@ def plan_for_site(args):
             "Name": t["name"],
             "Type": t["type"],
             "Mag": t["mag"] if t["mag"] is not None else "",
-            "Best Local Time": t["best_time"].strftime("%H:%M"),  # time only
+            "Best Local Time": t["best_time"].strftime("%H:%M"),
             "Best Alt (°)": t["best_alt"],
             "Best Dir": t["best_dir"],
             "Best Az (°)": t["best_az"],
@@ -786,8 +868,8 @@ def plan_for_site(args):
     hour_tables = []
     for t in targets:
         for row in t["hourly"]:
-            h, alt_h, az_h, dir_h, prio, *rest = row
-            out = {
+            h, alt_h, az_h, dir_h, prio, *_ = row
+            hour_tables.append({
                 "Hour": h.strftime("%Y-%m-%d %H:%M"),
                 "Name": t["name"],
                 "Type": t["type"],
@@ -795,14 +877,12 @@ def plan_for_site(args):
                 "Dir": dir_h,
                 "Az (°)": round(az_h,1),
                 "_Priority": prio,
-            }
-            hour_tables.append(out)
+            })
 
     hourly_df = pd.DataFrame(hour_tables)
     if not hourly_df.empty:
         hourly_df["Hour_dt"] = pd.to_datetime(hourly_df["Hour"])
         hourly_df.sort_values(["Hour_dt","_Priority"], ascending=[True,False], inplace=True)
-        # keep top-N by interest per hour
         hourly_df["rank"] = hourly_df.groupby("Hour")["_Priority"].rank(method="first", ascending=False)
         hourly_df = hourly_df[hourly_df["rank"] <= args.top_n_per_hour]
         hourly_df.drop(columns=["rank","Hour_dt","_Priority"], inplace=True, errors="ignore")
@@ -816,7 +896,7 @@ def plan_for_site(args):
     # HTML output
     if args.html:
         write_html(args.html, args.lat, args.lon, args.tz,
-                   args.date, args.start, args.end,
+                   date_str, start_str, end_str,
                    master_df, hourly_df,
                    ui_mode=args.html_ui)
 
