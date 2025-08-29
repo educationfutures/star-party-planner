@@ -23,7 +23,7 @@ Usage (examples)
     --bsp ./skyfield_data/de440s.bsp \
     --html_ui tabs \
     --min_alt_planets 5 --min_alt_moon 0 \
-    --preview_cache_dir ./.cache 
+    --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
 
 Dependencies
   pip install skyfield numpy pandas pytz python-dateutil requests
@@ -738,7 +738,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         '<img class="' + cls + '" src="' + entry.path + '" alt="Preview of ' + data.name + '" loading="lazy">' +
         '<div class="small" style="margin-top:.35rem;">' +
         (entry.kind === "dss2"
-            ? "Image: DSS2 Red (CDS hips2fits) — red-tinted"
+            ? "Image: DSS2 Red (CDS hips2fits)"
             : "Image: Wikipedia/Wikimedia — red-tinted") +
         "</div>";
     }}
@@ -807,7 +807,6 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     <span class="pill">Location: {site_lat:.6f}, {site_lon:.6f}</span>
     <span class="pill">Date: {date_str}</span>
     <span class="pill">Window: {start}–{end} {tzname}</span>
-    <span class="pill">Generated: {now}</span>
   </div>
 
   <div class="navbar">
@@ -831,7 +830,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     </div>
   </div>
 
-  <p class="small warn">Night-vision mode: Keep device brightness low at the scope.</p>
+  <p class="small warn">Night-vision mode: Keep device brightness low at the scope. Generated: {now}</p>
 </div>
 {js}
 </html>
