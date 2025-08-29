@@ -272,16 +272,16 @@ def build_observer(load, ts, lat, lon, elev):
 # ---------------------------- Interest scoring ----------------------------
 
 INTEREST_BASE = {
-    "Saturn": 100, "Jupiter": 95, "Moon": 90, "Mars": 80, "Venus": 70,
+    "Saturn": 100, "Jupiter": 90, "Moon": 70, "Mars": 80, "Venus": 70,
     "Uranus": 55, "Neptune": 50,
 }
 TYPE_BONUS = {
-    "Globular cluster": 45, "Open cluster": 35, "Planetary nebula": 40,
-    "Emission Nebula": 40, "Reflection Nebula": 35, "Nebula with cluster": 40,
-    "H II region nebula with cluster": 40, "Spiral galaxy": 35,
-    "Elliptical galaxy": 30, "Starburst galaxy": 34, "Galaxy": 32,
-    "Supernova Remnant": 42, "Milky Way star cloud": 38,
-    "Asterism": 28, "Optical Double": 20,
+    "Globular cluster": 45, "Open cluster": 35, "Planetary nebula": 40, "Galaxy cluster": 45,
+    "Emission Nebula": 40, "Reflection Nebula": 35, "Dark nebula": 35,"Dark nebula": 35, "Nebula with cluster": 45,
+    "H II region nebula with cluster": 40, "Spiral galaxy": 35, "Peculiar galaxy": 35, 
+    "Elliptical galaxy": 30, "Starburst galaxy": 34, "Galaxy": 35, "Lenticular galaxy": 32,
+    "Supernova Remnant": 42, "Milky Way star cloud": 38, "Quasar": 25,
+    "Asterism": 35, "Optical Double": 20, "Double star": 20, "Multiple star": 20,
 }
 CROWD_BONUS = {"Saturn": 30, "Jupiter": 25, "Moon": 20, "Mars": 12, "Venus": 10}
 

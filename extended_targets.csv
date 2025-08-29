@@ -1,21 +1,108 @@
 name,ra_deg,dec_deg,type,mag,notes
+Cr 399 (Coathanger),294.3,20,Asterism,3.6,"Binocular asterism in Vulpecula, resembles a coat hanger"
+M73,314.725,-12.633333,Asterism,9,NGC 6994
+Kemble's Cascade,57,72,Asterism,,Line of stars in Camelopardalis; binocular field
+M83,204.25375,-29.865833,Barred Spiral galaxy,7.6,Southern Pinwheel Galaxy NGC 5236
+M65,169.732917,13.092222,Barred Spiral galaxy,9.3,Leo Triplet NGC 3623
+M58,189.43125,11.818056,Barred Spiral galaxy,9.7,NGC 4579
+M95,160.990417,11.703889,Barred Spiral galaxy,9.7,NGC 3351
+M109,179.4,53.374444,Barred Spiral galaxy,9.8,Vacuum Cleaner Galaxy NGC 3992
+M108,167.879167,55.674167,Barred Spiral galaxy,10,Surfboard Galaxy NGC 3556
+M91,188.86,14.496389,Barred Spiral galaxy,10.2,NGC 4548
+Barnard 59,262.8,-27.1,Dark nebula,,Dense dark nebula near Pipe Nebula
+Barnard 65-7,263,-27.4,Dark nebula,,Complex of dark nebulae in Pipe region
+Barnard 78,268,-27.3,Dark nebula,,"Part of Pipe Nebula complex, visible as a dark lane"
+M78,86.694583,0.013889,Diffuse nebula,8.3,NGC 2068
+Mizar and Alcor,200.981,54.925,Double star,2.2,Naked-eye double in Ursa Major; binocular showpiece
+Albireo,292.68,27.959,Double star,3.1,Colorful blue/yellow double in Cygnus
+M32,10.674167,40.865278,Elliptical galaxy,8.1,Andromeda Satellite #1 NGC 221
+M49,187.444583,8.000556,Elliptical galaxy,8.4,NGC 4472
+M110,10.092083,41.685278,Elliptical galaxy,8.5,Andromeda Satellite #2 NGC 205
+M87,187.705833,12.391111,Elliptical galaxy,8.6,Virgo A NGC 4486
+M60,190.915,11.5525,Elliptical galaxy,8.8,NGC 4649
+M105,161.956667,12.581667,Elliptical galaxy,9.3,NGC 3379
+M59,190.509583,11.646944,Elliptical galaxy,9.6,NGC 4621
+M89,188.915833,12.556389,Elliptical galaxy,9.8,NGC 4552
+NGC 7000,314,44.5,Emission Nebula,4,North America Nebula (widefield)
+IC 1396 (Elephant's Trunk),324.7,57.5,Emission nebula,5,Large emission nebula in Cepheus with dark lanes
+M17 (Swan/Omega Nebula),275,-16.183,Emission Nebula,6,Shows swan/omega shape; OIII enhances contrast.
+M8,270.75,-24.383,Emission Nebula,6,Bright H II region with embedded cluster; UHC/OIII helpful.
+M16,274.5,-13.783,Emission Nebula,6.4,Open cluster + nebulosity; 'Pillars' need dark skies.
+NGC 281,13,56.6,Emission Nebula,7.4,Pacman Nebula
+IC 5070,314,44.3,Emission Nebula,7.5,Pelican Nebula (widefield)
+NGC 2070 (Tarantula Nebula),84.5,-69.1,Emission Nebula,8,In LMC; huge H II region; best from southern sites.
+NGC 7635,351,61.2,Emission Nebula,8.4,Bubble Nebula
+M20 (Trifid Nebula),270.595833,-23.03,Emission Nebula,6.3,Distinct dark lanes; use moderate magnification.
 Large Magellanic Cloud,80.75,-69.75,Galaxy,0.9,Dwarf galaxy; multiple embedded clusters/nebulae.
+Small Magellanic Cloud,13,-72.817,Galaxy,2.7,Dwarf galaxy; look for 47 Tuc nearby.
+NGC 253,11.888,-25.288,Galaxy,7.1,Sculptor Galaxy
+IC 342,56.702,68.102,Galaxy,8.4,Hidden Galaxy
+NGC 2403,114.214,65.601,Galaxy,8.9,Camelopardalis
+NGC 7331,339.267,34.415,Galaxy,9.4,Deer Lick
+NGC 3628,170.067,13.588,Galaxy,9.5,Hamburger (Leo Triplet)
+NGC 6946,308.717,60.153,Galaxy,9.6,Fireworks Galaxy
+NGC 2683,133.904,33.422,Galaxy,9.7,UFO Galaxy
+NGC 4631,190.533,32.541,Galaxy,9.8,Whale Galaxy
+NGC 4216,183.989,13.155,Galaxy,10,Virgo Cluster
+NGC 4565,189.086,25.987,Galaxy,10.4,Needle Galaxy
+NGC 7814,0.877,16.146,Galaxy,10.6,Little Sombrero
+NGC 925,36.822,33.579,Galaxy,10.7,Triangulum region
+NGC 891,35.638,42.349,Galaxy,10.8,"Edge-on, Andromeda"
+NGC 2905,143.05,21.5,Galaxy,12,Knot in NGC 2903 arm
+Abell 1656 (Coma Cluster),194.9,27.98,Galaxy cluster,,"Coma galaxy cluster, hundreds of galaxies"
+Fornax Cluster,54.5,-35,Galaxy cluster,,Rich cluster of galaxies in Fornax
+Markarian's Chain,190,12.5,Galaxy group,9,Chain of galaxies in Virgo Cluster
+NGC 5139 (Omega Centauri),201.5,-47.483,Globular cluster,3.7,Very low from 45°N (spring). Crowded core; best with low power.
+47 Tucanae (NGC 104),6,-72.083,Globular cluster,4,Southern showpiece near SMC; not visible from 45°N.
+M22,279.099583,-23.90475,Globular cluster,5.1,Great Sagittarius Cluster NGC 6656
+M4,245.896667,-26.52575,Globular cluster,5.6,Spider Globular Cluster NGC 6121
+M5,229.638333,2.081028,Globular cluster,5.6,Rose Cluster NGC 5904
+M13,250.421667,36.459861,Globular cluster,5.8,Great Hercules Cluster NGC 6205
+M15,322.492917,12.167,Globular cluster,6.2,Great Pegasus Cluster NGC 7078
+M3,205.548333,28.377278,Globular cluster,6.2,NGC 5272
+M55,294.99875,-30.96475,Globular cluster,6.3,Specter Cluster NGC 6809
+M92,259.280833,43.135944,Globular cluster,6.4,NGC 6341
+M2,323.3625,-0.82325,Globular cluster,6.5,NGC 7089
+M62,255.3025,-30.112361,Globular cluster,6.5,Flickering Globular NGC 6266
+M10,254.287083,-4.099472,Globular cluster,6.6,NGC 6254
+M12,251.809167,-1.948528,Globular cluster,6.7,NGC 6218
+M19,255.657083,-26.267944,Globular cluster,6.8,NGC 6273
+M28,276.137083,-24.869833,Globular cluster,6.8,NGC 6626
+M30,325.092083,-23.179861,Globular cluster,7.2,Jellyfish Cluster NGC 7099
+M80,244.26,-22.976083,Globular cluster,7.3,NGC 6093
+M14,264.400833,-3.245917,Globular cluster,7.6,NGC 6402
+M53,198.230417,18.168167,Globular cluster,7.6,NGC 5024
+M54,283.76375,-30.479861,Globular cluster,7.6,NGC 6715
+M69,277.84625,-32.348083,Globular cluster,7.6,NGC 6637
+M79,81.044167,-24.52425,Globular cluster,7.7,NGC 1904
+M9,259.799167,-18.51625,Globular cluster,7.7,NGC 6333
+M68,189.866667,-26.744056,Globular cluster,7.8,NGC 4590
+M107,248.132917,-13.053778,Globular cluster,7.9,Crucifix Cluster NGC 6171
+M70,280.803333,-32.292111,Globular cluster,7.9,NGC 6681
+M71,298.44375,18.779194,Globular cluster,8.2,Angelfish Cluster NGC 6838
+M56,289.148333,30.183472,Globular cluster,8.3,NGC 6779
+M75,301.52,-21.921167,Globular cluster,8.5,NGC 6864
+NGC 6934,308.547,7.404,Globular Cluster,8.8,Delphinus
+NGC 5466,211.363,28.534,Globular Cluster,9.1,High latitude
+M72,313.365417,-12.537306,Globular cluster,9.3,NGC 6981
+NGC 6229,251.744,47.528,Globular Cluster,9.4,Hercules
+NGC 2419,114.535,38.881,Globular Cluster,10.3,Intergalactic Wanderer
+NGC 7006,315.372,16.187,Globular Cluster,10.6,Delphinus
+M42,83.822083,-5.391111,H II region nebula,4,Great Orion Nebula NGC 1976
+M43,83.9,-5.266667,H II region nebula,9,De Mairan's Nebula NGC 1982
+M86,186.54875,12.946111,Lenticular galaxy,8.9,NGC 4406
+M84,186.265417,12.886944,Lenticular galaxy,9.1,NGC 4374
+M85,186.35,18.191111,Lenticular galaxy,9.1,NGC 4382
+M102,226.622917,55.763333,Lenticular galaxy,9.9,Spindle Galaxy NGC 5866
+M24 (Small Sag. Star Cloud),274.25,-18.483,Milky Way star cloud,4.6,Rich star field; sweep with wide-field eyepiece.
+Epsilon Lyrae (Double Double),282.455,39.67,Multiple star,5,Near Vega; requires small telescope to split
 Melotte 20 (Alpha Persei Cluster),51,49.9,Open cluster,1.2,Huge naked-eye cluster around α Persei
 M45,56.85,24.116667,Open cluster,1.6,"Pleiades, Seven Sisters or Subaru"
 Melotte 111 (Coma Berenices Cluster),185,26,Open cluster,1.8,"Large nearby open cluster, visible to naked eye"
-Mizar and Alcor,200.981,54.925,Double star,2.2,Naked-eye double in Ursa Major; binocular showpiece
 NGC 6231,253.49999999999997,-41.8,Open cluster,2.6,"At Scorpius’ tail. Compact, bright; low from 45°N."
-Small Magellanic Cloud,13,-72.817,Galaxy,2.7,Dwarf galaxy; look for 47 Tuc nearby.
-Albireo,292.68,27.959,Double star,3.1,Colorful blue/yellow double in Cygnus
 M7,268.463333,-34.792778,Open cluster,3.3,"Large, rich cluster in Scorpius; superb in binoculars."
-M31,10.684583,41.269167,Spiral galaxy,3.4,Andromeda Galaxy NGC 224
-Cr 399 (Coathanger),294.3,20,Asterism,3.6,"Binocular asterism in Vulpecula, resembles a coat hanger"
 M44,130.1,19.983333,Open cluster,3.7,Beehive Cluster or Praesepe NGC 2632
-NGC 5139 (Omega Centauri),201.5,-47.483,Globular cluster,3.7,Very low from 45°N (spring). Crowded core; best with low power.
 NGC 2264,100.255,9.896,Open Cluster,3.9,Christmas Tree Cone region
-47 Tucanae (NGC 104),6,-72.083,Globular cluster,4,Southern showpiece near SMC; not visible from 45°N.
-M42,83.822083,-5.391111,H II region nebula,4,Great Orion Nebula NGC 1976
-NGC 7000,314,44.5,Emission Nebula,4,North America Nebula (widefield)
 IC 4665,266.6,5.7,Open cluster,4.2,"Large, sparse cluster in Ophiuchus, visible in binoculars"
 M6,265.025,-32.216667,Open cluster,4.2,Striking 'butterfly' shape; best in wide-field views.
 NGC 869,34.78,57.147,Open Cluster,4.3,Double Cluster component
@@ -23,157 +110,70 @@ M47,114.15,-14.5,Open cluster,4.4,NGC 2422
 NGC 884,34.8,57.117,Open Cluster,4.4,Double Cluster component
 Stock 2,31.8,60.3,Open cluster,4.4,"Loose cluster near Double Cluster, aka 'Muscle Man'"
 M41,101.5,-20.766667,Open cluster,4.5,Little Beehive Cluster NGC 2287
-M24 (Small Sag. Star Cloud),274.25,-18.483,Milky Way star cloud,4.6,Rich star field; sweep with wide-field eyepiece.
 M25,277.9,-19.25,Open cluster,4.6,IC 4725
 M39,322.925,48.433333,Open cluster,4.6,Pyramid Cluster NGC 7092
-Epsilon Lyrae (Double Double),282.455,39.67,Multiple star,5,Near Vega; requires small telescope to split
-IC 1396 (Elephant's Trunk),324.7,57.5,Emission nebula,5,Large emission nebula in Cepheus with dark lanes
-NGC 6960,309.392,30.731,Supernova Remnant,5,Veil West (Witch's Broom)
-M22,279.099583,-23.90475,Globular cluster,5.1,Great Sagittarius Cluster NGC 6656
 M35,92.275,24.35,Open cluster,5.3,Shoe-Buckle Cluster NGC 2168
 M23,269.2,-19.016667,Open cluster,5.5,NGC 6494
 M34,40.525,42.766667,Open cluster,5.5,Spiral Cluster NGC 1039
 M48,123.425,-5.75,Open cluster,5.5,NGC 2548
-M4,245.896667,-26.52575,Globular cluster,5.6,Spider Globular Cluster NGC 6121
-M5,229.638333,2.081028,Globular cluster,5.6,Rose Cluster NGC 5904
-M33,23.458333,30.660194,Spiral galaxy,5.7,Triangulum/Pinwheel Galaxy NGC 598
 NGC 752,29.287,37.789,Open Cluster,5.7,Sprawling cluster in Andromeda
 M11,282.775,-6.266667,Open cluster,5.8,Wild Duck Cluster NGC 6705
-M13,250.421667,36.459861,Globular cluster,5.8,Great Hercules Cluster NGC 6205
 M50,105.8,-8.333333,Open cluster,5.9,Heart-Shaped Cluster NGC 2323
-M17 (Swan/Omega Nebula),275,-16.183,Emission Nebula,6,Shows swan/omega shape; OIII enhances contrast.
 M46,115.45,-14.816667,Open cluster,6,NGC 2437
-M8,270.75,-24.383,Emission Nebula,6,Bright H II region with embedded cluster; UHC/OIII helpful.
 M93,116.15,-23.866667,Open cluster,6,Critter Cluster NGC 2447
 NGC 2244,97.95,4.95,Open Cluster,6,In Rosette Nebula
-NGC 6992,314.74,31,Supernova Remnant,6,Veil East
 M67,132.825,11.816667,Open cluster,6.1,King Cobra or Golden Eye Cluster NGC 2682
-M15,322.492917,12.167,Globular cluster,6.2,Great Pegasus Cluster NGC 7078
-M3,205.548333,28.377278,Globular cluster,6.2,NGC 5272
 M37,88.075,32.550556,Open cluster,6.2,Salt and Pepper Cluster NGC 2099
-M20 (Trifid Nebula),270.595833,-23.03,Emission/Reflection Nebula,6.3,Distinct dark lanes; use moderate magnification.
 M36,84.05,34.134444,Open cluster,6.3,Pinwheel Cluster NGC 1960
-M55,294.99875,-30.96475,Globular cluster,6.3,Specter Cluster NGC 6809
-M16,274.5,-13.783,Emission Nebula,6.4,Open cluster + nebulosity; 'Pillars' need dark skies.
-M92,259.280833,43.135944,Globular cluster,6.4,NGC 6341
 NGC 457,19.863,58.303,Open Cluster,6.4,Owl/ET Cluster
-M2,323.3625,-0.82325,Globular cluster,6.5,NGC 7089
 M21,271.15,-22.5,Open cluster,6.5,Webb's Cross Cluster NGC 6531
-M62,255.3025,-30.112361,Globular cluster,6.5,Flickering Globular NGC 6266
-M10,254.287083,-4.099472,Globular cluster,6.6,NGC 6254
-M12,251.809167,-1.948528,Globular cluster,6.7,NGC 6218
 NGC 7789,359.287,56.734,Open Cluster,6.7,Caroline's Rose
-Centaurus A (NGC 5128),201.25,-43.017,Peculiar galaxy,6.8,Low from 45°N (spring). Dark lane bisects bright core.
-M19,255.657083,-26.267944,Globular cluster,6.8,NGC 6273
-M28,276.137083,-24.869833,Globular cluster,6.8,NGC 6626
-M81,148.888333,69.065278,Spiral galaxy,6.9,Bode's Galaxy NGC 3031
 M29,305.983333,38.523333,Open cluster,7.1,Cooling Tower Cluster NGC 6913
-NGC 253,11.888,-25.288,Galaxy,7.1,Sculptor Galaxy
 NGC 663,26.585,61.214,Open Cluster,7.1,Perseus
-M30,325.092083,-23.179861,Globular cluster,7.2,Jellyfish Cluster NGC 7099
 M52,351.05,61.583333,Open cluster,7.3,Scorpion Cluster NGC 7654
-M80,244.26,-22.976083,Globular cluster,7.3,NGC 6093
 M103,23.3,60.7,Open cluster,7.4,NGC 581
-M27,299.90125,22.721139,Planetary nebula,7.4,Dumbbell Nebula NGC 6853
 M38,82.175,35.855,Open cluster,7.4,Starfish Cluster NGC 1912
-NGC 281,13,56.6,Emission Nebula,7.4,Pacman Nebula
-IC 5070,314,44.3,Emission Nebula,7.5,Pelican Nebula (widefield)
 M18,274.975,-17.133333,Open cluster,7.5,Black Swan Cluster NGC 6613
-M14,264.400833,-3.245917,Globular cluster,7.6,NGC 6402
-M53,198.230417,18.168167,Globular cluster,7.6,NGC 5024
-M54,283.76375,-30.479861,Globular cluster,7.6,NGC 6715
-M69,277.84625,-32.348083,Globular cluster,7.6,NGC 6637
-M83,204.25375,-29.865833,Barred Spiral galaxy,7.6,Southern Pinwheel Galaxy NGC 5236
-M79,81.044167,-24.52425,Globular cluster,7.7,NGC 1904
-M9,259.799167,-18.51625,Globular cluster,7.7,NGC 6333
-M68,189.866667,-26.744056,Globular cluster,7.8,NGC 4590
-NGC 3242,156.19,-18.643,Planetary Nebula,7.8,Ghost of Jupiter
-M101,210.8025,54.349167,Spiral galaxy,7.9,Pinwheel Galaxy NGC 5457
-M107,248.132917,-13.053778,Globular cluster,7.9,Crucifix Cluster NGC 6171
-M70,280.803333,-32.292111,Globular cluster,7.9,NGC 6681
-M104,189.9975,-11.623056,Spiral galaxy,8,Sombrero Galaxy NGC 4594
 M26,281.3,-9.4,Open cluster,8,NGC 6694
-NGC 2070 (Tarantula Nebula),84.5,-69.1,Emission Nebula,8,In LMC; huge H II region; best from southern sites.
-NGC 7009,316.045,-11.363,Planetary Nebula,8,Saturn Nebula
-M32,10.674167,40.865278,Dwarf elliptical galaxy,8.1,Andromeda Satellite #1 NGC 221
-NGC 6543,269.639,66.633,Planetary Nebula,8.1,Cat's Eye
-M71,298.44375,18.779194,Globular cluster,8.2,Angelfish Cluster NGC 6838
-M94,192.72125,41.120556,Spiral galaxy,8.2,Crocodile Eye or Cat's Eye Galaxy NGC 4736
-M56,289.148333,30.183472,Globular cluster,8.3,NGC 6779
-M78,86.694583,0.013889,Diffuse nebula,8.3,NGC 2068
-IC 342,56.702,68.102,Galaxy,8.4,Hidden Galaxy
-M1,83.632917,22.0145,Super­nova remnant,8.4,Crab Nebula NGC 1952
-M106,184.739583,47.303889,Spiral galaxy,8.4,NGC 4258
-M40,185.552083,58.083056,Optical Double,8.4,Winnecke 4
-M49,187.444583,8.000556,Elliptical galaxy,8.4,NGC 4472
-M51,202.469583,47.195278,Spiral galaxy,8.4,"Whirlpool Galaxy NGC 5194, NGC 5195"
-M82,148.9675,69.679722,Starburst galaxy,8.4,Cigar Galaxy NGC 3034
-NGC 7635,351,61.2,Emission Nebula,8.4,Bubble Nebula
-M110,10.092083,41.685278,Dwarf elliptical galaxy,8.5,Andromeda Satellite #2 NGC 205
-M64,194.182083,21.682778,Spiral galaxy,8.5,Black Eye Galaxy NGC 4826
-M75,301.52,-21.921167,Globular cluster,8.5,NGC 6864
-M63,198.955417,42.029167,Spiral galaxy,8.6,Sunflower Galaxy NGC 5055
-M87,187.705833,12.391111,Elliptical galaxy,8.6,Virgo A NGC 4486
-M57,283.39625,33.029167,Planetary nebula,8.8,Ring Nebula NGC 6720
-M60,190.915,11.5525,Elliptical galaxy,8.8,NGC 4649
-NGC 6826,295.67,50.525,Planetary Nebula,8.8,Blinking
-NGC 6934,308.547,7.404,Globular Cluster,8.8,Delphinus
-M66,170.0625,12.991667,Barred Spiral galaxy,8.9,Leo Triplet NGC 3627
-M77,40.669583,-0.013333,Spiral galaxy,8.9,Cetus A or Squid Galaxy NGC 1068
-M86,186.54875,12.946111,Lenticular galaxy,8.9,NGC 4406
-NGC 2403,114.214,65.601,Galaxy,8.9,Camelopardalis
 King 10,12.9,61.1,Open cluster,9,"Open cluster in Cassiopeia, faint but interesting"
-M43,83.9,-5.266667,H II region nebula (part of the Orion Nebula),9,De Mairan's Nebula NGC 1982
-M73,314.725,-12.633333,Asterism,9,NGC 6994
-Markarian's Chain,190,12.5,Galaxy group,9,Chain of galaxies in Virgo Cluster
-M84,186.265417,12.886944,Lenticular galaxy,9.1,NGC 4374
-M85,186.35,18.191111,Lenticular galaxy,9.1,NGC 4382
-NGC 5466,211.363,28.534,Globular Cluster,9.1,High latitude
-M96,161.690417,11.82,Spiral galaxy,9.2,NGC 3368
+M40,185.552083,58.083056,Optical Double,8.4,Winnecke 4
+Centaurus A (NGC 5128),201.25,-43.017,Peculiar galaxy,6.8,Low from 45°N (spring). Dark lane bisects bright core.
+M27,299.90125,22.721139,Planetary nebula,7.4,Dumbbell Nebula NGC 6853
+NGC 3242,156.19,-18.643,Planetary Nebula,7.8,Ghost of Jupiter
+NGC 7009,316.045,-11.363,Planetary Nebula,8,Saturn Nebula
+NGC 6543,269.639,66.633,Planetary Nebula,8.1,Cat's Eye
+M57,283.39625,33.029167,Planetary nebula,8.8,Ring Nebula NGC 6720
+NGC 6826,295.67,50.525,Planetary Nebula,8.8,Blinking
 NGC 2392,112.288,20.911,Planetary Nebula,9.2,Eskimo
 IC 418,82.147,-12.701,Planetary Nebula,9.3,Spirograph
-M100,185.72875,15.8225,Spiral galaxy,9.3,Mirror Galaxy NGC 4321
-M105,161.956667,12.581667,Elliptical galaxy,9.3,NGC 3379
-M65,169.732917,13.092222,Barred Spiral galaxy,9.3,Leo Triplet NGC 3623
-M72,313.365417,-12.537306,Globular cluster,9.3,NGC 6981
-M74,24.174167,15.783611,Spiral galaxy,9.4,Phantom Galaxy[91] NGC 628
-NGC 6229,251.744,47.528,Globular Cluster,9.4,Hercules
-NGC 7331,339.267,34.415,Galaxy,9.4,Deer Lick
-M90,189.2075,13.162778,Spiral galaxy,9.5,NGC 4569
-NGC 3628,170.067,13.588,Galaxy,9.5,Hamburger (Leo Triplet)
-M59,190.509583,11.646944,Elliptical galaxy,9.6,NGC 4621
-M88,187.996667,14.420556,Spiral galaxy,9.6,NGC 4501
-NGC 6946,308.717,60.153,Galaxy,9.6,Fireworks Galaxy
-M58,189.43125,11.818056,Barred Spiral galaxy,9.7,NGC 4579
-M61,185.47875,4.473611,Spiral galaxy,9.7,Swelling Spiral Galaxy NGC 4303
-M95,160.990417,11.703889,Barred Spiral galaxy,9.7,NGC 3351
-NGC 2683,133.904,33.422,Galaxy,9.7,UFO Galaxy
-M109,179.4,53.374444,Barred Spiral galaxy,9.8,Vacuum Cleaner Galaxy NGC 3992
-M89,188.915833,12.556389,Elliptical galaxy,9.8,NGC 4552
-NGC 4631,190.533,32.541,Galaxy,9.8,Whale Galaxy
-M102,226.622917,55.763333,Lenticular galaxy,9.9,Spindle Galaxy NGC 5866
 M97,168.69875,55.019028,Planetary nebula,9.9,Owl Nebula NGC 3587
-M99,184.706667,14.416389,Spiral galaxy,9.9,St. Catherine's Wheel NGC 4254
-M108,167.879167,55.674167,Barred Spiral galaxy,10,Surfboard Galaxy NGC 3556
-NGC 4216,183.989,13.155,Galaxy,10,Virgo Cluster
 M76,25.6,51.575278,Planetary nebula,10.1,"Little Dumbbell Nebula NGC 650, NGC 651"
-M98,183.45125,14.900472,Spiral galaxy,10.1,NGC 4192
-M91,188.86,14.496389,Barred Spiral galaxy,10.2,NGC 4548
-NGC 2419,114.535,38.881,Globular Cluster,10.3,Intergalactic Wanderer
-NGC 4565,189.086,25.987,Galaxy,10.4,Needle Galaxy
 IC 2149,92.259,46.113,Planetary Nebula,10.6,Auriga
-NGC 7006,315.372,16.187,Globular Cluster,10.6,Delphinus
-NGC 7814,0.877,16.146,Galaxy,10.6,Little Sombrero
 IC 418 (Spirograph Nebula),82,-12.6,Planetary nebula,10.7,"Compact PN in Lepus, bright with filters"
 NGC 40,3.257,72.522,Planetary Nebula,10.7,Bow-Tie
 NGC 7008,315.403,54.954,Planetary Nebula,10.7,Fetus Nebula
-NGC 925,36.822,33.579,Galaxy,10.7,Triangulum region
-NGC 891,35.638,42.349,Galaxy,10.8,"Edge-on, Andromeda"
-NGC 2905,143.05,21.5,Galaxy,12,Knot in NGC 2903 arm
 3C 273,187.3,2,Quasar,12.9,"Brightest quasar, historically important"
-Abell 1656 (Coma Cluster),194.9,27.98,Galaxy cluster,,"Coma galaxy cluster, hundreds of galaxies"
-Barnard 59,262.8,-27.1,Dark nebula,,Dense dark nebula near Pipe Nebula
-Barnard 65-7,263,-27.4,Dark nebula,,Complex of dark nebulae in Pipe region
-Barnard 78,268,-27.3,Dark nebula,,"Part of Pipe Nebula complex, visible as a dark lane"
-Fornax Cluster,54.5,-35,Galaxy cluster,,Rich cluster of galaxies in Fornax
-Kemble's Cascade,57,72,Asterism,,Line of stars in Camelopardalis; binocular field
+M31,10.684583,41.269167,Spiral galaxy,3.4,Andromeda Galaxy NGC 224
+M33,23.458333,30.660194,Spiral galaxy,5.7,Triangulum/Pinwheel Galaxy NGC 598
+M81,148.888333,69.065278,Spiral galaxy,6.9,Bode's Galaxy NGC 3031
+M101,210.8025,54.349167,Spiral galaxy,7.9,Pinwheel Galaxy NGC 5457
+M104,189.9975,-11.623056,Spiral galaxy,8,Sombrero Galaxy NGC 4594
+M94,192.72125,41.120556,Spiral galaxy,8.2,Crocodile Eye or Cat's Eye Galaxy NGC 4736
+M106,184.739583,47.303889,Spiral galaxy,8.4,NGC 4258
+M51,202.469583,47.195278,Spiral galaxy,8.4,"Whirlpool Galaxy NGC 5194, NGC 5195"
+M64,194.182083,21.682778,Spiral galaxy,8.5,Black Eye Galaxy NGC 4826
+M63,198.955417,42.029167,Spiral galaxy,8.6,Sunflower Galaxy NGC 5055
+M66,170.0625,12.991667,Spiral galaxy,8.9,Leo Triplet NGC 3627
+M77,40.669583,-0.013333,Spiral galaxy,8.9,Cetus A or Squid Galaxy NGC 1068
+M96,161.690417,11.82,Spiral galaxy,9.2,NGC 3368
+M100,185.72875,15.8225,Spiral galaxy,9.3,Mirror Galaxy NGC 4321
+M74,24.174167,15.783611,Spiral galaxy,9.4,Phantom Galaxy[91] NGC 628
+M90,189.2075,13.162778,Spiral galaxy,9.5,NGC 4569
+M88,187.996667,14.420556,Spiral galaxy,9.6,NGC 4501
+M61,185.47875,4.473611,Spiral galaxy,9.7,Swelling Spiral Galaxy NGC 4303
+M99,184.706667,14.416389,Spiral galaxy,9.9,St. Catherine's Wheel NGC 4254
+M98,183.45125,14.900472,Spiral galaxy,10.1,NGC 4192
+M82,148.9675,69.679722,Starburst galaxy,8.4,Cigar Galaxy NGC 3034
+M1,83.632917,22.0145,Supernova Remnant,8.4,Crab Nebula NGC 1952
+NGC 6960,309.392,30.731,Supernova Remnant,5,Veil West (Witch's Broom)
+NGC 6992,314.74,31,Supernova Remnant,6,Veil East
