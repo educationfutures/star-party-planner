@@ -22,19 +22,6 @@ Outputs:
 
 ---
 
-## What’s new (compared to the basic planner)
-
-- **Non‑sticky table headers** (fixes header overlap issues on resize)
-- Column order aligned with how we *look through the scope*: **Alt, Az, Dir**
-- **Row modals** with more details + preview image
-- DSS2 images are shown through a **red filter** to remain night‑vision safe
-- **Caching** with an optional cleanup flag so your cron job stays fast
-
-> This script may run slowly when downloading previews of images for the first time.
-> DSS2 Red (via NASA SkyView) is now preferred for consistency and night‑vision safety.
-
----
-
 ## Installation
 
 Requires **Python 3.10+**.
@@ -103,6 +90,8 @@ python starparty_planner.py \
   --min_alt_planets 5 --min_alt_moon 0 \
   --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
 ```
+
+> ⚠️ This script may run slowly when downloading previews of images for the first time.
 
 ---
 
