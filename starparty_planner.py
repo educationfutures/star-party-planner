@@ -276,14 +276,14 @@ INTEREST_BASE = {
     "Uranus": 55, "Neptune": 50,
 }
 TYPE_BONUS = {
-    "Globular cluster": 45, "Open cluster": 35, "Planetary nebula": 40, "Galaxy cluster": 45,
-    "Emission Nebula": 40, "Reflection Nebula": 35, "Dark nebula": 35,"Dark nebula": 35, "Nebula with cluster": 45,
-    "H II region nebula with cluster": 40, "Spiral galaxy": 35, "Peculiar galaxy": 35, 
-    "Elliptical galaxy": 30, "Starburst galaxy": 34, "Galaxy": 35, "Lenticular galaxy": 32,
+    "Globular cluster": 45, "Open cluster": 35, "Planetary nebula": 40, "Galaxy cluster": 32,
+    "Emission Nebula": 40, "Reflection Nebula": 35, "Dark nebula": 30, "Nebula with cluster": 45,
+    "H II region nebula with cluster": 40, "Spiral galaxy": 35, "Peculiar galaxy": 30, 
+    "Elliptical galaxy": 30, "Starburst galaxy": 30, "Galaxy": 30, "Lenticular galaxy": 32,
     "Supernova Remnant": 42, "Milky Way star cloud": 38, "Quasar": 25,
-    "Asterism": 35, "Optical Double": 20, "Double star": 20, "Multiple star": 20,
+    "Asterism": 50, "Optical Double": 50, "Double star": 50, "Multiple star": 50,
 }
-CROWD_BONUS = {"Saturn": 30, "Jupiter": 25, "Moon": 20, "Mars": 12, "Venus": 10}
+CROWD_BONUS = {"Saturn": 30, "Jupiter": 25, "Moon": 20, "Mars": 12, "Venus": 10, "Cr 399": 15, "Albireo": 15}
 
 def interest_score(name: str, typ: str, best_alt: float, alt_now: Optional[float] = None) -> float:
     base = INTEREST_BASE.get(name, 0)
