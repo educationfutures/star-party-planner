@@ -87,10 +87,10 @@ python starparty_planner.py \
   - Use `--refresh_previews` weekly or when images change.
   - Use `--clean_preview_cache` in daily cron to trim unused files.
 
-### Cron Example (daily at 15:00 local)
+### Cron Example (daily at 09:00 local)
 
 ```cron
-0 15 * * * cd /path/to/star-party-planner && \
+0 9 * * * cd /path/to/star-party-planner && \
   /usr/bin/python3 starparty_planner.py \
   --lat 44.810265 --lon -93.939783 --elev 296 \
   --tz America/Chicago --catalog messier_caldwell.csv \

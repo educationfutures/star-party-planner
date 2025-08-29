@@ -490,7 +490,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
             anchor = f"hour-{hour.replace(' ','_').replace(':','')}"
             hour_label = _hour_anchor_label(hour)
             hour_links.append(f'<a href="#{anchor}">{hour_label}</a>')
-            cols = ['Name','Type','Alt (°)','Az (°)','Dir','RA (deg)','Dec (deg)','Notes']
+            cols = ['Name','Type','Mag','Alt (°)','Az (°)','Dir','RA (deg)','Dec (deg)','Notes']
             present = [c for c in cols if c in sub.columns]
             tbl = df_to_html_table(sub[present], id_attr=f"tbl-{anchor}")
             if ui_mode == "accordion":
@@ -1000,13 +1000,20 @@ def plan_for_site(args):
         for row in t["hourly"]:
             h, alt_h, az_h, dir_h, prio, *rest = row
             out = {
-                "Hour": h.strftime("%Y-%m-%d %H:%M"), "Name": t["name"], "Type": t["type"],
-                "Alt (°)": round(alt_h,1), "Az (°)": round(az_h,1), "Dir": dir_h,
-                "RA (deg)": t["ra_deg"], "Dec (deg)": t["dec_deg"], "Notes": t.get("notes",""),
+                "Hour": h.strftime("%Y-%m-%d %H:%M"),
+                "Name": t["name"],
+                "Type": t["type"],
+                "Mag": t["mag"] if t["mag"] is not None else "",   # <-- add this
+                "Alt (°)": round(alt_h, 1),
+                "Az (°)": round(az_h, 1),
+                "Dir": dir_h,
+                "RA (deg)": t["ra_deg"],
+                "Dec (deg)": t["dec_deg"],
+                "Notes": t.get("notes", ""),
                 "_Priority": prio,
             }
             if t["name"] == "Moon" and rest:
-                out["Moon Phase (°)"] = round(rest[-1],1)
+                out["Moon Phase (°)"] = round(rest[-1], 1)
             hour_tables.append(out)
 
     hourly_df = pd.DataFrame(hour_tables)
