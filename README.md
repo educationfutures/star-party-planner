@@ -87,9 +87,9 @@ This repository ships with **`messier_caldwell.csv`** covering Messier + Caldwel
 
 ---
 
-## Usage (All Flags Example)
+## Usage
 
-The example below demonstrates **full use of the common flags**. Customize as needed.
+### Example (Eagle Lake Observatory, Minnesota)
 
 ```bash
 python starparty_planner.py \
@@ -101,38 +101,47 @@ python starparty_planner.py \
   --bsp ./skyfield_data/de440s.bsp \
   --html_ui tabs \
   --min_alt_planets 5 --min_alt_moon 0 \
-  --preview_cache_dir ./.cache --clean_cache  # (optional) manage preview cache
+  --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
 ```
-
-### Defaults & Time Logic
-
-- If `--date` is omitted → **today** (in your `--tz`).
-- If `--start` is omitted → **local sunset** (rounded to nearest hour).
-- If `--end` is omitted → **hour of local sunrise** (same hour, minutes dropped).
-- Planets and Moon have their own altitude cutoffs (defaults: 10° and 5°).
-
-> The nightly window automatically spans past midnight when needed.
 
 ---
 
-## Key Flags Reference
+## Command-Line Arguments
 
-| Flag | Description |
-|---|---|
-| `--lat`, `--lon`, `--elev` | Site location and elevation (meters). |
-| `--date` | Local date `YYYY-MM-DD` (defaults to today). |
-| `--start`, `--end` | Local time `HH:MM`. Omit to use sunset/sunrise logic above. |
-| `--tz` | IANA timezone (e.g. `America/Chicago`). |
-| `--catalog` | CSV of DSOs (Messier/Caldwell included). |
-| `--min_alt`, `--max_mag`, `--moon_sep_min` | Visibility filters. |
-| `--top_n_per_hour` | Cap per-hour “point your scope now” list. |
-| `--out_prefix` | Prefix for CSV filenames. |
-| `--html` | Path for night-vision HTML (e.g. `starparty.html`). |
-| `--html_ui` | `accordion` or `tabs`. |
-| `--bsp` | Path to local ephemeris, e.g. `./skyfield_data/de440s.bsp`. |
-| `--min_alt_planets`, `--min_alt_moon` | Per-type altitude thresholds. |
-| `--preview_cache_dir` | Directory to store preview images (default: `./.cache`). |
-| `--clean_cache` | Deletes the cache before generation (forces re-download of previews). |
+### Core Location & Time
+- `--lat` (float, required) – Latitude in decimal degrees (north positive)  
+- `--lon` (float, required) – Longitude in decimal degrees (east positive)  
+- `--elev` (float, default=0.0) – Elevation in meters
+- `--date` (YYYY-MM-DD, default=today) – Observation date (local)  
+- `--start` (HH:MM, default=sunset rounded) – Session start time  
+- `--end` (HH:MM, default=sunrise hour) – Session end time  
+- `--tz` (string, default=UTC) – IANA timezone, e.g. `America/Chicago`
+
+### Catalog & Filtering
+- `--catalog` (path, default=`messier_caldwell.csv`) – Input catalog of deep-sky objects  
+- `--min_alt` (float, default=20.0) – Minimum altitude (deg) for DSOs  
+- `--max_mag` (float, default=9.0) – Maximum magnitude (fainter objects are excluded)  
+- `--moon_sep_min` (float, default=15.0) – Minimum separation from the Moon (deg)  
+- `--hour_step` (int, default=1) – Step size in hours for hourly tables  
+- `--top_n_per_hour` (int, default=16) – Max targets shown per hour slot  
+
+### Outputs
+- `--out_prefix` (string, default=`starparty`) – Prefix for CSV output files  
+- `--html` (string, optional) – Path to save HTML output file  
+- `--bsp` (path, default=`./skyfield_data/de440s.bsp`) – Planetary ephemeris file  
+- `--html_ui` (`tabs` | `accordion`, default=`tabs`) – HTML layout style  
+
+### Per-Type Altitude Thresholds
+- `--min_alt_planets` (float, default=5.0) – Minimum altitude for planets  
+- `--min_alt_moon` (float, default=0.0) – Minimum altitude for the Moon  
+
+### Preview & Caching
+- `--no_previews` – Disable image previews entirely  
+- `--preview_cache_dir` (string, default=`image_cache`) – Directory for cached previews  
+- `--preview_px` (int, default=800) – Pixel size for DSS2 images  
+- `--preview_fov_deg` (float, default=0.6) – Field of view for DSS2 images (degrees)  
+- `--refresh_previews` – Force re-download of all previews  
+- `--clean_preview_cache` – Remove cached images not used in this run  
 
 > **Note:** `--cache_dir` and `--clean_cache` apply to the *HTML preview images* (DSS2). Catalogs and BSPs are not affected.
 
