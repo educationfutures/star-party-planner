@@ -3,6 +3,8 @@
 **Plan an observing night with confidence!**  
 This tool generates observing lists tailored to your site, date, and time window. It prioritizes crowd-pleasers such as Saturn and Jupiter, filters by altitude and Moon separation for deep space objects, and outputs **night-vision-friendly HTML**, CSV tables, and console listings.
 
+A demonstration of the planner, providing data for Minnesota Astronomical Society's Eagle Lake Observatory is available at https://party.knowmad.org
+
 ---
 
 ## Highlights

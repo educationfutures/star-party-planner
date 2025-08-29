@@ -717,8 +717,8 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       const items = [];
       const push = (label, val) => {{ if (val !== undefined && val !== "" && val != null && val !== "nan") items.push(`<div><strong>${{label}}:</strong> ${{val}}</div>`); }};
       push("Type", fields.type); push("Magnitude", fields.mag);
-      push("Best Time", fields.bestTime); push("Alt (°)", fields.alt);
-      push("Az (°)", fields.az); push("Dir", fields.dir);
+      push("Best Time", fields.bestTime); push("Dir", fields.dir);
+      push("Alt (°)", fields.alt); push("Az (°)", fields.az); 
       push("RA (deg)", fields.ra); push("Dec (deg)", fields.dec);
       push("Notes", fields.notes);
       return items.join("");
@@ -734,9 +734,9 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         type: get("Type"),
         mag: get("Mag"),
         bestTime: get("Best Time") || get("Best Local Time"),
+        dir: get("Dir"),
         alt: get("Alt (°)"),
         az: get("Az (°)"),
-        dir: get("Dir"),
         ra: get("RA (deg)"),
         dec: get("Dec (deg)"),
         notes: get("Notes"),
@@ -1025,9 +1025,9 @@ def plan_for_site(args):
             "Type": t["type"],
             "Mag": t["mag"] if t["mag"] is not None else "",
             "Best Time": t["best_time"].strftime("%H:%M"),
+            "Dir": t["best_dir"],
             "Alt (°)": t["best_alt"],
             "Az (°)": t["best_az"],
-            "Dir": t["best_dir"],
             "Notes": t["notes"],
             "RA (deg)": round(t["ra_deg"], 3) if not pd.isna(t["ra_deg"]) else "",
             "Dec (deg)": round(t["dec_deg"], 3) if not pd.isna(t["dec_deg"]) else "",
@@ -1049,9 +1049,9 @@ def plan_for_site(args):
                 "Name": t["name"],
                 "Type": t["type"],
                 "Mag": t["mag"] if t["mag"] is not None else "",
+                "Dir": dir_h,
                 "Alt (°)": round(alt_h, 1),
                 "Az (°)": round(az_h, 1),
-                "Dir": dir_h,
                 "RA (deg)": round(t["ra_deg"], 3) if not pd.isna(t["ra_deg"]) else "",
                 "Dec (deg)": round(t["dec_deg"], 3) if not pd.isna(t["dec_deg"]) else "",
                 "Notes": t.get("notes", ""),
