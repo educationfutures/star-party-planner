@@ -115,6 +115,10 @@ def parse_args():
     p.add_argument("--refresh_previews", action="store_true", help="Force re-download of previews")
     p.add_argument("--clean_preview_cache", action="store_true", help="Remove cached files not used by this run")
 
+    # ---- Moonlight penalty control ----
+    p.add_argument("--moonlight_penalty_max", type=float, default=18.0,
+                   help="Max points subtracted from diffuse targets at full Moon when the Moon is high (default=18)")
+
     return p.parse_args()
 
 # ---------------------------- Astronomy core ----------------------------
@@ -293,10 +297,51 @@ def interest_score(name: str, typ: str, best_alt: float, alt_now: Optional[float
     alt_term = 0.10 * best_alt + 0.15 * (alt_now if alt_now is not None else best_alt)
     return min(200.0, base + alt_term)
 
+# ---- Moonlight penalty helpers ----
+
+# Targets that visibly wash out under moonlight
+DIFFUSE_TYPES = {
+    "Emission Nebula", "Reflection Nebula", "Dark nebula",
+    "Milky Way star cloud", "Nebula with cluster", "H II region nebula with cluster",
+    "Spiral galaxy", "Elliptical galaxy", "Lenticular galaxy", "Starburst galaxy",
+    "Galaxy", "Peculiar galaxy", "Galaxy cluster", "Supernova Remnant"
+}
+# Compact nebulae: penalize half-strength
+PARTIALLY_DIFFUSE_TYPES = {"Planetary nebula"}
+
+def lunar_illum_fraction_from_phase_deg(phase_deg: float) -> float:
+    """Convert Moon-Sun elongation (0°=New, 180°=Full) to illumination fraction [0,1]."""
+    return 0.5 * (1.0 - math.cos(math.radians(phase_deg)))
+
+def moon_alt_scale(alt_deg: Optional[float]) -> float:
+    """
+    Scale penalty by Moon altitude using sin(alt).
+    - Below horizon -> 0
+    - At horizon -> 0
+    - 30° -> 0.5
+    - 90° -> 1.0
+    """
+    if alt_deg is None:
+        return 1.0
+    return max(0.0, math.sin(math.radians(max(-5.0, float(alt_deg)))))  # small clamp
+
+def moonlight_penalty_points(obj_type: str, illum_frac: float, max_penalty: float,
+                             moon_alt_deg: Optional[float] = None) -> float:
+    """
+    Points to subtract based on Moon illumination and altitude.
+    Illumination sets the ceiling; altitude scales it by visibility.
+    """
+    t = (obj_type or "").strip()
+    if t in DIFFUSE_TYPES:
+        return illum_frac * max_penalty * moon_alt_scale(moon_alt_deg)
+    if t in PARTIALLY_DIFFUSE_TYPES:
+        return 0.5 * illum_frac * max_penalty * moon_alt_scale(moon_alt_deg)
+    return 0.0
+
 # ---------------------------- Preview caching ----------------------------
 
 def slugify(s: str) -> str:
-    s = re.sub(r"[^\w\-]+", "_", s.strip(), flags=re.U)  # keep letters, numbers, _
+    s = re.sub(r"[^\w\-]+", "_", s.strip(), flags=re.U)
     s = re.sub(r"_+", "_", s)
     return s.strip("_").lower() or "object"
 
@@ -310,15 +355,13 @@ def fetch_wikipedia_image(name: str, cache_dir: Path, refresh: bool,
                           title_override: Optional[str] = None) -> Optional[Path]:
     """
     Try to download a Wikipedia/Wikimedia image for `name`.
-
     Strategy:
-      A) Wikipedia REST summary (often gives thumbnail/originalimage)
-      B) Fallback: MediaWiki API 'pageimages' with redirects
+      A) Wikipedia REST summary (thumbnail/originalimage)
+      B) MediaWiki API 'pageimages'
     """
     slug = slugify(name) + "_wiki.jpg"
     out = cache_dir / slug
     if out.exists():
-        # If the file is suspiciously tiny (<1KB), force re-fetch
         try:
             if out.stat().st_size < 1024:
                 refresh = True
@@ -330,7 +373,6 @@ def fetch_wikipedia_image(name: str, cache_dir: Path, refresh: bool,
     headers = {"accept": "application/json", "User-Agent": WIKI_UA}
     title = title_override or name
 
-    # --- A) REST summary endpoint
     try:
         summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(title)}"
         r = requests.get(summary_url, headers=headers, timeout=20, allow_redirects=True)
@@ -345,16 +387,11 @@ def fetch_wikipedia_image(name: str, cache_dir: Path, refresh: bool,
     except Exception:
         pass
 
-    # --- B) MediaWiki API fallback (pageimages)
     try:
         api_url = "https://en.wikipedia.org/w/api.php"
         params = {
-            "action": "query",
-            "format": "json",
-            "prop": "pageimages",
-            "piprop": "original|thumbnail",
-            "pithumbsize": "1000",
-            "redirects": "1",
+            "action": "query", "format": "json", "prop": "pageimages",
+            "piprop": "original|thumbnail", "pithumbsize": "1000", "redirects": "1",
             "titles": title,
         }
         r = requests.get(api_url, params=params, headers=headers, timeout=25, allow_redirects=True)
@@ -389,13 +426,9 @@ def fetch_dss2_hips2fits(ra_deg: float, dec_deg: float, fov_deg: float, px: int,
     base = "https://alasky.u-strasbg.fr/hips-image-services/hips2fits"
     params = {
         "hips": "CDS/P/DSS2/red",
-        "ra": f"{ra_deg:.6f}",
-        "dec": f"{dec_deg:.6f}",
-        "fov": f"{fov_deg:.6f}",
-        "width": str(px),
-        "height": str(px),
-        "format": "jpg",
-        "projection": "TAN",
+        "ra": f"{ra_deg:.6f}", "dec": f"{dec_deg:.6f}",
+        "fov": f"{fov_deg:.6f}", "width": str(px), "height": str(px),
+        "format": "jpg", "projection": "TAN",
     }
     try:
         r = requests.get(base, params=params, timeout=60)
@@ -432,12 +465,10 @@ def build_preview_cache(master_df: pd.DataFrame, cache_dir: Path, refresh: bool,
         kind = None
 
         if (name in planet_like) or (typ in {"planet", "moon"}):
-            # Use disambiguation-safe title where needed (e.g., Mercury (planet))
             title = PLANET_TITLE_OVERRIDES.get(name, name)
             chosen = fetch_wikipedia_image(name, cache_dir, refresh, title_override=title)
             kind = "wiki" if chosen else None
         else:
-            # DSOs: prefer DSS2; fallback to Wikipedia
             chosen = fetch_dss2_hips2fits(
                 float(ra) if pd.notna(ra) else None,
                 float(dec) if pd.notna(dec) else None,
@@ -478,7 +509,7 @@ def _hour_anchor_label(hour_str: str) -> str:
         return t.strftime("%H:%M")
     except Exception:
         return hour_str
-    
+
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
                ui_mode: str, preview_map: Dict[str, Dict[str,str]]):
@@ -512,7 +543,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     hourly_html = "\n".join(hourly_sections) if hourly_sections else "<p>No hourly targets above your altitude threshold.</p>"
     master_html = df_to_html_table(master_df, id_attr="tbl-master") if not master_df.empty else "<p>No targets passed the filters. Try adjusting filters.</p>"
 
-    # Night-vision CSS (tables now have centered, non-sticky headers)
+    # Night-vision CSS
     css = """
     <style>
       :root { color-scheme: dark; }
@@ -527,7 +558,6 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       .small { font-size: 0.9rem; color: #f66; }
       .warn { color:#f77; font-style: italic; }
 
-      /* Tables */
       .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
       table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
       th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
@@ -537,11 +567,9 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       .table-wrap table tbody tr:hover { background: #111; }
       th.hide, td.hide { display: none; }
 
-      /* Meta (non-sticky) */
       .meta-bar { position: static; padding: 0.5rem 0; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
       .pill { border:1px solid #700; padding:0.25rem 0.5rem; border-radius:999px; color:#f66; }
 
-      /* Sticky navbar */
       .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
       .navbar .left { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
       .navbar .right { flex: 1 1 100%; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; margin-top: 0.35rem; }
@@ -550,18 +578,15 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       input[type="search"]::placeholder { color:#f66; }
       input[type="search"]:focus { box-shadow: 0 0 0 2px #500 inset; border-color:#900; }
 
-      /* Tabs */
       .tabs { display:flex; gap:0.4rem; }
       .tab { padding:0.35rem 0.7rem; border:1px solid #500; border-radius:8px; cursor:pointer; user-select:none; color:#f66; background:#0a0000; }
       .tab.active { background:#180000; border-color:#700; color:#f66; }
 
-      /* Hours */
       .hours { display:flex; gap:0.35rem; flex-wrap:wrap; }
       .hours a { display:inline-block; padding: 0.25rem 0.55rem; border:1px solid #500; border-radius:6px; text-decoration:none; }
 
       .hidden { display:none; }
 
-      /* Modal */
       .modal-backdrop {
         position: fixed; inset: 0; background: rgba(0,0,0,0.75);
         display: none; align-items: center; justify-content: center; z-index: 50;
@@ -580,7 +605,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         float: right; border:1px solid #700; background:#180000; color:#f66; border-radius:8px; padding:.25rem .6rem; cursor:pointer;
       }
 
-      /* Night-vision red filter for DSS2 images */
+      /* Night-vision red filter for all previews */
       .night-red { filter: sepia(1) saturate(6) hue-rotate(-50deg) brightness(0.9) contrast(1.1); }
 
       @media (max-width: 640px) {
@@ -593,8 +618,8 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     </style>
     """
 
-    # JS: filter, tabs, hour links, hide RA/Dec, row->modal with cached preview
-    preview_json = json.dumps(preview_map)  # name -> {path, kind}
+    # JS for filtering, tabs, hour links, data hiding, and row->modal previews
+    preview_json = json.dumps(preview_map)
     js = f"""
     <script>
     const PREVIEW_MAP = {preview_json};
@@ -733,8 +758,8 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         imgbox.innerHTML = `<p class="small">No preview available.</p>`;
         return;
       }}
-        const cls = "night-red"; // apply red filter to ALL previews (DSS2 + Wikipedia)
-        imgbox.innerHTML =
+      const cls = "night-red"; // red filter for ALL previews
+      imgbox.innerHTML =
         '<img class="' + cls + '" src="' + entry.path + '" alt="Preview of ' + data.name + '" loading="lazy">' +
         '<div class="small" style="margin-top:.35rem;">' +
         (entry.kind === "dss2"
@@ -775,7 +800,6 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     now = datetime.now(tz.gettz(tzname)).strftime("%Y-%m-%d %H:%M %Z")
     hour_links_html = " &middot; ".join(hour_links) if hour_links else "No hourly targets"
 
-    # Main content
     if ui_mode == "tabs":
         content = f"""
         <div class='tabs'><div class='tab active' data-tab='panel-master'>Master List</div><div class='tab' data-tab='panel-hourly'>By Hour</div></div>
@@ -859,12 +883,17 @@ def plan_for_site(args):
         t_cursor += timedelta(minutes=2)
     ts_minute = ts.from_datetimes(minute_times_local)
 
-    # Moon RA/Dec over grid
+    # Moon RA/Dec over grid for separation tests
     moon_ras, moon_decs = [], []
     for t in ts_minute:
         ra_m, dec_m = moon_ra_dec(eph, t, site, earth)
         moon_ras.append(ra_m); moon_decs.append(dec_m)
     moon_ras = np.array(moon_ras); moon_decs = np.array(moon_decs)
+
+    # Night-wide illumination fraction (mid-window)
+    mid_idx = len(ts_minute) // 2
+    phase_mid_deg = almanac.moon_phase(eph, ts_minute[mid_idx]).degrees
+    illum_frac_night = lunar_illum_fraction_from_phase_deg(phase_mid_deg)
 
     planet_names = ["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune"]
     targets: List[Dict] = []
@@ -888,6 +917,9 @@ def plan_for_site(args):
         best_alt = float(alts[idx_best]); best_az = float(azs[idx_best])
         best_dir = cardinal_from_az(best_az)
 
+        # Moon altitude at the object's best time
+        alt_moon_best, _, _ = moon_altaz_phase(eph, ts.from_datetime(best_local), site, earth)
+
         hourly_rows = []
         for h in hours:
             t_h = ts.from_datetime(h)
@@ -895,17 +927,25 @@ def plan_for_site(args):
             if alt_h >= args.min_alt:
                 dir_h = cardinal_from_az(az_h)
                 prio = interest_score(name, typ, best_alt, alt_now=alt_h)
-                hourly_rows.append((h, float(alt_h), float(az_h), dir_h, prio))
+                # Moon altitude at this hour
+                alt_moon_h, _, _ = moon_altaz_phase(eph, t_h, site, earth)
+                prio -= moonlight_penalty_points(typ, illum_frac_night, args.moonlight_penalty_max,
+                                                 moon_alt_deg=alt_moon_h)
+                hourly_rows.append((h, float(alt_h), float(az_h), dir_h, max(0.0, prio)))
 
         if not hourly_rows:
             return
+
+        master_prio = interest_score(name, typ, best_alt)
+        master_prio -= moonlight_penalty_points(typ, illum_frac_night, args.moonlight_penalty_max,
+                                                moon_alt_deg=alt_moon_best)
 
         targets.append({
             "name": name, "type": typ, "mag": mag, "notes": notes,
             "best_time": best_local, "best_alt": round(best_alt,1),
             "best_dir": best_dir, "best_az": round(best_az,1),
             "ra_deg": ra_deg, "dec_deg": dec_deg,
-            "priority": interest_score(name, typ, best_alt),
+            "priority": max(0.0, master_prio),
             "hourly": hourly_rows
         })
 
@@ -1002,7 +1042,7 @@ def plan_for_site(args):
                 "Hour": h.strftime("%Y-%m-%d %H:%M"),
                 "Name": t["name"],
                 "Type": t["type"],
-                "Mag": t["mag"] if t["mag"] is not None else "",   # <-- add this
+                "Mag": t["mag"] if t["mag"] is not None else "",
                 "Alt (°)": round(alt_h, 1),
                 "Az (°)": round(az_h, 1),
                 "Dir": dir_h,
@@ -1054,7 +1094,7 @@ def plan_for_site(args):
     if not hourly_df.empty:
         for hour, sub in hourly_df.groupby("Hour"):
             print(f"\n# {hour}")
-            cols = [c for c in ["Name","Type","Alt (°)","Az (°)","Dir"] if c in sub.columns]
+            cols = [c for c in ["Name","Type","Mag","Alt (°)","Az (°)","Dir"] if c in sub.columns]
             print(sub[cols].to_string(index=False))
     else:
         print("No hourly targets above your altitude threshold.")

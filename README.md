@@ -1,7 +1,7 @@
 # 🪐 Star Party Planner
 
 **Plan an observing night with confidence!**  
-This tool generates observing lists tailored to your site, date, and time window. It prioritizes crowd-pleasers such as Saturn and Jupiter, filters by altitude and Moon separation, and outputs **night-vision-friendly HTML**, CSV tables, and console listings.
+This tool generates observing lists tailored to your site, date, and time window. It prioritizes crowd-pleasers such as Saturn and Jupiter, filters by altitude and Moon separation for deep space objects, and outputs **night-vision-friendly HTML**, CSV tables, and console listings.
 
 ---
 
@@ -110,9 +110,10 @@ python starparty_planner.py \
 - `--catalog` (path, default=`messier_caldwell.csv`) – Input catalog of deep-sky objects  
 - `--min_alt` (float, default=20.0) – Minimum altitude (deg) for DSOs  
 - `--max_mag` (float, default=9.0) – Maximum magnitude (fainter objects are excluded)  
-- `--moon_sep_min` (float, default=15.0) – Minimum separation from the Moon (deg)  
+- `--moon_sep_min` (float, default=15.0) – Minimum separation from the Moon (deg) for DSOs  
 - `--hour_step` (int, default=1) – Step size in hours for hourly tables  
-- `--top_n_per_hour` (int, default=16) – Max targets shown per hour slot  
+- `--top_n_per_hour` (int, default=16) – Max targets shown per hour slot
+- `--moonlight_penalty_max` (float, default=18) - Max points subtracted from diffuse targets at full Moon when the Moon is high 
 
 ### Outputs
 - `--out_prefix` (string, default=`starparty`) – Prefix for CSV output files  

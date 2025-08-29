@@ -51,7 +51,8 @@ python starparty_planner.py \
 - `--catalog FILE.csv` · DSO catalog with `name,ra_deg,dec_deg,type,mag,notes`
 - `--min_alt DEG` · Min altitude for DSOs (default 20)
 - `--max_mag MAG` · Max magnitude (fainter=larger) (default 9)
-- `--moon_sep_min DEG` · Min separation from Moon (default 15)
+- `--moon_sep_min DEG` · Min separation from Moon for DSOs (default 15)
+- `--moonlight_penalty_max` Max points subtracted from diffuse targets at full Moon when the Moon is high (default 18)
 - `--hour_step INT` · Hour step for per-hour tables (default 1)
 - `--top_n_per_hour INT` · Cap list length per hour (default 16)
 
