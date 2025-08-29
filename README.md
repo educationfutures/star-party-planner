@@ -91,7 +91,7 @@ python starparty_planner.py \
   --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
 ```
 
-> ⚠️ This script may run slowly when downloading previews of images for the first time.
+> ⚠️ This tool may run slowly when downloading previews of images for the first time. Be patient!
 
 ---
 
@@ -247,7 +247,7 @@ Assume you want the output available at `/var/www/star-party/index.html` on a Li
 ## Troubleshooting
 
 - **Blank/white preview**: Some browsers block cross‑origin iframes or image loads under certain privacy modes. Try a normal tab or allow the request in your content blocker. Cached images will still display if present.
-- **No BSP found**: Ensure `--bsp` points to `./skyfield_data/de440s.bsp` and that the file exists.
+- **No BSP found**: Ensure `--bsp` points to the location of your skyfield data (e.g.,  `./skyfield_data/de440s.bsp`) and that the file exists.
 - **Tables seem empty**: Relax filters (`--min_alt`, `--moon_sep_min`, `--max_mag`) or expand the time window.
 - **Wrong times**: Confirm your `--tz` and system clock. The planner assumes an IANA timezone string.
 - **Permissions**: Make sure the web server user can read the generated HTML and the cache directory.
@@ -258,7 +258,7 @@ Assume you want the output available at `/var/www/star-party/index.html` on a Li
 
 - Written in **Python**, using Skyfield for accurate ephemerides
 - All heavy astronomy data (BSP) is **local**; the planner does not auto-fetch ephemerides
-- The UI is plain HTML/CSS/JS with a night‑vision theme
+- The UI is plain HTML/CSS/JS and is red-tinted to help protect night vision
 - Extendable:
   - Change scoring in `interest_score()`
   - Add columns to your catalog(s)
