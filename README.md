@@ -52,7 +52,7 @@ mv de440s.bsp ./skyfield_data/
 # You should now have: ./skyfield_data/de440s.bsp
 ```
 
-> The planner never auto-downloads BSP files; you must provide them with `--bsp`.
+> ⚠️ The planner never auto-downloads BSP files; you must provide them with `--bsp`.
 
 ---
 
@@ -220,7 +220,7 @@ Assume you want the output available at `/var/www/star-party/index.html` on a Li
      --bsp ./skyfield_data/de440s.bsp \
      --html_ui tabs \
      --min_alt_planets 5 --min_alt_moon 0 \
-     --cache_dir /var/www/star-party/.cache \
+     --cache_dir /var/www/star-party/images \
      --clean_cache
    ```
 

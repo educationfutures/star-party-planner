@@ -1021,12 +1021,18 @@ def plan_for_site(args):
     master_rows = []
     for t in targets:
         master_rows.append({
-            "Name": t["name"], "Type": t["type"],
+            "Name": t["name"],
+            "Type": t["type"],
             "Mag": t["mag"] if t["mag"] is not None else "",
             "Best Time": t["best_time"].strftime("%H:%M"),
-            "Alt (°)": t["best_alt"], "Az (°)": t["best_az"], "Dir": t["best_dir"],
-            "Notes": t["notes"], "RA (deg)": t["ra_deg"], "Dec (deg)": t["dec_deg"],
-            "_Priority": t["priority"], "_BestDT": t["best_time"],
+            "Alt (°)": t["best_alt"],
+            "Az (°)": t["best_az"],
+            "Dir": t["best_dir"],
+            "Notes": t["notes"],
+            "RA (deg)": round(t["ra_deg"], 3) if not pd.isna(t["ra_deg"]) else "",
+            "Dec (deg)": round(t["dec_deg"], 3) if not pd.isna(t["dec_deg"]) else "",
+            "_Priority": t["priority"],
+            "_BestDT": t["best_time"],
         })
     master_df = pd.DataFrame(master_rows)
     if not master_df.empty:
@@ -1046,8 +1052,8 @@ def plan_for_site(args):
                 "Alt (°)": round(alt_h, 1),
                 "Az (°)": round(az_h, 1),
                 "Dir": dir_h,
-                "RA (deg)": t["ra_deg"],
-                "Dec (deg)": t["dec_deg"],
+                "RA (deg)": round(t["ra_deg"], 3) if not pd.isna(t["ra_deg"]) else "",
+                "Dec (deg)": round(t["dec_deg"], 3) if not pd.isna(t["dec_deg"]) else "",
                 "Notes": t.get("notes", ""),
                 "_Priority": prio,
             }
