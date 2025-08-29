@@ -9,7 +9,7 @@ A concise cheat sheet for operators at the scope. For full details, see `README.
 ```bash
 python starparty_planner.py \
   --lat 44.810265 --lon -93.939783 --elev 296 \
-  --tz America/Chicago --catalog messier_caldwell.csv \
+  --tz America/Chicago --catalog extended_targets.csv \
   --bsp ./skyfield_data/de440s.bsp \
   --html starparty.html
 ```
@@ -85,8 +85,8 @@ python starparty_planner.py \
 
 - **Ephemeris** is local-only; download `de440s.bsp` once to `./skyfield_data/`.
 - To keep cache fresh on daily rebuilds:
-  - Use `--refresh_previews` weekly or when images change.
-  - Use `--clean_preview_cache` in daily cron to trim unused files.
+  - Use `--refresh_previews` when images change.
+  - Use `--clean_preview_cache` in daily cron to trim unused files if you are working with a large dataset.
 
 ### Cron Example (daily at 09:00 local)
 
@@ -100,7 +100,7 @@ python starparty_planner.py \
   --out_prefix /var/www/html/starparty \
   --top_n_per_hour 16 --min_alt 20 --moon_sep_min 20 --max_mag 9 \
   --min_alt_planets 5 --min_alt_moon 0 \
-  --preview_cache_dir /var/www/html/image_cache \
+  --preview_cache_dir /var/www/html/images \
   --preview_fov_deg 0.6 --preview_px 800 \
   --clean_preview_cache
 ```

@@ -70,7 +70,7 @@ Example row:
 M13,250.421,36.461,Globular cluster,5.8,"Great Hercules Cluster"
 ```
 
-This repository ships with **`messier_caldwell.csv`** covering Messier + Caldwell objects.
+This repository ships with **`messier_caldwell.csv`** covering Messier + Caldwell objects and **`extended_targets.csv`** that adds a few additional, interesting objects in the northern and southern skies.
 
 ---
 
@@ -91,7 +91,7 @@ python starparty_planner.py \
   --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
 ```
 
-> ⚠️ This tool may run slowly when downloading previews of images for the first time. Be patient!
+> ⚠️ This tool may run slowly when downloading image previews for the first time. Be patient!
 
 ---
 
