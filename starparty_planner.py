@@ -14,9 +14,16 @@ Features
 - Clickable rows -> modal with preview image (cached on disk)
 
 Usage (examples)
-  python starparty_planner.py --lat 44.98 --lon -93.26 --date 2025-08-28 \
-      --start 20:00 --end 07:00 --tz America/Chicago --catalog messier_caldwell.csv \
-      --html starparty.html --bsp ./skyfield_data/de440s.bsp
+    python starparty_planner.py \
+    --lat 44.810265 --lon -93.939783 --elev 296 \
+    --date 2025-08-30 --start 20:00 --end 01:00 --tz America/Chicago \
+    --catalog messier_caldwell.csv --min_alt 20 --moon_sep_min 20 --max_mag 9 \
+    --top_n_per_hour 16 --out_prefix starparty \
+    --html starparty.html \
+    --bsp ./skyfield_data/de440s.bsp \
+    --html_ui tabs \
+    --min_alt_planets 5 --min_alt_moon 0 \
+    --preview_cache_dir ./.cache 
 
 Dependencies
   pip install skyfield numpy pandas pytz python-dateutil requests
@@ -48,6 +55,25 @@ import requests
 
 from skyfield.api import Loader, wgs84, load_file, Star
 from skyfield import almanac
+
+# Friendly UA for Wikipedia/Wikimedia calls
+WIKI_UA = (
+    "StarPartyPlanner/1.0 (+https://example.com; contact: you@example.com) "
+    "requests"
+)
+
+# Disambiguation-safe page titles for planets
+PLANET_TITLE_OVERRIDES = {
+    "Mercury": "Mercury (planet)",
+    "Venus": "Venus",
+    "Earth": "Earth",
+    "Moon": "Moon",
+    "Mars": "Mars",
+    "Jupiter": "Jupiter",
+    "Saturn": "Saturn",
+    "Uranus": "Uranus",
+    "Neptune": "Neptune",
+}
 
 # ---------------------------- Config helpers ----------------------------
 
@@ -280,28 +306,76 @@ def cache_write(path: Path, content: bytes, refresh: bool):
         return
     path.write_bytes(content)
 
-def fetch_wikipedia_image(name: str, cache_dir: Path, refresh: bool) -> Optional[Path]:
-    """Download a Wikipedia summary image for `name` if available."""
+def fetch_wikipedia_image(name: str, cache_dir: Path, refresh: bool,
+                          title_override: Optional[str] = None) -> Optional[Path]:
+    """
+    Try to download a Wikipedia/Wikimedia image for `name`.
+
+    Strategy:
+      A) Wikipedia REST summary (often gives thumbnail/originalimage)
+      B) Fallback: MediaWiki API 'pageimages' with redirects
+    """
     slug = slugify(name) + "_wiki.jpg"
     out = cache_dir / slug
+    if out.exists():
+        # If the file is suspiciously tiny (<1KB), force re-fetch
+        try:
+            if out.stat().st_size < 1024:
+                refresh = True
+        except Exception:
+            refresh = True
     if out.exists() and not refresh:
         return out
-    url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(name)}"
+
+    headers = {"accept": "application/json", "User-Agent": WIKI_UA}
+    title = title_override or name
+
+    # --- A) REST summary endpoint
     try:
-        r = requests.get(url, headers={"accept": "application/json"}, timeout=15)
-        if r.status_code != 200:
-            return None
-        j = r.json()
-        img = (j.get("originalimage") or {}).get("source") or (j.get("thumbnail") or {}).get("source")
-        if not img:
-            return None
-        ir = requests.get(img, timeout=30)
-        if ir.status_code != 200:
-            return None
-        cache_write(out, ir.content, refresh)
-        return out
+        summary_url = f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(title)}"
+        r = requests.get(summary_url, headers=headers, timeout=20, allow_redirects=True)
+        if r.ok:
+            j = r.json()
+            img = (j.get("originalimage") or {}).get("source") or (j.get("thumbnail") or {}).get("source")
+            if img:
+                ir = requests.get(img, headers={"User-Agent": WIKI_UA}, timeout=30, allow_redirects=True)
+                if ir.ok and ir.content:
+                    cache_write(out, ir.content, True)
+                    return out
     except Exception:
-        return None
+        pass
+
+    # --- B) MediaWiki API fallback (pageimages)
+    try:
+        api_url = "https://en.wikipedia.org/w/api.php"
+        params = {
+            "action": "query",
+            "format": "json",
+            "prop": "pageimages",
+            "piprop": "original|thumbnail",
+            "pithumbsize": "1000",
+            "redirects": "1",
+            "titles": title,
+        }
+        r = requests.get(api_url, params=params, headers=headers, timeout=25, allow_redirects=True)
+        if r.ok:
+            j = r.json()
+            pages = j.get("query", {}).get("pages", {})
+            for _, page in pages.items():
+                src = None
+                if isinstance(page, dict):
+                    if "original" in page and "source" in page["original"]:
+                        src = page["original"]["source"]
+                    elif "thumbnail" in page and "source" in page["thumbnail"]:
+                        src = page["thumbnail"]["source"]
+                if src:
+                    ir = requests.get(src, headers={"User-Agent": WIKI_UA}, timeout=30, allow_redirects=True)
+                    if ir.ok and ir.content:
+                        cache_write(out, ir.content, True)
+                        return out
+    except Exception:
+        pass
+    return None
 
 def fetch_dss2_hips2fits(ra_deg: float, dec_deg: float, fov_deg: float, px: int,
                          cache_dir: Path, name: str, refresh: bool) -> Optional[Path]:
@@ -352,14 +426,15 @@ def build_preview_cache(master_df: pd.DataFrame, cache_dir: Path, refresh: bool,
             continue
         ra = row.get("RA (deg)")
         dec = row.get("Dec (deg)")
-        typ = str(row.get("Type", "")).strip()
+        typ = str(row.get("Type", "")).strip().lower()
 
         chosen: Optional[Path] = None
         kind = None
 
-        if name in planet_like or typ.lower() in {"planet", "moon"}:
-            # Planets/Moon: DSS2 is not meaningful; use Wikipedia
-            chosen = fetch_wikipedia_image(name, cache_dir, refresh)
+        if (name in planet_like) or (typ in {"planet", "moon"}):
+            # Use disambiguation-safe title where needed (e.g., Mercury (planet))
+            title = PLANET_TITLE_OVERRIDES.get(name, name)
+            chosen = fetch_wikipedia_image(name, cache_dir, refresh, title_override=title)
             kind = "wiki" if chosen else None
         else:
             # DSOs: prefer DSS2; fallback to Wikipedia
@@ -375,7 +450,6 @@ def build_preview_cache(master_df: pd.DataFrame, cache_dir: Path, refresh: bool,
                 kind = "wiki" if chosen else None
 
         if chosen and kind:
-            # Store relative path for portability
             rel = str(Path(cache_dir.name) / chosen.name)
             preview[name] = {"path": rel, "kind": kind}
 
@@ -404,7 +478,7 @@ def _hour_anchor_label(hour_str: str) -> str:
         return t.strftime("%H:%M")
     except Exception:
         return hour_str
-
+    
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
                ui_mode: str, preview_map: Dict[str, Dict[str,str]]):
@@ -659,11 +733,14 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         imgbox.innerHTML = `<p class="small">No preview available.</p>`;
         return;
       }}
-      const cls = entry.kind === "dss2" ? "night-red" : "";
-      imgbox.innerHTML = `<img class="${{cls}}" src="${{entry.path}}" alt="Preview of ${{data.name}}" loading="lazy">` +
-                         `<div class="small" style="margin-top:.35rem;">` +
-                         (entry.kind === "dss2" ? "Image: DSS2 Red (CDS hips2fits) — red-tinted" : "Image: Wikipedia/Wikimedia") +
-                         `</div>`;
+        const cls = "night-red"; // apply red filter to ALL previews (DSS2 + Wikipedia)
+        imgbox.innerHTML =
+        '<img class="' + cls + '" src="' + entry.path + '" alt="Preview of ' + data.name + '" loading="lazy">' +
+        '<div class="small" style="margin-top:.35rem;">' +
+        (entry.kind === "dss2"
+            ? "Image: DSS2 Red (CDS hips2fits) — red-tinted"
+            : "Image: Wikipedia/Wikimedia — red-tinted") +
+        "</div>";
     }}
 
     function closeModal() {{

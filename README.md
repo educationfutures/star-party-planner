@@ -30,7 +30,7 @@ Outputs:
 - DSS2 images are shown through a **red filter** to remain night‑vision safe
 - **Caching** with an optional cleanup flag so your cron job stays fast
 
-> Wikipedia thumbnails were previously used for some targets.  
+> This script may run slowly when downloading previews of images for the first time.
 > DSS2 Red (via NASA SkyView) is now preferred for consistency and night‑vision safety.
 
 ---
@@ -101,7 +101,7 @@ python starparty_planner.py \
   --bsp ./skyfield_data/de440s.bsp \
   --html_ui tabs \
   --min_alt_planets 5 --min_alt_moon 0 \
-  --cache_dir ./.cache --clean_cache  # (optional) manage preview cache
+  --preview_cache_dir ./.cache --clean_cache  # (optional) manage preview cache
 ```
 
 ### Defaults & Time Logic
@@ -131,7 +131,7 @@ python starparty_planner.py \
 | `--html_ui` | `accordion` or `tabs`. |
 | `--bsp` | Path to local ephemeris, e.g. `./skyfield_data/de440s.bsp`. |
 | `--min_alt_planets`, `--min_alt_moon` | Per-type altitude thresholds. |
-| `--cache_dir` | Directory to store preview images (default: `./.cache`). |
+| `--preview_cache_dir` | Directory to store preview images (default: `./.cache`). |
 | `--clean_cache` | Deletes the cache before generation (forces re-download of previews). |
 
 > **Note:** `--cache_dir` and `--clean_cache` apply to the *HTML preview images* (DSS2). Catalogs and BSPs are not affected.
