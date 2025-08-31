@@ -558,7 +558,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     .pill { border:1px solid #700; padding:0.25rem 0.5rem; border-radius:999px; color:#f66; }
 
     /* Sticky nav containing search, tabs, and hour chips */
-    .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
+    .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding-top: 0.5rem; z-index: 5; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
     .navbar .left { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
     .navbar .right { flex: 1 1 100%; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; margin-top: 0.35rem; }
 
@@ -1198,9 +1198,9 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
         <!-- Top N for Now -->
         <div class="topn-row">
-        <label for="now-topn">Limit objects in "Now" view:</label>
+        <label for="now-topn">Limit count of objects in "Now" view:</label>
         <input id="now-topn" type="number" min="1" max="64" step="1" value="16" aria-describedby="topn-note">
-        <span id="topn-note" class="small">Example: 16 shows only the top 16 targets (after applying filters).</span>
+        <span id="topn-note" class="small">Example: Entering 16 shows only the top 16 targets (after applying filters).</span>
         </div>
 
         <!-- Sectors -->
