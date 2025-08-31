@@ -96,7 +96,7 @@ python starparty_planner.py \
   --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
 ```
 
-> ⏱️ First run may spend time fetching previews to the local cache.
+> ⚠️ First run may spend time fetching previews to the local cache.
 
 ---
 
@@ -186,7 +186,7 @@ python starparty_planner.py \
 4. Open `starparty.html` on your phone/tablet at the telescope.
 5. Enjoy your observing session!
 
-💡 **Automation:** run this via a **daily cron job** and publish the HTML so the plan is always fresh before sunset.
+TIP: **Automation:** run this via a **daily cron job** and publish the HTML so the plan is always fresh before sunset.
 
 ---
 
