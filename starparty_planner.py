@@ -533,153 +533,139 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     # ---------------- Night-vision CSS ----------------
     css = """
     <style>
-      :root { color-scheme: dark; }
-      html, body { background: #000; color: #f33; }
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; line-height: 1.35; }
-      ::selection { background: #400; color: #fdd; }
-      a { color: #f66; text-decoration: underline; }
-      h1,h2,h3 { color: #f44; margin: 0.8rem 0 0.4rem; }
-      .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    :root { color-scheme: dark; }
+    html, body { background: #000; color: #f33; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Helvetica Neue', Arial, sans-serif; line-height: 1.35; }
+    ::selection { background: #400; color: #fdd; }
+    a { color: #f66; text-decoration: underline; }
+    h1,h2,h3 { color: #f44; margin: 0.8rem 0 0.4rem; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 1rem; }
 
-      .hr { border: 0; height: 1px; background: #400; margin: 1rem 0; }
-      .small { font-size: 0.9rem; color: #f66; }
-      .warn { color:#f77; font-style: italic; }
+    .hr { border: 0; height: 1px; background: #400; margin: 1rem 0; }
+    .small { font-size: 0.9rem; color: #f66; }
+    .warn { color:#f77; font-style: italic; }
 
-      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
-      th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
-      th { background: #100; text-align: center; }
-      tr:nth-child(even) { background: #070707; }
-      .table-wrap table tbody tr { cursor: pointer; }
-      .table-wrap table tbody tr:hover { background: #111; }
-      th.hide, td.hide { display: none; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; }
+    th, td { border: 1px solid #700; padding: 0.45rem 0.5rem; }
+    th { background: #100; text-align: center; }
+    tr:nth-child(even) { background: #070707; }
+    .table-wrap table tbody tr { cursor: pointer; }
+    .table-wrap table tbody tr:hover { background: #111; }
+    th.hide, td.hide { display: none; }
 
-      .meta-bar { position: static; padding: 0.5rem 0; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
-      .pill { border:1px solid #700; padding:0.25rem 0.5rem; border-radius:999px; color:#f66; }
+    .meta-bar { position: static; padding: 0.5rem 0; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
+    .pill { border:1px solid #700; padding:0.25rem 0.5rem; border-radius:999px; color:#f66; }
 
-      /* Sticky nav containing search, tabs, and hour chips */
-      .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
-      .navbar .left { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
-      .navbar .right { flex: 1 1 100%; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; margin-top: 0.35rem; }
+    /* Sticky nav containing search, tabs, and hour chips */
+    .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
+    .navbar .left { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
+    .navbar .right { flex: 1 1 100%; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; margin-top: 0.35rem; }
 
-      input[type="search"] { background: #160000; border: 1px solid #700; color: #f55; padding: 0.4rem 0.6rem; border-radius: 6px; min-width: 220px; caret-color: #f55; outline: none; }
-      input[type="search"]::placeholder { color:#f66; }
-      input[type="search"]:focus { box-shadow: 0 0 0 2px #500 inset; border-color:#900; }
+    input[type="search"] { background: #160000; border: 1px solid #700; color: #f55; padding: 0.4rem 0.6rem; border-radius: 6px; min-width: 220px; caret-color: #f55; outline: none; }
+    input[type="search"]::placeholder { color:#f66; }
+    input[type="search"]:focus { box-shadow: 0 0 0 2px #500 inset; border-color:#900; }
 
-      .tabs { display:flex; gap:0.4rem; }
-      .tab { padding:0.35rem 0.7rem; border:1px solid #500; border-radius:8px; cursor:pointer; user-select:none; color:#f66; background:#0a0000; }
-      .tab.active { background:#180000; border-color:#700; color:#f66; }
+    .tabs { display:flex; gap:0.4rem; }
+    .tab { padding:0.35rem 0.7rem; border:1px solid #500; border-radius:8px; cursor:pointer; user-select:none; color:#f66; background:#0a0000; }
+    .tab.active { background:#180000; border-color:#700; color:#f66; }
 
-      .hours { display:flex; gap:0.35rem; flex-wrap:wrap; }
-      .hours a { display:inline-block; padding: 0.25rem 0.55rem; border:1px solid #500; border-radius:6px; text-decoration:none; }
+    .hours { display:flex; gap:0.35rem; flex-wrap:wrap; }
+    .hours a { display:inline-block; padding: 0.25rem 0.55rem; border:1px solid #500; border-radius:6px; text-decoration:none; }
 
-      .hidden { display:none; }
+    .hidden { display:none; }
 
-      .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 50; }
-      .modal {
+    .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 50; }
+    .modal {
         width: min(900px, 92vw);
         max-height: 90vh; overflow: auto;
         background: #050505; border: 1px solid #600; border-radius: 12px; padding: 1rem;
         color: #f55; box-shadow: 0 0 0 2px #300;
-      }
-      .modal h3 { margin: 0 0 .5rem; color: #f66; }
-      .modal .meta { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .5rem .75rem; margin-bottom: .75rem; }
-      .modal .imgbox { text-align: center; margin: .5rem 0 0; }
-      .modal .imgbox img { max-width: 100%; border: 1px solid #400; border-radius: 8px; }
-      .modal .close {
+    }
+    .modal h3 { margin: 0 0 .5rem; color: #f66; }
+    .modal .meta { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .5rem .75rem; margin-bottom: .75rem; }
+    .modal .imgbox { text-align: center; margin: .5rem 0 0; }
+    .modal .imgbox img { max-width: 100%; border: 1px solid #400; border-radius: 8px; }
+    .modal .close {
         float: right; border:1px solid #700; background:#180000; color:#f66; border-radius:8px; padding:.25rem .6rem; cursor:pointer;
-      }
+    }
 
-      .night-red { filter: sepia(1) saturate(6) hue-rotate(-50deg) brightness(0.9) contrast(1.1); }
+    .night-red { filter: sepia(1) saturate(6) hue-rotate(-50deg) brightness(0.9) contrast(1.1); }
 
-      /* ---- Filters modal ---- */
-        .filters-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: .5rem .75rem;
-        margin: .75rem 0;
-        }
-        .filters-grid label { font-size:.9rem; color:#f66; }
-        .filters-row {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0,1fr));
-        gap: .5rem .75rem;
-        margin-bottom: .4rem;
-        }
-        .filters-row input[type="number"],
-        .filters-grid input[type="number"] {
+    /* ---- Filters modal ---- */
+    /* Narrower, overrides base .modal width just for the filters dialog */
+    .modal.filters-dialog { width: min(600px, 92vw); }
+    .filters-dialog { max-width: 600px; }
+
+    /* Ensure rows render below the floated Close button */
+    .filters-dialog h3,
+    .filters-dialog .topn-row,
+    .filters-dialog .sectors-wrap,
+    .filters-dialog .buttons { clear: both; }
+
+    .filters-switch { display:flex; align-items:center; gap:.5rem; margin:.25rem 0 .75rem; }
+    .topn-row { display:flex; align-items:center; gap:.6rem; margin:.6rem 0 .8rem; }
+
+    .sectors-wrap { margin:.6rem 0 .4rem; }
+
+    .sector-head{
+        display:grid;
+        grid-template-columns: repeat(3, min-content);
+        gap:.6rem .75rem;
+        margin:.35rem 0 .25rem;
+        font-size:.85rem; color:#f77;
+    }
+    .sector-head span{ width:5.2rem; text-align:center; }
+
+    #sector-rows{ display:flex; flex-direction:column; gap:.35rem; }
+
+    .filters-dialog .filters-row{
+        display:grid;
+        grid-template-columns: repeat(3, min-content);
+        gap:.6rem .75rem;
+    }
+
+    .filters-dialog input[type="number"]{
         background:#160000; border:1px solid #700; color:#f55;
-        padding:.35rem .5rem; border-radius:6px; width:100%;
-        }
-        .filters-actions { display:flex; gap:.5rem; justify-content:flex-end; margin-top:.75rem; }
-        .filters-actions button {
+        padding:.32rem .4rem; border-radius:6px;
+        width:5.2rem !important; text-align:center;
+    }
+    .filters-dialog input[type="checkbox"]{ accent-color:#f55; width:1.1rem; height:1.1rem; }
+
+    .filters-dialog .buttons{
+        display:flex; justify-content:flex-end; gap:.6rem; margin-top:.75rem;
+    }
+    .filters-dialog button{
         border:1px solid #700; background:#180000; color:#f66;
-        border-radius:8px; padding:.35rem .7rem; cursor:pointer;
-        }
-        .filters-switch { display:flex; align-items:center; gap:.5rem; margin:.25rem 0 .5rem; }
-        .filters-note { font-size:.85rem; color:#f77; }
-        .filters-dialog label {
-        display: block;
-        font-size: 0.85rem;
-        margin-bottom: 0.2rem;
-        color: #f77;
-        }
+        border-radius:6px; padding:.3rem .75rem; cursor:pointer; font-size:.85rem;
+    }
 
-        .filters-dialog input[type="number"],
-        .filters-dialog input[type="checkbox"],
-        .filters-dialog select {
-        background: #100;
-        border: 1px solid #700;
-        color: #f55;
-        font-size: 0.85rem;
-        padding: 0.25rem 0.4rem;
-        border-radius: 4px;
-        width: 5rem;
-        text-align: center;
-        }
-
-        .filters-dialog .sector-row {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 0.35rem;
-        }
-
-        .filters-dialog .sector-row input {
-        flex: 1 1 auto;
-        max-width: 5rem;
-        }
-
-        .filters-dialog .topn-row {
-        margin-bottom: 0.8rem;
+    .icon-btn {
         display: flex;
         align-items: center;
-        gap: 0.6rem;
-        }
-
-        .filters-dialog .buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 0.6rem;
-        margin-top: 0.6rem;
-        }
-
-        .filters-dialog button {
-        border: 1px solid #700;
-        background: #180000;
+        justify-content: center;
+        padding: 0.35rem 0.55rem;
+        border: 1px solid #500;
+        border-radius: 8px;
+        background: #0a0000;
         color: #f66;
-        border-radius: 6px;
-        padding: 0.25rem 0.7rem;
         cursor: pointer;
-        font-size: 0.85rem;
-        }
+    }
+    .icon-btn:hover {
+        background: #180000;
+        border-color: #700;
+    }
+    .icon-btn svg {
+        display: block;
+    }
 
-      @media (max-width: 640px) {
+    @media (max-width: 640px) {
         body { font-size: 15px; }
         th, td { padding: 0.35rem 0.45rem; }
         .pill { font-size: 0.85rem; }
         .tab { padding:0.3rem 0.55rem; }
         .modal .meta{ grid-template-columns: 1fr; }
-      }
+    }
     </style>
     """
 
@@ -1049,6 +1035,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     }
 
     b.style.display = 'flex';
+    document.querySelector('#filters-backdrop .modal')?.scrollTo({ top: 0, behavior: 'instant' });
     b.setAttribute('aria-hidden', 'false');
     }
     function closeFilters() {
@@ -1166,12 +1153,19 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
   <div class="navbar">
     <div class="left">
+      <button id="btn-filters" class="tab icon-btn" type="button" aria-label="Filters" title="Filters">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="14" cy="6" r="2" fill="currentColor"/>
+            <circle cx="18" cy="12" r="2" fill="currentColor"/>
+            <circle cx="11" cy="18" r="2" fill="currentColor"/>
+        </svg>
+      </button>
       <input id="q" type="search" placeholder="Search targets… (name, type, notes)" aria-label="Search">
       <div class="tabs">
         <div class="tab active" data-tab="panel-now">Now</div>
         <div class="tab" data-tab="panel-master">Master List</div>
       </div>
-      <button id="btn-filters" class="tab" type="button" style="margin-left:.25rem;">Filters</button>
     </div>
     <div class="right">
       <span class="hours">{hour_links_html}</span>
@@ -1190,65 +1184,73 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     </div>
   </div>
 
-  <!-- Filters dialog (compact layout) -->
-  <div id="filters-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal filters-dialog" role="document" style="max-width:720px;">
-      <button class="close" aria-label="Close">Close ✕</button>
-      <h3>Directional + Altitude Filters</h3>
+    <!-- Filters dialog -->
+    <div id="filters-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal filters-dialog" role="document">
+        <button class="close" aria-label="Close">Close ✕</button>
+        <h3>Directional + Altitude Filters</h3>
 
-      <!-- Master enable -->
-      <label style="display:flex;align-items:center;gap:.5rem;margin:.5rem 0 .75rem;">
+        <!-- Master enable -->
+        <label class="filters-switch">
         <input type="checkbox" id="obs-enabled">
         <span>Enable filters</span>
-      </label>
+        </label>
 
-      <!-- Top N for Now -->
-      <div class="topn-row">
-        <label for="now-topn">Top N for Now:</label>
-        <input id="now-topn" type="number" min="1" max="64" step="1" value="16">
-        <span class="small">Applies after sector filtering.</span>
-      </div>
+        <!-- Top N for Now -->
+        <div class="topn-row">
+        <label for="now-topn">Limit objects in "Now" view:</label>
+        <input id="now-topn" type="number" min="1" max="64" step="1" value="16" aria-describedby="topn-note">
+        <span id="topn-note" class="small">Example: 16 shows only the top 16 targets (after applying filters).</span>
+        </div>
 
-      <!-- Sectors -->
-      <h4 style="margin:.5rem 0 .35rem; color:#f66;">Sectors (up to 5)</h4>
-      <div class="small" style="margin-bottom:.35rem;">Each row: Az start°, Az end°, Min altitude°</div>
+        <!-- Sectors -->
+        <div class="sectors-wrap">
+        <h4 style="margin:.5rem 0 .35rem; color:#f66;">Block sky areas (up to 5 ranges)</h4>
+        <div class="small" style="margin-bottom:.35rem;">
+            Use this if trees/buildings obstruct your view. Each row = Azimuth start°, Azimuth end°, and minimum clear altitude°.
+        </div>
 
-      <div id="sector-rows">
-        <div class="filters-row">
-          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
-          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
-          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
+        <div class="sector-head" aria-hidden="true">
+            <span>Start</span><span>End</span><span>Min Alt</span>
         </div>
-        <div class="filters-row">
-          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
-          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
-          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
-          </div>
-        <div class="filters-row">
-          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
-          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
-          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
-        </div>
-        <div class="filters-row">
-          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
-          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
-          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
-        </div>
-        <div class="filters-row">
-          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
-          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
-          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
-        </div>
-      </div>
 
-      <!-- Actions -->
-      <div class="buttons" style="margin-top:.75rem;">
+        <div id="sector-rows">
+            <div class="filters-row">
+            <input class="az1" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="az2" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="minAlt" type="number" placeholder="0–90"  min="0" max="90"  inputmode="numeric">
+            </div>
+            <div class="filters-row">
+            <input class="az1" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="az2" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="minAlt" type="number" placeholder="0–90"  min="0" max="90"  inputmode="numeric">
+            </div>
+            <div class="filters-row">
+            <input class="az1" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="az2" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="minAlt" type="number" placeholder="0–90"  min="0" max="90"  inputmode="numeric">
+            </div>
+            <div class="filters-row">
+            <input class="az1" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="az2" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="minAlt" type="number" placeholder="0–90"  min="0" max="90"  inputmode="numeric">
+            </div>
+            <div class="filters-row">
+            <input class="az1" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="az2" type="number" placeholder="0–360" min="0" max="360" inputmode="numeric">
+            <input class="minAlt" type="number" placeholder="0–90"  min="0" max="90"  inputmode="numeric">
+            </div>
+        </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="buttons">
         <button type="button" id="filters-reset">Reset</button>
         <button type="button" id="filters-cancel">Cancel</button>
         <button type="button" id="filters-save">Save</button>
-      </div>
+        </div>
     </div>
-  </div>
+    </div>
 
   <p class="small">Location: {site_lat:.6f}, {site_lon:.6f}. Generated: {now_str}</p>
 </div>
