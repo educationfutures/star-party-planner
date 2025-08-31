@@ -562,7 +562,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     .navbar .left { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
     .navbar .right { flex: 1 1 100%; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; margin-top: 0.35rem; }
 
-    input[type="search"] { background: #160000; border: 1px solid #700; color: #f55; padding: 0.4rem 0.6rem; border-radius: 6px; min-width: 220px; caret-color: #f55; outline: none; }
+    input[type="search"] { background: #160000; border: 1px solid #700; color: #f55; padding: 0.4rem 0.6rem; border-radius: 6px; min-width: 150px; caret-color: #f55; outline: none; }
     input[type="search"]::placeholder { color:#f66; }
     input[type="search"]:focus { box-shadow: 0 0 0 2px #500 inset; border-color:#900; }
 
