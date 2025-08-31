@@ -27,7 +27,7 @@ Outputs
 
 ⸻
 
-🛠️ Installation
+Installation
 
 Requires Python 3.10+.
 
