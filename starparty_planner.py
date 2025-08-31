@@ -337,6 +337,8 @@ def moonlight_penalty_points(obj_type: str, illum_frac: float, max_penalty: floa
     if t in PARTIALLY_DIFFUSE_TYPES:
         return 0.5 * illum_frac * max_penalty * moon_alt_scale(moon_alt_deg)
     return 0.0
+def _round3(v):
+    return "" if pd.isna(v) else round(float(v), 3)
 
 # ---------------------------- Preview caching ----------------------------
 
@@ -512,9 +514,9 @@ def _hour_anchor_label(hour_str: str) -> str:
 
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
-               ui_mode: str, preview_map: Dict[str, Dict[str,str]]):
-    # Build hourly sections
-    hourly_sections = []
+               ui_mode: str, preview_map: Dict[str, Dict[str,str]], now_data: List[Dict]):
+    # ---------------- Build hourly lookup + chips ----------------
+    hours_lookup = {}
     hour_links = []
     if not hourly_df.empty:
         for hour, sub in hourly_df.groupby("Hour"):
@@ -524,26 +526,10 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
             cols = ['Name','Type','Mag','Alt (°)','Az (°)','Dir','RA (deg)','Dec (deg)','Notes']
             present = [c for c in cols if c in sub.columns]
             tbl = df_to_html_table(sub[present], id_attr=f"tbl-{anchor}")
-            if ui_mode == "accordion":
-                hourly_sections.append(f"""
-                <details id="{anchor}" class="acc">
-                  <summary><span class="acc-time">{hour_label}</span>
-                    <span class="acc-count">{len(sub)} targets</span>
-                  </summary>
-                  {tbl}
-                </details>
-                """)
-            else:
-                hourly_sections.append(f"""
-                <section id="{anchor}" class="hour-tab-panel hidden">
-                  <h3>{hour}</h3>
-                  {tbl}
-                </section>
-                """)
-    hourly_html = "\n".join(hourly_sections) if hourly_sections else "<p>No hourly targets above your altitude threshold.</p>"
+            hours_lookup[anchor] = f"<h3>{hour}</h3>{tbl}"
     master_html = df_to_html_table(master_df, id_attr="tbl-master") if not master_df.empty else "<p>No targets passed the filters. Try adjusting filters.</p>"
 
-    # Night-vision CSS
+    # ---------------- Night-vision CSS ----------------
     css = """
     <style>
       :root { color-scheme: dark; }
@@ -570,6 +556,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       .meta-bar { position: static; padding: 0.5rem 0; display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
       .pill { border:1px solid #700; padding:0.25rem 0.5rem; border-radius:999px; color:#f66; }
 
+      /* Sticky nav containing search, tabs, and hour chips */
       .navbar { position: sticky; top: 0; background: rgba(0,0,0,0.98); border-bottom: 1px solid #400; padding: 0.5rem; z-index: 5; display:flex; flex-wrap:wrap; gap:0.6rem; align-items:center; }
       .navbar .left { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
       .navbar .right { flex: 1 1 100%; display:flex; gap:0.4rem; flex-wrap:wrap; align-items:center; margin-top: 0.35rem; }
@@ -587,10 +574,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
       .hidden { display:none; }
 
-      .modal-backdrop {
-        position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-        display: none; align-items: center; justify-content: center; z-index: 50;
-      }
+      .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 50; }
       .modal {
         width: min(900px, 92vw);
         max-height: 90vh; overflow: auto;
@@ -605,7 +589,6 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         float: right; border:1px solid #700; background:#180000; color:#f66; border-radius:8px; padding:.25rem .6rem; cursor:pointer;
       }
 
-      /* Night-vision red filter for all previews */
       .night-red { filter: sepia(1) saturate(6) hue-rotate(-50deg) brightness(0.9) contrast(1.1); }
 
       @media (max-width: 640px) {
@@ -618,118 +601,102 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     </style>
     """
 
-    # JS for filtering, tabs, hour links, data hiding, and row->modal previews
+    # ---------------- JS payload ----------------
     preview_json = json.dumps(preview_map)
-    js = f"""
-    <script>
-    const PREVIEW_MAP = {preview_json};
+    now_json = json.dumps(now_data)
+    hours_json = json.dumps(hours_lookup)
 
-    function filterTables(q) {{
+    js_template = """
+    <script>
+    const PREVIEW_MAP = __PREVIEW_JSON__;
+    const NOW_DATA = __NOW_JSON__;
+    const HOURS_HTML = __HOURS_JSON__;
+
+    function filterTables(q) {
       const needle = q.trim().toLowerCase();
-      document.querySelectorAll('table').forEach(tbl => {{
+      document.querySelectorAll('table').forEach(tbl => {
         const rows = tbl.tBodies[0]?.rows || [];
-        for (let r of rows) {{
+        for (let r of rows) {
           const txt = r.innerText.toLowerCase();
           r.style.display = (!needle || txt.includes(needle)) ? '' : 'none';
-        }}
-      }});
-    }}
+        }
+      });
+    }
 
-    function activateMainTab(targetId) {{
-      document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+    function activateMainTab(targetId) {
+      document.querySelectorAll('.tabs .tab').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
       const tabBtn = document.querySelector('.tab[data-tab="' + targetId + '"]');
       if (tabBtn) tabBtn.classList.add('active');
       const panel = document.getElementById(targetId);
       if (panel) panel.classList.remove('hidden');
-    }}
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
 
-    function showHourPanel(hourId) {{
-      activateMainTab('panel-hourly');
-      document.querySelectorAll('.hour-tab-panel').forEach(el => el.classList.add('hidden'));
-      const target = document.getElementById(hourId);
-      if (target) {{
-        target.classList.remove('hidden');
-        const y = target.getBoundingClientRect().top + window.scrollY - 70;
-        window.scrollTo({{ top: y, behavior: 'instant' }});
-      }}
-    }}
+    function initTabsBehavior() {
+      const tabs = document.querySelectorAll('[data-tab]');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.getAttribute('data-tab');
+          activateMainTab(target);
+        });
+      });
+    }
 
-    function openAccordion(hourId) {{
-      const det = document.getElementById(hourId);
-      if (det && det.tagName.toLowerCase() === 'details') {{
-        det.open = true;
-        const y = det.getBoundingClientRect().top + window.scrollY - 70;
-        window.scrollTo({{ top: y, behavior: 'instant' }});
-      }}
-    }}
-
-    function handleHourNavClick(e) {{
+    // ------ Hour nav -> switch to Hour panel and inject only that hour ------
+    function handleHourNavClick(e) {
       const href = e.currentTarget.getAttribute('href') || '';
       if (!href.startsWith('#')) return;
       e.preventDefault();
       const id = href.slice(1);
-      if (document.getElementById('panel-hourly')) showHourPanel(id);
-      else openAccordion(id);
-      history.replaceState(null, '', href);
-    }}
+      activateMainTab('panel-hour');
+      const wrap = document.getElementById('hour-panel-wrap');
+      if (wrap) {
+        wrap.innerHTML = HOURS_HTML[id] || '<p class="small">No data for that hour.</p>';
+        enableRowModals();
+        hideDataColumns();
+      }
+    }
 
-    function initTabsBehavior() {{
-      const tabs = document.querySelectorAll('[data-tab]');
-      tabs.forEach(tab => {{
-        tab.addEventListener('click', () => {{
-          const target = tab.getAttribute('data-tab');
-          activateMainTab(target);
-          if (target === 'panel-hourly') {{
-            const first = document.querySelector('.hour-tab-panel');
-            if (first) {{
-              document.querySelectorAll('.hour-tab-panel').forEach(el => el.classList.add('hidden'));
-              first.classList.remove('hidden');
-            }}
-          }}
-        }});
-      }});
-    }}
-
-    function initHourLinks() {{
-      document.querySelectorAll('.navbar .hours a').forEach(a => {{
+    function initHourLinks() {
+      document.querySelectorAll('.navbar .hours a').forEach(a => {
         a.addEventListener('click', handleHourNavClick);
-      }});
-    }}
+      });
+    }
 
-    function hideDataColumns() {{
+    function hideDataColumns() {
       const toHide = new Set(["RA (deg)", "Dec (deg)"]);
-      document.querySelectorAll('table').forEach(tbl => {{
+      document.querySelectorAll('table').forEach(tbl => {
         const head = tbl.tHead?.rows?.[0];
         if (!head) return;
         const idxs = [];
-        [...head.cells].forEach((th, i) => {{
+        [...head.cells].forEach((th, i) => {
           const label = (th.innerText || "").trim();
-          if (toHide.has(label)) {{ th.classList.add('hide'); idxs.push(i); }}
-        }});
-        tbl.querySelectorAll('tbody tr').forEach(tr => {{
+          if (toHide.has(label)) { th.classList.add('hide'); idxs.push(i); }
+        });
+        tbl.querySelectorAll('tbody tr').forEach(tr => {
           idxs.forEach(i => tr.cells[i]?.classList.add('hide'));
-        }});
-      }});
-    }}
+        });
+      });
+    }
 
-    function buildMetaHTML(fields) {{
+    function buildMetaHTML(fields) {
       const items = [];
-      const push = (label, val) => {{ if (val !== undefined && val !== "" && val != null && val !== "nan") items.push(`<div><strong>${{label}}:</strong> ${{val}}</div>`); }};
+      const push = (label, val) => { if (val !== undefined && val !== "" && val != null && val !== "nan") items.push(`<div><strong>${label}:</strong> ${val}</div>`); };
       push("Type", fields.type); push("Magnitude", fields.mag);
       push("Best Time", fields.bestTime); push("Dir", fields.dir);
-      push("Alt (°)", fields.alt); push("Az (°)", fields.az); 
+      push("Alt (°)", fields.alt); push("Az (°)", fields.az);
       push("RA (deg)", fields.ra); push("Dec (deg)", fields.dec);
       push("Notes", fields.notes);
       return items.join("");
-    }}
+    }
 
-    function openModalForRow(tr) {{
+    function openModalForRow(tr) {
       const tbl = tr.closest('table');
       const headers = [...(tbl.tHead?.rows?.[0]?.cells || [])].map(th => (th.innerText || "").trim());
-      const get = (label) => {{ const i = headers.indexOf(label); return (i >= 0 && tr.cells[i]) ? tr.cells[i].innerText.trim() : ""; }};
+      const get = (label) => { const i = headers.indexOf(label); return (i >= 0 && tr.cells[i]) ? tr.cells[i].innerText.trim() : ""; };
 
-      const data = {{
+      const data = {
         name: get("Name"),
         type: get("Type"),
         mag: get("Mag"),
@@ -740,7 +707,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         ra: get("RA (deg)"),
         dec: get("Dec (deg)"),
         notes: get("Notes"),
-      }};
+      };
 
       const backdrop = document.getElementById('modal-backdrop');
       const title = document.getElementById('modal-title');
@@ -754,69 +721,157 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       backdrop.setAttribute('aria-hidden', 'false');
 
       const entry = PREVIEW_MAP[data.name] || null;
-      if (!entry) {{
+      if (!entry) {
         imgbox.innerHTML = `<p class="small">No preview available.</p>`;
         return;
-      }}
-      const cls = "night-red"; // red filter for ALL previews
+      }
       imgbox.innerHTML =
-        '<img class="' + cls + '" src="' + entry.path + '" alt="Preview of ' + data.name + '" loading="lazy">' +
+        '<img class="night-red" src="' + entry.path + '" alt="Preview of ' + data.name + '" loading="lazy">' +
         '<div class="small" style="margin-top:.35rem;">' +
-        (entry.kind === "dss2"
-            ? "Image: DSS2 Red (CDS hips2fits)"
-            : "Image: Wikipedia/Wikimedia — red-tinted") +
+        (entry.kind === "dss2" ? "Image: DSS2 Red (CDS hips2fits)" : "Image: Wikipedia/Wikimedia — red-tinted") +
         "</div>";
-    }}
+    }
 
-    function closeModal() {{
+    function closeModal() {
       const backdrop = document.getElementById('modal-backdrop');
       backdrop.style.display = 'none';
       backdrop.setAttribute('aria-hidden', 'true');
-    }}
+    }
 
-    function enableRowModals() {{
-      document.querySelectorAll('.table-wrap table').forEach(tbl => {{
-        tbl.addEventListener('click', (e) => {{
+    function enableRowModals() {
+      document.querySelectorAll('.table-wrap table').forEach(tbl => {
+        tbl.addEventListener('click', (e) => {
           const tr = e.target.closest('tr');
           if (!tr || tr.parentElement.tagName !== 'TBODY') return;
           openModalForRow(tr);
-        }}, {{ passive: true }});
-      }});
+        }, { passive: true });
+      });
       const backdrop = document.getElementById('modal-backdrop');
-      backdrop?.addEventListener('click', (e) => {{
+      backdrop?.addEventListener('click', (e) => {
         if (e.target.id === 'modal-backdrop' || e.target.classList.contains('close')) closeModal();
-      }});
-      document.addEventListener('keydown', (e) => {{ if (e.key === 'Escape') closeModal(); }});
-    }}
+      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    }
 
-    document.addEventListener('DOMContentLoaded', () => {{
+    // ----------------- NOW view (2-minute granularity) -----------------
+    const NOW_INDEX = (() => {
+      const m = new Map();
+      for (const entry of NOW_DATA || []) {
+        if (entry && entry.time && Array.isArray(entry.rows)) {
+          m.set(entry.time, entry.rows);
+        }
+      }
+      return m;
+    })();
+    const NOW_KEYS = Array.from(NOW_INDEX.keys()).sort();
+
+    function _fmt2(n) { return n < 10 ? "0" + n : "" + n; }
+    function _keyToDate(keyStr) { return new Date(keyStr.replace(" ", "T") + ":00"); }
+    function _currentTwoMinuteKeyRaw() {
+      const d = new Date();
+      const y = d.getFullYear(), mo = _fmt2(d.getMonth()+1), da = _fmt2(d.getDate());
+      const hh = _fmt2(d.getHours()); const mm = d.getMinutes() - (d.getMinutes()%2);
+      return `${y}-${mo}-${da} ${hh}:${_fmt2(mm)}`;
+    }
+
+    function rowsToHTML(rows) {
+      if (!rows || rows.length === 0) return '<p class="small">No targets above your thresholds right now.</p>';
+      const head = `
+        <table id="tbl-now">
+          <thead>
+            <tr>
+              <th>Name</th><th>Type</th><th>Mag</th>
+              <th>Alt (°)</th><th>Az (°)</th><th>Dir</th><th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>`;
+      const body = rows.map(r => `
+        <tr>
+          <td>${r["Name"] ?? ""}</td>
+          <td>${r["Type"] ?? ""}</td>
+          <td>${r["Mag"] ?? ""}</td>
+          <td>${r["Alt (°)"] ?? ""}</td>
+          <td>${r["Az (°)"] ?? ""}</td>
+          <td>${r["Dir"] ?? ""}</td>
+          <td>${r["Notes"] ?? ""}</td>
+        </tr>`).join("");
+      return '<div class="table-wrap">' + head + body + "</tbody></table></div>";
+    }
+
+    function renderNow(forceKey = null) {
+      const wrap = document.getElementById("now-table-wrap");
+      if (!wrap) return;
+      if (!NOW_KEYS.length) { wrap.innerHTML = '<p class="small">No current data in range.</p>'; return; }
+
+      const firstKey = NOW_KEYS[0], lastKey = NOW_KEYS[NOW_KEYS.length - 1];
+      const firstDt = _keyToDate(firstKey), lastDt = _keyToDate(lastKey);
+
+      let key = forceKey || _currentTwoMinuteKeyRaw();
+      const keyDt = _keyToDate(key);
+
+      if (keyDt < firstDt || keyDt > lastDt) {
+        wrap.innerHTML = '<p class="small warn">The current time is outside of the observation window.</p>';
+        return;
+      }
+
+      if (!NOW_INDEX.has(key)) {
+        let fallback = firstKey;
+        for (const k of NOW_KEYS) { if (_keyToDate(k) <= keyDt) fallback = k; else break; }
+        key = fallback;
+      }
+
+      const rows = NOW_INDEX.get(key) || [];
+      wrap.innerHTML = rowsToHTML(rows);
+      enableRowModals();
+      hideDataColumns();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
       const input = document.getElementById('q');
       if (input) input.addEventListener('input', () => filterTables(input.value));
       initTabsBehavior(); initHourLinks(); hideDataColumns(); enableRowModals();
-    }});
+
+      activateMainTab('panel-now');  // land on Now
+      renderNow();
+
+      const btn = document.getElementById('btn-refresh-now');
+      if (btn) btn.addEventListener('click', () => renderNow());
+
+      setInterval(renderNow, 30000);
+    });
     </script>
     """
 
-    now = datetime.now(tz.gettz(tzname)).strftime("%Y-%m-%d %H:%M %Z")
+    js = (
+        js_template
+        .replace("__PREVIEW_JSON__", preview_json)
+        .replace("__NOW_JSON__", now_json)
+        .replace("__HOURS_JSON__", hours_json)
+    )
+
+    # ---------------- HTML skeleton ----------------
+    now_str = datetime.now(tz.gettz(tzname)).strftime("%Y-%m-%d %H:%M %Z")
     hour_links_html = " &middot; ".join(hour_links) if hour_links else "No hourly targets"
 
-    if ui_mode == "tabs":
-        content = f"""
-        <div class='tabs'><div class='tab active' data-tab='panel-master'>Master List</div><div class='tab' data-tab='panel-hourly'>By Hour</div></div>
-        <section id="panel-master" class="tab-panel">{master_html}</section>
-        <section id="panel-hourly" class="tab-panel hidden">
-          <p class="small">Top targets each hour, prioritized by interest score. Directions are compass points.</p>
-          {hourly_html}
-        </section>"""
-    else:
-        content = f"""
-          <h2>Master List (by interest)</h2>
-          {master_html}
-          <hr class="hr">
-          <h2>Hourly “Point Your Scope Now”</h2>
-          <p class="small">Top targets each hour, prioritized by interest score. Directions are compass points.</p>
-          {hourly_html}
-        """
+    content = f"""
+      <section id="panel-now" class="tab-panel">
+        <div class="small" style="margin:.2rem 0 .6rem;">
+          Targets currently in view. Updates every two minutes.
+          <button id="btn-refresh-now" class="tab" style="margin-left:.5rem;">Refresh</button>
+        </div>
+        <div id="now-table-wrap" class="table-wrap"><p class="small">Loading current targets…</p></div>
+      </section>
+
+      <section id="panel-master" class="tab-panel hidden">
+        {master_html}
+      </section>
+
+      <section id="panel-hour" class="tab-panel hidden">
+        <div id="hour-panel-wrap" class="table-wrap">
+          <p class="small">Pick an hour from the chips above to load its table.</p>
+        </div>
+      </section>
+    """
 
     html = f"""<!doctype html>
 <html lang="en">
@@ -828,15 +883,17 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
   <h1>Star Party Planner</h1>
 
   <div class="meta-bar">
-    <span class="pill">Location: {site_lat:.6f}, {site_lon:.6f}</span>
-    <span class="pill">Date: {date_str}</span>
-    <span class="pill">Window: {start}–{end} {tzname}</span>
+        <span class="pill">Date: {date_str}</span>
+    <span class="pill">Observation window: {start}–{end} {tzname}</span>
   </div>
 
   <div class="navbar">
     <div class="left">
       <input id="q" type="search" placeholder="Search targets… (name, type, notes)" aria-label="Search">
-      {"<div class='tabs'><div class='tab active' data-tab='panel-master'>Master List</div><div class='tab' data-tab='panel-hourly'>By Hour</div></div>" if ui_mode=="tabs" else ""}
+      <div class="tabs">
+        <div class="tab active" data-tab="panel-now">Now</div>
+        <div class="tab" data-tab="panel-master">Master List</div>
+      </div>
     </div>
     <div class="right">
       <span class="hours">{hour_links_html}</span>
@@ -854,7 +911,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     </div>
   </div>
 
-  <p class="small warn">Night-vision mode: Keep device brightness low at the scope. Generated: {now}</p>
+  <p class="small">Location: {site_lat:.6f}, {site_lon:.6f}. Generated: {now_str}</p>
 </div>
 {js}
 </html>
@@ -1069,6 +1126,94 @@ def plan_for_site(args):
         hourly_df = hourly_df[hourly_df["rank"] <= args.top_n_per_hour]
         hourly_df.drop(columns=["rank","Hour_dt","_Priority"], inplace=True, errors="ignore")
 
+    # -------- NOW view (2-minute granularity, client-side) --------
+    # Build an array of dicts: one entry per 2-minute slot with top N objects
+    # Uses same scoring rules (incl. moonlight penalty) as hourly
+    now_data = []
+    top_n_now = args.top_n_per_hour  # reuse the same cap
+
+    # Pre-create light-weight target descriptors we can iterate quickly
+    # We will re-compute alt/az at each 2-min tick (fast enough for typical lists)
+    simple_targets = []
+    for t in targets:
+        simple_targets.append({
+            "name": t["name"],
+            "type": t["type"],
+            "mag": t["mag"],
+            "ra_deg": t["ra_deg"],
+            "dec_deg": t["dec_deg"],
+            "min_alt": (
+                args.min_alt_planets if t["type"].lower() == "planet"
+                else (args.min_alt_moon if t["type"].lower() == "moon" else args.min_alt)
+            ),
+        })
+
+    # We will reuse illum_frac_night (night-wide), but scale by the *instant* Moon altitude
+    def _altaz_for_target_at(ts_obj, targ):
+        typ = (targ["type"] or "").lower()
+        if typ == "planet":
+            alt, az, _ = planet_altaz(eph, ts_obj, site, earth, targ["name"])
+        elif typ == "moon":
+            alt, az, _ = moon_altaz_phase(eph, ts_obj, site, earth)
+        else:
+            alt, az = to_altaz(ts_obj, site, earth, targ["ra_deg"], targ["dec_deg"])
+        return float(alt), float(az)
+
+    for dt_local in minute_times_local:
+        ts_tick = ts.from_datetime(dt_local)
+
+        # Moon altitude for penalty scaling at this instant
+        moon_alt_tick, _, moon_phase_tick = moon_altaz_phase(eph, ts_tick, site, earth)
+        # We keep illumination fraction fixed for the night; if you prefer per-tick,
+        # replace illum_frac_night with lunar_illum_fraction_from_phase_deg(moon_phase_tick).
+        rows = []
+        for targ in simple_targets:
+            alt, az = _altaz_for_target_at(ts_tick, targ)
+            if alt < targ["min_alt"]:
+                continue
+
+            # Dir, prio with penalties as needed
+            dir_txt = cardinal_from_az(az)
+
+            # Base interest uses 'best_alt' vs 'alt_now'; at "Now" we only have current alt
+            # We can approximate by using alt as both best_alt and alt_now (works well in practice)
+            base_prio = interest_score(targ["name"], targ["type"], best_alt=alt, alt_now=alt)
+
+            # Moonlight penalty for diffuse DSOs only (planets/Moon unaffected)
+            prio = base_prio
+            if targ["type"].lower() not in {"planet", "moon"}:
+                prio -= moonlight_penalty_points(
+                    targ["type"], illum_frac_night, args.moonlight_penalty_max,
+                    moon_alt_deg=moon_alt_tick
+                )
+            if prio <= 0:
+                continue
+
+            rows.append({
+                "Name": targ["name"],
+                "Type": targ["type"],
+                "Mag": targ["mag"] if targ["mag"] is not None else "",
+                "Alt (°)": round(alt, 1),
+                "Az (°)": round(az, 1),
+                "Dir": dir_txt,
+                "RA (deg)": _round3(targ["ra_deg"]),
+                "Dec (deg)": _round3(targ["dec_deg"]),
+                "_Priority": prio
+            })
+
+        if rows:
+            rows.sort(key=lambda r: (-r["_Priority"], r["Name"]))
+            rows = rows[:top_n_now]
+            # Strip helper key for the browser
+            for r in rows:
+                r.pop("_Priority", None)
+
+            now_data.append({
+                # ISO without seconds; match the format we’ll use in the client
+                "time": dt_local.strftime("%Y-%m-%d %H:%M"),
+                "rows": rows
+            })
+
     # Save CSVs
     master_csv = f"{args.out_prefix}_master.csv"
     hourly_csv = f"{args.out_prefix}_hourly.csv"
@@ -1087,7 +1232,8 @@ def plan_for_site(args):
     if args.html:
         write_html(args.html, args.lat, args.lon, args.tz,
                    args.date, args.start, args.end,
-                   master_df, hourly_df, args.html_ui, preview_map)
+                   master_df, hourly_df, args.html_ui, preview_map,
+                   now_data=now_data)
 
     # Console
     print("\n=== MASTER LIST (by interestingness) ===")
