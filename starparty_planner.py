@@ -95,6 +95,9 @@ def parse_args():
     p.add_argument("--moon_sep_min", type=float, default=15.0, help="Min separation from Moon (deg)")
     p.add_argument("--hour_step", type=int, default=1, help="Hour step for hourly tables")
     p.add_argument("--top_n_per_hour", type=int, default=16, help="Max targets per hour table")
+    # Sampling cadence for the "Now" view
+    p.add_argument("--now_step_min", type=int, default=4,
+                   help="Minutes between 'Now' samples (default=4)")
 
     p.add_argument("--out_prefix", type=str, default="starparty", help="Output prefix (csv)")
     p.add_argument("--html", type=str, default="", help="Optional HTML output filepath")
@@ -515,7 +518,7 @@ def _hour_anchor_label(hour_str: str) -> str:
 
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
-               ui_mode: str, preview_map: Dict[str, Dict[str,str]], now_data: List[Dict]):
+               ui_mode: str, preview_map: Dict[str, Dict[str,str]], now_data: List[Dict], now_step_min: int):
     # ---------------- Build hourly lookup + chips ----------------
     hours_lookup = {}
     hour_links = []
@@ -529,6 +532,9 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
             tbl = df_to_html_table(sub[present], id_attr=f"tbl-{anchor}")
             hours_lookup[anchor] = f"<h3>{hour}</h3>{tbl}"
     master_html = df_to_html_table(master_df, id_attr="tbl-master") if not master_df.empty else "<p>No targets passed the filters. Try adjusting filters.</p>"
+
+    # user-facing note reflecting the actual cadence
+    update_note_line = f"Targets currently in view. Updates every {now_step_min} minute{'s' if now_step_min != 1 else ''}."
 
     # ---------------- Night-vision CSS ----------------
     css = """
@@ -680,6 +686,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     const PREVIEW_MAP = __PREVIEW_JSON__;
     const NOW_DATA    = __NOW_JSON__;
     const HOURS_HTML  = __HOURS_JSON__;
+    const NOW_STEP_MIN = __NOW_STEP_MIN__;
 
     /* ==============================
     Local storage + sector logic
@@ -928,7 +935,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     }
 
     /* ==============================
-    NOW view (2-minute granularity)
+    NOW view (client-side; samples every NOW_STEP_MIN minutes)
     ============================== */
     const NOW_INDEX = (() => {
     const m = new Map();
@@ -943,10 +950,11 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
     function _fmt2(n) { return n < 10 ? "0" + n : "" + n; }
     function _keyToDate(keyStr) { return new Date(keyStr.replace(" ", "T") + ":00"); }
-    function _currentTwoMinuteKeyRaw() {
+    function _currentStepKeyRaw(stepMin) {
     const d = new Date();
     const y = d.getFullYear(), mo = _fmt2(d.getMonth()+1), da = _fmt2(d.getDate());
-    const hh = _fmt2(d.getHours()); const mm = d.getMinutes() - (d.getMinutes()%2);
+    const hh = _fmt2(d.getHours());
+    const mm = d.getMinutes() - (d.getMinutes() % stepMin);
     return `${y}-${mo}-${da} ${hh}:${_fmt2(mm)}`;
     }
 
@@ -982,7 +990,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     const firstKey = NOW_KEYS[0], lastKey = NOW_KEYS[NOW_KEYS.length - 1];
     const firstDt = _keyToDate(firstKey), lastDt = _keyToDate(lastKey);
 
-    let key = forceKey || _currentTwoMinuteKeyRaw();
+    let key = forceKey || _currentStepKeyRaw(NOW_STEP_MIN);
     const keyDt = _keyToDate(key);
 
     if (keyDt < firstDt || keyDt > lastDt) {
@@ -1103,8 +1111,8 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
     function scheduleNextRender() {
     const now = new Date();
-    const secIntoTwoMin = (now.getMinutes() % 2) * 60 + now.getSeconds();
-    const msUntilNextSlot = (120 - secIntoTwoMin) * 1000 - now.getMilliseconds();
+    const secIntoStep = (now.getMinutes() % NOW_STEP_MIN) * 60 + now.getSeconds();
+    const msUntilNextSlot = (NOW_STEP_MIN * 60 - secIntoStep) * 1000 - now.getMilliseconds();
     clearTimeout(scheduleNextRender._t);
     scheduleNextRender._t = setTimeout(renderNowAndReschedule, Math.max(500, msUntilNextSlot));
     }
@@ -1126,6 +1134,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         .replace("__PREVIEW_JSON__", preview_json)
         .replace("__NOW_JSON__", now_json)
         .replace("__HOURS_JSON__", hours_json)
+        .replace("__NOW_STEP_MIN__", str(now_step_min))
     )
 
     # ---------------- HTML skeleton ----------------
@@ -1135,7 +1144,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     content = f"""
       <section id="panel-now" class="tab-panel">
         <div class="small" style="margin:.2rem 0 .6rem;">
-          Targets currently in view. Updates every two minutes.
+          {update_note_line}
         </div>
         <div id="now-table-wrap" class="table-wrap"><p class="small">Loading current targets…</p></div>
       </section>
@@ -1340,12 +1349,13 @@ def plan_for_site(args):
     if end_dt <= start_dt:
         end_dt += timedelta(days=1)
 
-    # Build 2-minute grid across the observing window
+    # Build minute grid across the observing window (configurable step)
     minute_times_local = []
+    step = max(1, int(args.now_step_min))
     t_cursor = start_dt
     while t_cursor <= end_dt:
         minute_times_local.append(t_cursor)
-        t_cursor += timedelta(minutes=2)
+        t_cursor += timedelta(minutes=step)
     ts_minute = ts.from_datetimes(minute_times_local)
 
     # ---- Vectorized precomputes ----
@@ -1530,7 +1540,7 @@ def plan_for_site(args):
         hourly_df = hourly_df[hourly_df["rank"] <= args.top_n_per_hour]
         hourly_df.drop(columns=["rank","Hour_dt","_Priority"], inplace=True, errors="ignore")
 
-    # -------- NOW view (2-minute granularity, client-side) --------
+    # -------- NOW view (client-side; step=args.now_step_min minutes) --------
     # Build an array of dicts: one entry per 2-minute slot with top N objects
     # Uses same scoring rules (incl. moonlight penalty) as hourly
 
@@ -1645,7 +1655,7 @@ def plan_for_site(args):
         write_html(args.html, args.lat, args.lon, args.tz,
                    args.date, args.start, args.end,
                    master_df, hourly_df, args.html_ui, preview_map,
-                   now_data=now_data)
+                   now_data=now_data, now_step_min=args.now_step_min)
 
     # Console
     print("\n=== MASTER LIST (by interestingness) ===")

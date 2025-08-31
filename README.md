@@ -150,7 +150,7 @@ python starparty_planner.py \
 - Emphasis on eyepiece‑friendly columns: **Alt (°), Az (°), Dir**.
 
 ### Now view (auto‑refreshing)
-- Updates in step with the clock (every two minutes).  
+- Updates in step with the clock (every four minutes).  
 - Renders the **top‑N** targets after filters—configurable in the Filters dialog.  
 - Click any row to open the modal with details + preview.
 
