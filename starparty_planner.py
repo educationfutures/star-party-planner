@@ -591,6 +591,87 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
       .night-red { filter: sepia(1) saturate(6) hue-rotate(-50deg) brightness(0.9) contrast(1.1); }
 
+      /* ---- Filters modal ---- */
+        .filters-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: .5rem .75rem;
+        margin: .75rem 0;
+        }
+        .filters-grid label { font-size:.9rem; color:#f66; }
+        .filters-row {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: .5rem .75rem;
+        margin-bottom: .4rem;
+        }
+        .filters-row input[type="number"],
+        .filters-grid input[type="number"] {
+        background:#160000; border:1px solid #700; color:#f55;
+        padding:.35rem .5rem; border-radius:6px; width:100%;
+        }
+        .filters-actions { display:flex; gap:.5rem; justify-content:flex-end; margin-top:.75rem; }
+        .filters-actions button {
+        border:1px solid #700; background:#180000; color:#f66;
+        border-radius:8px; padding:.35rem .7rem; cursor:pointer;
+        }
+        .filters-switch { display:flex; align-items:center; gap:.5rem; margin:.25rem 0 .5rem; }
+        .filters-note { font-size:.85rem; color:#f77; }
+        .filters-dialog label {
+        display: block;
+        font-size: 0.85rem;
+        margin-bottom: 0.2rem;
+        color: #f77;
+        }
+
+        .filters-dialog input[type="number"],
+        .filters-dialog input[type="checkbox"],
+        .filters-dialog select {
+        background: #100;
+        border: 1px solid #700;
+        color: #f55;
+        font-size: 0.85rem;
+        padding: 0.25rem 0.4rem;
+        border-radius: 4px;
+        width: 5rem;
+        text-align: center;
+        }
+
+        .filters-dialog .sector-row {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+        }
+
+        .filters-dialog .sector-row input {
+        flex: 1 1 auto;
+        max-width: 5rem;
+        }
+
+        .filters-dialog .topn-row {
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        }
+
+        .filters-dialog .buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+        margin-top: 0.6rem;
+        }
+
+        .filters-dialog button {
+        border: 1px solid #700;
+        background: #180000;
+        color: #f66;
+        border-radius: 6px;
+        padding: 0.25rem 0.7rem;
+        cursor: pointer;
+        font-size: 0.85rem;
+        }
+
       @media (max-width: 640px) {
         body { font-size: 15px; }
         th, td { padding: 0.35rem 0.45rem; }
@@ -608,124 +689,162 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
     js_template = """
     <script>
+    /* ======= injected data ======= */
     const PREVIEW_MAP = __PREVIEW_JSON__;
-    const NOW_DATA = __NOW_JSON__;
-    const HOURS_HTML = __HOURS_JSON__;
+    const NOW_DATA    = __NOW_JSON__;
+    const HOURS_HTML  = __HOURS_JSON__;
 
+    /* ==============================
+    Local storage + sector logic
+    ============================== */
+    const LS_KEYS = {
+    enabled: 'obs.enabled',
+    sectors: 'obs.sectors',
+    topN:    'now.topN',
+    };
+
+    function _clamp(v, lo, hi) { v = Number(v); return isFinite(v) ? Math.min(Math.max(v, lo), hi) : NaN; }
+
+    function loadSettings(defaultTopN = 16) {
+    const enabled = (localStorage.getItem(LS_KEYS.enabled) || 'false') === 'true';
+    let sectors = [];
+    try { sectors = JSON.parse(localStorage.getItem(LS_KEYS.sectors) || '[]'); } catch { sectors = []; }
+    let topN = parseInt(localStorage.getItem(LS_KEYS.topN) || `${defaultTopN}`, 10);
+    if (!Number.isFinite(topN) || topN <= 0) topN = defaultTopN;
+
+    // sanitize
+    const clean = [];
+    for (const s of sectors) {
+        const az1 = _clamp(s.az1, 0, 360);
+        const az2 = _clamp(s.az2, 0, 360);
+        const minAlt = _clamp(s.minAlt, 0, 90);
+        if (Number.isFinite(az1) && Number.isFinite(az2) && Number.isFinite(minAlt)) clean.push({ az1, az2, minAlt });
+    }
+    return { enabled, sectors: clean.slice(0, 5), topN };
+    }
+
+    function saveSettings({ enabled, sectors, topN }) {
+    localStorage.setItem(LS_KEYS.enabled, enabled ? 'true' : 'false');
+    localStorage.setItem(LS_KEYS.sectors, JSON.stringify((sectors || []).slice(0, 5)));
+    localStorage.setItem(LS_KEYS.topN, String(topN));
+    }
+
+    // ---------- Sector math ----------
+    function normAz(x)    { x = Number(x); return ((x % 360) + 360) % 360; }
+    function azInSector(az, a1, a2) {
+    az = normAz(az); a1 = normAz(a1); a2 = normAz(a2);
+    if (a1 === a2) return true;               // treat 0-length as full circle
+    return (a1 <= a2) ? (az >= a1 && az <= a2)
+                        : (az >= a1 || az <= a2); // wrap-around
+    }
+    function requiredAltForAz(sectors, az) {
+    let req = 0;
+    for (const s of sectors) if (azInSector(az, s.az1, s.az2)) req = Math.max(req, s.minAlt);
+    return req;
+    }
+    function passesSectors(row, sectors) {
+    const az = Number(row["Az (°)"]);
+    const alt = Number(row["Alt (°)"]);
+    if (!Number.isFinite(az) || !Number.isFinite(alt)) return true;
+    const need = requiredAltForAz(sectors, az);
+    return alt >= need;
+    }
+
+    /* ==============================
+    UI helpers
+    ============================== */
     function filterTables(q) {
-      const needle = q.trim().toLowerCase();
-      document.querySelectorAll('table').forEach(tbl => {
+    const needle = q.trim().toLowerCase();
+    document.querySelectorAll('table').forEach(tbl => {
         const rows = tbl.tBodies[0]?.rows || [];
         for (let r of rows) {
-          const txt = r.innerText.toLowerCase();
-          r.style.display = (!needle || txt.includes(needle)) ? '' : 'none';
+        const txt = r.innerText.toLowerCase();
+        r.style.display = (!needle || txt.includes(needle)) ? '' : 'none';
         }
-      });
+    });
     }
 
     function activateMainTab(targetId) {
-      document.querySelectorAll('.tabs .tab').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
-      const tabBtn = document.querySelector('.tab[data-tab="' + targetId + '"]');
-      if (tabBtn) tabBtn.classList.add('active');
-      const panel = document.getElementById(targetId);
-      if (panel) panel.classList.remove('hidden');
-      window.scrollTo({ top: 0, behavior: 'instant' });
+    document.querySelectorAll('.tabs .tab').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(el => el.classList.add('hidden'));
+    const tabBtn = document.querySelector('.tab[data-tab="' + targetId + '"]');
+    if (tabBtn) tabBtn.classList.add('active');
+    const panel = document.getElementById(targetId);
+    if (panel) panel.classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
     function initTabsBehavior() {
-      const tabs = document.querySelectorAll('[data-tab]');
-      tabs.forEach(tab => {
+    const tabs = document.querySelectorAll('[data-tab]');
+    tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-          const target = tab.getAttribute('data-tab');
-          activateMainTab(target);
+        activateMainTab(tab.getAttribute('data-tab'));
         });
-      });
-    }
-
-    // ------ Hour nav -> switch to Hour panel and inject only that hour ------
-    function handleHourNavClick(e) {
-      const href = e.currentTarget.getAttribute('href') || '';
-      if (!href.startsWith('#')) return;
-      e.preventDefault();
-      const id = href.slice(1);
-      activateMainTab('panel-hour');
-      const wrap = document.getElementById('hour-panel-wrap');
-      if (wrap) {
-        wrap.innerHTML = HOURS_HTML[id] || '<p class="small">No data for that hour.</p>';
-        enableRowModals();
-        hideDataColumns();
-      }
-    }
-
-    function initHourLinks() {
-      document.querySelectorAll('.navbar .hours a').forEach(a => {
-        a.addEventListener('click', handleHourNavClick);
-      });
+    });
     }
 
     function hideDataColumns() {
-      const toHide = new Set(["RA (deg)", "Dec (deg)"]);
-      document.querySelectorAll('table').forEach(tbl => {
+    const toHide = new Set(["RA (deg)", "Dec (deg)"]);
+    document.querySelectorAll('table').forEach(tbl => {
         const head = tbl.tHead?.rows?.[0];
         if (!head) return;
         const idxs = [];
         [...head.cells].forEach((th, i) => {
-          const label = (th.innerText || "").trim();
-          if (toHide.has(label)) { th.classList.add('hide'); idxs.push(i); }
+        const label = (th.innerText || "").trim();
+        if (toHide.has(label)) { th.classList.add('hide'); idxs.push(i); }
         });
         tbl.querySelectorAll('tbody tr').forEach(tr => {
-          idxs.forEach(i => tr.cells[i]?.classList.add('hide'));
+        idxs.forEach(i => tr.cells[i]?.classList.add('hide'));
         });
-      });
+    });
     }
 
+    /* ==============================
+    Preview modal
+    ============================== */
     function buildMetaHTML(fields) {
-      const items = [];
-      const push = (label, val) => { if (val !== undefined && val !== "" && val != null && val !== "nan") items.push(`<div><strong>${label}:</strong> ${val}</div>`); };
-      push("Type", fields.type); push("Magnitude", fields.mag);
-      push("Best Time", fields.bestTime); push("Dir", fields.dir);
-      push("Alt (°)", fields.alt); push("Az (°)", fields.az);
-      push("RA (deg)", fields.ra); push("Dec (deg)", fields.dec);
-      push("Notes", fields.notes);
-      return items.join("");
+    const items = [];
+    const push = (label, val) => { if (val !== undefined && val !== "" && val != null && val !== "nan") items.push(`<div><strong>${label}:</strong> ${val}</div>`); };
+    push("Type", fields.type); push("Magnitude", fields.mag);
+    push("Best Time", fields.bestTime); push("Dir", fields.dir);
+    push("Alt (°)", fields.alt); push("Az (°)", fields.az);
+    push("RA (deg)", fields.ra); push("Dec (deg)", fields.dec);
+    push("Notes", fields.notes);
+    return items.join("");
     }
 
     function openModalForRow(tr) {
-      const tbl = tr.closest('table');
-      const headers = [...(tbl.tHead?.rows?.[0]?.cells || [])].map(th => (th.innerText || "").trim());
-      const get = (label) => { const i = headers.indexOf(label); return (i >= 0 && tr.cells[i]) ? tr.cells[i].innerText.trim() : ""; };
+    const tbl = tr.closest('table');
+    const headers = [...(tbl.tHead?.rows?.[0]?.cells || [])].map(th => (th.innerText || "").trim());
+    const get = (label) => { const i = headers.indexOf(label); return (i >= 0 && tr.cells[i]) ? tr.cells[i].innerText.trim() : ""; };
 
-      const data = {
+    const data = {
         name: get("Name"),
         type: get("Type"),
-        mag: get("Mag"),
+        mag:  get("Mag"),
         bestTime: get("Best Time") || get("Best Local Time"),
-        dir: get("Dir"),
-        alt: get("Alt (°)"),
-        az: get("Az (°)"),
-        ra: get("RA (deg)"),
-        dec: get("Dec (deg)"),
-        notes: get("Notes"),
-      };
+        dir:  get("Dir"),
+        alt:  get("Alt (°)"),
+        az:   get("Az (°)"),
+        ra:   get("RA (deg)"),
+        dec:  get("Dec (deg)"),
+        notes:get("Notes"),
+    };
 
-      const backdrop = document.getElementById('modal-backdrop');
-      const title = document.getElementById('modal-title');
-      const meta = document.getElementById('modal-meta');
-      const imgbox = document.getElementById('modal-image');
+    const backdrop = document.getElementById('modal-backdrop');
+    const title = document.getElementById('modal-title');
+    const meta = document.getElementById('modal-meta');
+    const imgbox = document.getElementById('modal-image');
 
-      title.textContent = data.name || "Object";
-      meta.innerHTML = buildMetaHTML(data);
-      imgbox.innerHTML = `<p class="small">Loading preview…</p>`;
-      backdrop.style.display = 'flex';
-      backdrop.setAttribute('aria-hidden', 'false');
+    title.textContent = data.name || "Object";
+    meta.innerHTML = buildMetaHTML(data);
+    imgbox.innerHTML = `<p class="small">Loading preview…</p>`;
+    backdrop.style.display = 'flex';
+    backdrop.setAttribute('aria-hidden', 'false');
 
-      const entry = PREVIEW_MAP[data.name] || null;
-      if (!entry) {
-        imgbox.innerHTML = `<p class="small">No preview available.</p>`;
-        return;
-      }
-      imgbox.innerHTML =
+    const entry = PREVIEW_MAP[data.name] || null;
+    if (!entry) { imgbox.innerHTML = `<p class="small">No preview available.</p>`; return; }
+    imgbox.innerHTML =
         '<img class="night-red" src="' + entry.path + '" alt="Preview of ' + data.name + '" loading="lazy">' +
         '<div class="small" style="margin-top:.35rem;">' +
         (entry.kind === "dss2" ? "Image: DSS2 Red (CDS hips2fits)" : "Image: Wikipedia/Wikimedia — red-tinted") +
@@ -733,111 +852,268 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     }
 
     function closeModal() {
-      const backdrop = document.getElementById('modal-backdrop');
-      backdrop.style.display = 'none';
-      backdrop.setAttribute('aria-hidden', 'true');
+    const backdrop = document.getElementById('modal-backdrop');
+    backdrop.style.display = 'none';
+    backdrop.setAttribute('aria-hidden', 'true');
     }
 
     function enableRowModals() {
-      document.querySelectorAll('.table-wrap table').forEach(tbl => {
+    document.querySelectorAll('.table-wrap table').forEach(tbl => {
         tbl.addEventListener('click', (e) => {
-          const tr = e.target.closest('tr');
-          if (!tr || tr.parentElement.tagName !== 'TBODY') return;
-          openModalForRow(tr);
+        const tr = e.target.closest('tr');
+        if (!tr || tr.parentElement.tagName !== 'TBODY') return;
+        openModalForRow(tr);
         }, { passive: true });
-      });
-      const backdrop = document.getElementById('modal-backdrop');
-      backdrop?.addEventListener('click', (e) => {
+    });
+    const backdrop = document.getElementById('modal-backdrop');
+    backdrop?.addEventListener('click', (e) => {
         if (e.target.id === 'modal-backdrop' || e.target.classList.contains('close')) closeModal();
-      });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
     }
 
-    // ----------------- NOW view (2-minute granularity) -----------------
-    const NOW_INDEX = (() => {
-      const m = new Map();
-      for (const entry of NOW_DATA || []) {
-        if (entry && entry.time && Array.isArray(entry.rows)) {
-          m.set(entry.time, entry.rows);
+    /* ==============================
+    Hour chips -> single hour view
+    ============================== */
+    function handleHourNavClick(e) {
+    const href = e.currentTarget.getAttribute('href') || '';
+    if (!href.startsWith('#')) return;
+    e.preventDefault();
+    const id = href.slice(1);
+    activateMainTab('panel-hour');
+    const wrap = document.getElementById('hour-panel-wrap');
+    if (wrap) {
+        wrap.innerHTML = HOURS_HTML[id] || '<p class="small">No data for that hour.</p>';
+        enableRowModals();
+        hideDataColumns();
+        applyHourFilters();   // apply sector filters + show counts
+    }
+    }
+
+    function initHourLinks() {
+    document.querySelectorAll('.navbar .hours a').forEach(a => {
+        a.addEventListener('click', handleHourNavClick);
+    });
+    }
+
+    // Hide hour rows that don't meet sector min-alt, and show counts
+    function applyHourFilters() {
+    const panel = document.getElementById('panel-hour');
+    if (!panel || panel.classList.contains('hidden')) return; // only if hour panel visible
+    const tbl = panel.querySelector('table');
+    if (!tbl) return;
+
+    const s = loadSettings(16);
+    const rows = Array.from(tbl.tBodies?.[0]?.rows || []);
+    let total = rows.length;
+    let shown = 0;
+
+    // headers once
+    const headers = [...(tbl.tHead?.rows?.[0]?.cells || [])].map(th => (th.innerText || '').trim());
+    const idxAlt = headers.indexOf("Alt (°)");
+    const idxAz  = headers.indexOf("Az (°)");
+
+    for (const tr of rows) {
+        if (!s.enabled || !s.sectors.length) {
+        tr.style.display = '';
+        shown++;
+        continue;
         }
-      }
-      return m;
+        const rowObj = {
+        "Az (°)": idxAz >= 0 ? tr.cells[idxAz]?.innerText?.trim() : "",
+        "Alt (°)": idxAlt >= 0 ? tr.cells[idxAlt]?.innerText?.trim() : "",
+        };
+        const ok = passesSectors(rowObj, s.sectors);
+        tr.style.display = ok ? '' : 'none';
+        if (ok) shown++;
+    }
+
+    // Add/Update a tiny “Showing X of Y” indicator under the hour title
+    let info = panel.querySelector('.hour-count-info');
+    if (!info) {
+        info = document.createElement('div');
+        info.className = 'hour-count-info small';
+        const before = panel.querySelector('.table-wrap');
+        if (before) panel.insertBefore(info, before);
+        else panel.appendChild(info);
+    }
+    info.textContent = s.enabled && s.sectors.length ? `Showing ${shown} of ${total}` : `Showing ${total} of ${total}`;
+    }
+
+    /* ==============================
+    NOW view (2-minute granularity)
+    ============================== */
+    const NOW_INDEX = (() => {
+    const m = new Map();
+    for (const entry of NOW_DATA || []) {
+        if (entry && entry.time && Array.isArray(entry.rows)) {
+        m.set(entry.time, entry.rows);
+        }
+    }
+    return m;
     })();
     const NOW_KEYS = Array.from(NOW_INDEX.keys()).sort();
 
     function _fmt2(n) { return n < 10 ? "0" + n : "" + n; }
     function _keyToDate(keyStr) { return new Date(keyStr.replace(" ", "T") + ":00"); }
     function _currentTwoMinuteKeyRaw() {
-      const d = new Date();
-      const y = d.getFullYear(), mo = _fmt2(d.getMonth()+1), da = _fmt2(d.getDate());
-      const hh = _fmt2(d.getHours()); const mm = d.getMinutes() - (d.getMinutes()%2);
-      return `${y}-${mo}-${da} ${hh}:${_fmt2(mm)}`;
+    const d = new Date();
+    const y = d.getFullYear(), mo = _fmt2(d.getMonth()+1), da = _fmt2(d.getDate());
+    const hh = _fmt2(d.getHours()); const mm = d.getMinutes() - (d.getMinutes()%2);
+    return `${y}-${mo}-${da} ${hh}:${_fmt2(mm)}`;
     }
 
     function rowsToHTML(rows) {
-      if (!rows || rows.length === 0) return '<p class="small">No targets above your thresholds right now.</p>';
-      const head = `
+    if (!rows || rows.length === 0) return '<p class="small">No targets above your thresholds right now.</p>';
+    const head = `
         <table id="tbl-now">
-          <thead>
+        <thead>
             <tr>
-              <th>Name</th><th>Type</th><th>Mag</th>
-              <th>Alt (°)</th><th>Az (°)</th><th>Dir</th><th>Notes</th>
+            <th>Name</th><th>Type</th><th>Mag</th>
+            <th>Alt (°)</th><th>Az (°)</th><th>Dir</th><th>Notes</th>
             </tr>
-          </thead>
-          <tbody>`;
-      const body = rows.map(r => `
+        </thead>
+        <tbody>`;
+    const body = rows.map(r => `
         <tr>
-          <td>${r["Name"] ?? ""}</td>
-          <td>${r["Type"] ?? ""}</td>
-          <td>${r["Mag"] ?? ""}</td>
-          <td>${r["Alt (°)"] ?? ""}</td>
-          <td>${r["Az (°)"] ?? ""}</td>
-          <td>${r["Dir"] ?? ""}</td>
-          <td>${r["Notes"] ?? ""}</td>
+        <td>${r["Name"] ?? ""}</td>
+        <td>${r["Type"] ?? ""}</td>
+        <td>${r["Mag"] ?? ""}</td>
+        <td>${r["Alt (°)"] ?? ""}</td>
+        <td>${r["Az (°)"] ?? ""}</td>
+        <td>${r["Dir"] ?? ""}</td>
+        <td>${r["Notes"] ?? ""}</td>
         </tr>`).join("");
-      return '<div class="table-wrap">' + head + body + "</tbody></table></div>";
+    return '<div class="table-wrap">' + head + body + "</tbody></table></div>";
     }
 
     function renderNow(forceKey = null) {
-      const wrap = document.getElementById("now-table-wrap");
-      if (!wrap) return;
-      if (!NOW_KEYS.length) { wrap.innerHTML = '<p class="small">No current data in range.</p>'; return; }
+    const wrap = document.getElementById("now-table-wrap");
+    if (!wrap) return;
+    if (!NOW_KEYS.length) { wrap.innerHTML = '<p class="small">No current data in range.</p>'; return; }
 
-      const firstKey = NOW_KEYS[0], lastKey = NOW_KEYS[NOW_KEYS.length - 1];
-      const firstDt = _keyToDate(firstKey), lastDt = _keyToDate(lastKey);
+    const firstKey = NOW_KEYS[0], lastKey = NOW_KEYS[NOW_KEYS.length - 1];
+    const firstDt = _keyToDate(firstKey), lastDt = _keyToDate(lastKey);
 
-      let key = forceKey || _currentTwoMinuteKeyRaw();
-      const keyDt = _keyToDate(key);
+    let key = forceKey || _currentTwoMinuteKeyRaw();
+    const keyDt = _keyToDate(key);
 
-      if (keyDt < firstDt || keyDt > lastDt) {
+    if (keyDt < firstDt || keyDt > lastDt) {
         wrap.innerHTML = '<p class="small warn">The current time is outside of the observation window.</p>';
         return;
-      }
+    }
 
-      if (!NOW_INDEX.has(key)) {
+    if (!NOW_INDEX.has(key)) {
         let fallback = firstKey;
         for (const k of NOW_KEYS) { if (_keyToDate(k) <= keyDt) fallback = k; else break; }
         key = fallback;
-      }
-
-      const rows = NOW_INDEX.get(key) || [];
-      wrap.innerHTML = rowsToHTML(rows);
-      enableRowModals();
-      hideDataColumns();
     }
 
+    const settings = loadSettings(16);
+    let rows = NOW_INDEX.get(key) || [];
+
+    // Apply sector filters first
+    if (settings.enabled && settings.sectors.length) {
+        rows = rows.filter(r => passesSectors(r, settings.sectors));
+    }
+
+    // Sort by _Score desc, then Name, then slice to TopN
+    rows.sort((a, b) => (Number(b._Score||0) - Number(a._Score||0)) || String(a.Name).localeCompare(String(b.Name)));
+    rows = rows.slice(0, settings.topN);
+
+    wrap.innerHTML = rowsToHTML(rows);
+    enableRowModals();
+    hideDataColumns();
+    }
+
+    /* ==============================
+    Filters dialog UI
+    ============================== */
+    function openFilters() {
+    const b = document.getElementById('filters-backdrop');
+    if (!b) return;
+    const s = loadSettings(16);
+    document.getElementById('obs-enabled').checked = !!s.enabled;
+    const topNEl = document.getElementById('now-topn');
+    if (topNEl) topNEl.value = s.topN;
+
+    const rows = document.querySelectorAll('#sector-rows .filters-row');
+    for (let i = 0; i < rows.length; i++) {
+        const r = rows[i];
+        const sct = s.sectors[i] || {};
+        const az1 = r.querySelector('.az1'); const az2 = r.querySelector('.az2'); const ma = r.querySelector('.minAlt');
+        if (az1) az1.value = (sct.az1 ?? "");
+        if (az2) az2.value = (sct.az2 ?? "");
+        if (ma)  ma.value  = (sct.minAlt ?? "");
+    }
+
+    b.style.display = 'flex';
+    b.setAttribute('aria-hidden', 'false');
+    }
+    function closeFilters() {
+    const b = document.getElementById('filters-backdrop');
+    if (!b) return;
+    b.style.display = 'none';
+    b.setAttribute('aria-hidden', 'true');
+    }
+    function readSettingsFromForm() {
+    const enabled = !!document.getElementById('obs-enabled')?.checked;
+    const topN = _clamp(document.getElementById('now-topn')?.value, 1, 64) || 16;
+    const out = [];
+    const rows = document.querySelectorAll('#sector-rows .filters-row');
+    rows.forEach(r => {
+        const az1 = _clamp(r.querySelector('.az1')?.value, 0, 360);
+        const az2 = _clamp(r.querySelector('.az2')?.value, 0, 360);
+        const minAlt = _clamp(r.querySelector('.minAlt')?.value, 0, 90);
+        if (Number.isFinite(az1) && Number.isFinite(az2) && Number.isFinite(minAlt)) out.push({ az1, az2, minAlt });
+    });
+    return { enabled, sectors: out.slice(0, 5), topN };
+    }
+    function initFiltersUI() {
+    document.getElementById('btn-filters')?.addEventListener('click', openFilters);
+    document.querySelector('#filters-backdrop .close')?.addEventListener('click', closeFilters);
+    document.getElementById('filters-cancel')?.addEventListener('click', closeFilters);
+    document.getElementById('filters-reset')?.addEventListener('click', () => {
+        saveSettings({ enabled:false, sectors:[], topN:16 });
+        closeFilters();
+        renderNow();
+        applyHourFilters();
+    });
+    document.getElementById('filters-save')?.addEventListener('click', () => {
+        const s = readSettingsFromForm();
+        saveSettings(s);
+        closeFilters();
+        renderNow();
+        applyHourFilters();
+    });
+    document.getElementById('filters-backdrop')?.addEventListener('click', (e) => {
+        if (e.target.id === 'filters-backdrop') closeFilters();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFilters(); });
+    }
+
+    /* ==============================
+    Boot
+    ============================== */
     document.addEventListener('DOMContentLoaded', () => {
-      const input = document.getElementById('q');
-      if (input) input.addEventListener('input', () => filterTables(input.value));
-      initTabsBehavior(); initHourLinks(); hideDataColumns(); enableRowModals();
+    const input = document.getElementById('q');
+    if (input) input.addEventListener('input', () => filterTables(input.value));
 
-      activateMainTab('panel-now');  // land on Now
-      renderNow();
+    initTabsBehavior();
+    initHourLinks();
+    hideDataColumns();
+    enableRowModals();
+    initFiltersUI();
 
-      const btn = document.getElementById('btn-refresh-now');
-      if (btn) btn.addEventListener('click', () => renderNow());
+    activateMainTab('panel-now');  // land on Now
+    renderNow();
 
-      setInterval(renderNow, 30000);
+    const btn = document.getElementById('btn-refresh-now');
+    if (btn) btn.addEventListener('click', () => renderNow());
+
+    setInterval(renderNow, 30000);
+
+    applyHourFilters(); // safe no-op unless Hour panel is visible
     });
     </script>
     """
@@ -883,7 +1159,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
   <h1>Star Party Planner</h1>
 
   <div class="meta-bar">
-        <span class="pill">Date: {date_str}</span>
+    <span class="pill">Date: {date_str}</span>
     <span class="pill">Observation window: {start}–{end} {tzname}</span>
   </div>
 
@@ -894,6 +1170,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         <div class="tab active" data-tab="panel-now">Now</div>
         <div class="tab" data-tab="panel-master">Master List</div>
       </div>
+      <button id="btn-filters" class="tab" type="button" style="margin-left:.25rem;">Filters</button>
     </div>
     <div class="right">
       <span class="hours">{hour_links_html}</span>
@@ -902,6 +1179,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
   {content}
 
+  <!-- Object preview modal -->
   <div id="modal-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
     <div class="modal" role="document">
       <button class="close" aria-label="Close">Close ✕</button>
@@ -911,11 +1189,73 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     </div>
   </div>
 
+  <!-- Filters dialog (compact layout) -->
+  <div id="filters-backdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal filters-dialog" role="document" style="max-width:720px;">
+      <button class="close" aria-label="Close">Close ✕</button>
+      <h3>Directional + Altitude Filters</h3>
+
+      <!-- Master enable -->
+      <label style="display:flex;align-items:center;gap:.5rem;margin:.5rem 0 .75rem;">
+        <input type="checkbox" id="obs-enabled">
+        <span>Enable filters</span>
+      </label>
+
+      <!-- Top N for Now -->
+      <div class="topn-row">
+        <label for="now-topn">Top N for Now:</label>
+        <input id="now-topn" type="number" min="1" max="64" step="1" value="16">
+        <span class="small">Applies after sector filtering.</span>
+      </div>
+
+      <!-- Sectors -->
+      <h4 style="margin:.5rem 0 .35rem; color:#f66;">Sectors (up to 5)</h4>
+      <div class="small" style="margin-bottom:.35rem;">Each row: Az start°, Az end°, Min altitude°</div>
+
+      <div id="sector-rows">
+        <div class="filters-row">
+          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
+          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
+          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
+        </div>
+        <div class="filters-row">
+          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
+          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
+          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
+          </div>
+        <div class="filters-row">
+          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
+          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
+          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
+        </div>
+        <div class="filters-row">
+          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
+          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
+          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
+        </div>
+        <div class="filters-row">
+          <input class="az1" type="number" placeholder="Az start (0–360)" min="0" max="360">
+          <input class="az2" type="number" placeholder="Az end (0–360)" min="0" max="360">
+          <input class="minAlt" type="number" placeholder="Min alt (0–90)" min="0" max="90">
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="buttons" style="margin-top:.75rem;">
+        <button type="button" id="filters-reset">Reset</button>
+        <button type="button" id="filters-cancel">Cancel</button>
+        <button type="button" id="filters-save">Save</button>
+      </div>
+    </div>
+  </div>
+
   <p class="small">Location: {site_lat:.6f}, {site_lon:.6f}. Generated: {now_str}</p>
 </div>
 {js}
 </html>
 """
+    Path(output_path).write_text(html, encoding="utf-8")
+
     Path(output_path).write_text(html, encoding="utf-8")
 
 # ---------------------------- Planning & tables ----------------------------
@@ -1203,13 +1543,11 @@ def plan_for_site(args):
 
         if rows:
             rows.sort(key=lambda r: (-r["_Priority"], r["Name"]))
-            rows = rows[:top_n_now]
-            # Strip helper key for the browser
+            # Preserve score for client-side sorting/filtering; do NOT slice here
             for r in rows:
-                r.pop("_Priority", None)
+                r["_Score"] = float(r.pop("_Priority", 0.0))
 
             now_data.append({
-                # ISO without seconds; match the format we’ll use in the client
                 "time": dt_local.strftime("%Y-%m-%d %H:%M"),
                 "rows": rows
             })
