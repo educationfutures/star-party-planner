@@ -1115,7 +1115,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 
     # ---------------- HTML skeleton ----------------
     now_str = datetime.now(tz.gettz(tzname)).strftime("%Y-%m-%d %H:%M %Z")
-    hour_links_html = " &middot; ".join(hour_links) if hour_links else "No hourly targets"
+    hour_links_html = "".join(hour_links) if hour_links else "No hourly targets"
 
     content = f"""
       <section id="panel-now" class="tab-panel">
