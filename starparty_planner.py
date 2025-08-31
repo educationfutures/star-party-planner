@@ -1184,7 +1184,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
             <circle cx="11" cy="18" r="2" fill="currentColor"/>
         </svg>
       </button>
-      <input id="q" type="search" placeholder="Search targets… (name, type, notes)" aria-label="Search">
+      <input id="q" type="search" placeholder="Search targets…" aria-label="Search">
       <div class="tabs">
         <div class="tab active" data-tab="panel-now">Now</div>
         <div class="tab" data-tab="panel-master">Master List</div>

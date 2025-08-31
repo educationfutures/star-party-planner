@@ -186,11 +186,11 @@ python starparty_planner.py \
 4. Open `starparty.html` on your phone/tablet at the telescope.
 5. Enjoy your observing session!
 
-TIP: **Automation:** run this via a **daily cron job** and publish the HTML so the plan is always fresh before sunset.
-
 ---
 
-## Deploy to a Web Server (Daily at 07:00)
+## Deploy to a Web Server (Example: Daily at 07:00)
+
+**Automation:** run this via a **daily cron job** and publish the HTML so the plan is always fresh before sunset.
 
 Assume you want the output at `/var/www/star-party/index.html` on a Linux host (Nginx/Apache).
 
