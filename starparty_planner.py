@@ -924,7 +924,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         if (before) panel.insertBefore(info, before);
         else panel.appendChild(info);
     }
-    info.textContent = s.enabled && s.sectors.length ? `Showing ${shown} of ${total}` : `Showing ${total} of ${total}`;
+    // info.textContent = s.enabled && s.sectors.length ? `Showing ${shown} of ${total}` : `Showing ${total} of ${total}`;
     }
 
     /* ==============================
@@ -986,7 +986,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     const keyDt = _keyToDate(key);
 
     if (keyDt < firstDt || keyDt > lastDt) {
-        wrap.innerHTML = '<p class="small warn">The current time is outside of the observation window.</p>';
+        wrap.innerHTML = '<p class="small warn">The current time on this device is outside of the observation window.</p>';
         return;
     }
 
@@ -1096,10 +1096,25 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     activateMainTab('panel-now');  // land on Now
     renderNow();
 
-    const btn = document.getElementById('btn-refresh-now');
-    if (btn) btn.addEventListener('click', () => renderNow());
+    function renderNowAndReschedule() {
+    renderNow();
+    scheduleNextRender();
+    }
 
-    setInterval(renderNow, 30000);
+    function scheduleNextRender() {
+    const now = new Date();
+    const secIntoTwoMin = (now.getMinutes() % 2) * 60 + now.getSeconds();
+    const msUntilNextSlot = (120 - secIntoTwoMin) * 1000 - now.getMilliseconds();
+    clearTimeout(scheduleNextRender._t);
+    scheduleNextRender._t = setTimeout(renderNowAndReschedule, Math.max(500, msUntilNextSlot));
+    }
+
+    document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) renderNowAndReschedule();
+    });
+    window.addEventListener('focus', renderNowAndReschedule);
+
+    scheduleNextRender();
 
     applyHourFilters(); // safe no-op unless Hour panel is visible
     });
@@ -1121,7 +1136,6 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
       <section id="panel-now" class="tab-panel">
         <div class="small" style="margin:.2rem 0 .6rem;">
           Targets currently in view. Updates every two minutes.
-          <button id="btn-refresh-now" class="tab" style="margin-left:.5rem;">Refresh</button>
         </div>
         <div id="now-table-wrap" class="table-wrap"><p class="small">Loading current targets…</p></div>
       </section>
