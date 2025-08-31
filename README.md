@@ -53,13 +53,14 @@ The planner uses a local JPL ephemeris for precise positions. Recommended: de440
 mkdir -p ./skyfield_data
 curl -LO https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de440s.bsp
 mv de440s.bsp ./skyfield_data/
-# Result: ./skyfield_data/de440s.bsp
+
+*Result: ./skyfield_data/de440s.bsp*
 
 The planner does not auto‑download BSP files. You must provide one via --bsp.
 
 ⸻
 
-📚 Catalogs
+Catalogs
 
 Provide a CSV with at least these columns:
 
