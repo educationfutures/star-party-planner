@@ -220,7 +220,8 @@ def cardinal_from_az(az_deg: float) -> str:
 
 def angular_sep(ra1_deg, dec1_deg, ra2_deg, dec2_deg) -> float:
     r1, d1, r2, d2 = map(np.deg2rad, [ra1_deg, dec1_deg, ra2_deg, dec2_deg])
-    return np.rad2deg(np.arccos(np.sin(d1)*np.sin(d2) + np.cos(d1)*np.cos(d2)*np.cos(r1-r2)))
+    cosang = np.sin(d1)*np.sin(d2) + np.cos(d1)*np.cos(d2)*np.cos(r1-r2)
+    return np.rad2deg(np.arccos(np.clip(cosang, -1.0, 1.0)))
 
 def get_apparent(ts, observer, earth, target):
     return (earth + observer).at(ts).observe(target).apparent()
@@ -1256,7 +1257,57 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 """
     Path(output_path).write_text(html, encoding="utf-8")
 
-    Path(output_path).write_text(html, encoding="utf-8")
+
+# ======= Vectorized Skyfield helpers =======
+
+def altaz_star_series(ts_series, site, earth, ra_deg: float, dec_deg: float):
+    """Vectorized alt/az for a fixed RA/Dec across a time array."""
+    star = Star(ra_hours=ra_deg/15.0, dec_degrees=dec_deg)
+    app = (earth + site).at(ts_series).observe(star).apparent()
+    alt, az, _ = app.altaz()
+    return alt.degrees, az.degrees
+
+def altaz_body_series(body, ts_series, site, earth):
+    """Vectorized alt/az for a solar system body across a time array."""
+    app = (earth + site).at(ts_series).observe(body).apparent()
+    alt, az, _ = app.altaz()
+    return alt.degrees, az.degrees
+
+def moon_series(eph, ts_series, site, earth):
+    """Vectorized Moon alt/az + RA/Dec + phase across a time array."""
+    app = (earth + site).at(ts_series).observe(eph['moon']).apparent()
+    alt, az, _ = app.altaz()
+    ra, dec, _ = app.radec()
+    phase = almanac.moon_phase(eph, ts_series).degrees
+    # Return degrees for everything except RA hours (convert to deg):
+    return alt.degrees, az.degrees, ra.hours*15.0, dec.degrees, phase
+
+def angular_sep_vec(ra1_deg, dec1_deg, ra2_deg_arr, dec2_deg_arr):
+    r1 = np.deg2rad(ra1_deg);  d1 = np.deg2rad(dec1_deg)
+    r2 = np.deg2rad(ra2_deg_arr); d2 = np.deg2rad(dec2_deg_arr)
+    cosang = np.sin(d1)*np.sin(d2) + np.cos(d1)*np.cos(d2)*np.cos(r1-r2)
+    return np.rad2deg(np.arccos(np.clip(cosang, -1.0, 1.0)))
+
+def pick_planet_target(eph, name: str):
+    """Robustly resolve eph target once (not per time-step)."""
+    candidates_by_name = {
+        "Mercury": ["mercury", "mercury barycenter"],
+        "Venus":   ["venus", "venus barycenter"],
+        "Mars":    ["mars barycenter", "mars"],
+        "Jupiter": ["jupiter barycenter", "jupiter"],
+        "Saturn":  ["saturn barycenter", "saturn"],
+        "Uranus":  ["uranus barycenter", "uranus"],
+        "Neptune": ["neptune barycenter", "neptune"],
+    }
+    target = None
+    for key in candidates_by_name[name]:
+        try:
+            target = eph[key]; break
+        except KeyError:
+            continue
+    if target is None:
+        raise KeyError(f"No suitable target in BSP for {name}")
+    return target
 
 # ---------------------------- Planning & tables ----------------------------
 
@@ -1273,6 +1324,7 @@ def plan_for_site(args):
     if end_dt <= start_dt:
         end_dt += timedelta(days=1)
 
+    # Build 2-minute grid across the observing window
     minute_times_local = []
     t_cursor = start_dt
     while t_cursor <= end_dt:
@@ -1280,16 +1332,18 @@ def plan_for_site(args):
         t_cursor += timedelta(minutes=2)
     ts_minute = ts.from_datetimes(minute_times_local)
 
-    # Moon RA/Dec over grid for separation tests
-    moon_ras, moon_decs = [], []
-    for t in ts_minute:
-        ra_m, dec_m = moon_ra_dec(eph, t, site, earth)
-        moon_ras.append(ra_m); moon_decs.append(dec_m)
-    moon_ras = np.array(moon_ras); moon_decs = np.array(moon_decs)
+    # ---- Vectorized precomputes ----
+    t_hours = ts.from_datetimes(hours)  # for hourly tables (few points)
 
-    # Night-wide illumination fraction (mid-window)
+    # Moon series at minutes and at hour tops (one shot, reused everywhere)
+    moon_alt_min, moon_az_min, moon_ra_min, moon_dec_min, moon_phase_min = moon_series(eph, ts_minute, site, earth)
+    moon_alt_hr,  _,              _,               _,              moon_phase_hr = moon_series(eph, t_hours,  site, earth)
+    # We still need Moon az at hour marks for the Hourly table rows:
+    _, moon_az_hr = altaz_body_series(eph['moon'], t_hours, site, earth)
+
+    # Night-wide illumination fraction (unchanged policy)
     mid_idx = len(ts_minute) // 2
-    phase_mid_deg = almanac.moon_phase(eph, ts_minute[mid_idx]).degrees
+    phase_mid_deg = moon_phase_min[mid_idx]
     illum_frac_night = lunar_illum_fraction_from_phase_deg(phase_mid_deg)
 
     planet_names = ["Mercury","Venus","Mars","Jupiter","Saturn","Uranus","Neptune"]
@@ -1297,39 +1351,38 @@ def plan_for_site(args):
 
     dso_list = read_catalog(args.catalog)
 
+    # ----- Vectorized DSO evaluator -----
     def eval_target(name, ra_deg, dec_deg, typ, mag=None, notes=""):
-        alts, azs = [], []
-        for t in ts_minute:
-            alt, az = to_altaz(t, site, earth, ra_deg, dec_deg)
-            alts.append(alt); azs.append(az)
-        alts = np.array(alts); azs = np.array(azs)
+        # Vectorized alt/az across all minutes
+        alts_min, azs_min = altaz_star_series(ts_minute, site, earth, ra_deg, dec_deg)
 
-        seps = angular_sep(ra_deg, dec_deg, moon_ras, moon_decs)
-        visible_mask = (alts >= args.min_alt) & (seps >= args.moon_sep_min)
+        # Vectorized Moon separation across all minutes
+        seps_min = angular_sep_vec(ra_deg, dec_deg, moon_ra_min, moon_dec_min)
+
+        # Visibility mask (same logic, just vectorized)
+        visible_mask = (alts_min >= args.min_alt) & (seps_min >= args.moon_sep_min)
         if not np.any(visible_mask):
             return
 
-        idx_best = best_time_in_window(ts_minute, alts)
+        # Best minute within window
+        idx_best = int(np.nanargmax(alts_min))
         best_local = minute_times_local[idx_best]
-        best_alt = float(alts[idx_best]); best_az = float(azs[idx_best])
-        best_dir = cardinal_from_az(best_az)
+        best_alt   = float(alts_min[idx_best])
+        best_az    = float(azs_min[idx_best])
+        best_dir   = cardinal_from_az(best_az)
 
-        # Moon altitude at the object's best time
-        alt_moon_best, _, _ = moon_altaz_phase(eph, ts.from_datetime(best_local), site, earth)
+        # Moon alt at best time (grab from precomp)
+        alt_moon_best = float(moon_alt_min[idx_best])
 
+        # Hourly rows (hours are few — keep a tiny loop for clarity)
+        alt_h, az_h = altaz_star_series(t_hours, site, earth, ra_deg, dec_deg)
         hourly_rows = []
-        for h in hours:
-            t_h = ts.from_datetime(h)
-            alt_h, az_h = to_altaz(t_h, site, earth, ra_deg, dec_deg)
-            if alt_h >= args.min_alt:
-                dir_h = cardinal_from_az(az_h)
-                prio = interest_score(name, typ, best_alt, alt_now=alt_h)
-                # Moon altitude at this hour
-                alt_moon_h, _, _ = moon_altaz_phase(eph, t_h, site, earth)
+        for h, altv, azv, alt_moon in zip(hours, alt_h, az_h, moon_alt_hr):
+            if altv >= args.min_alt:
+                prio = interest_score(name, typ, best_alt, alt_now=float(altv))
                 prio -= moonlight_penalty_points(typ, illum_frac_night, args.moonlight_penalty_max,
-                                                 moon_alt_deg=alt_moon_h)
-                hourly_rows.append((h, float(alt_h), float(az_h), dir_h, max(0.0, prio)))
-
+                                                 moon_alt_deg=float(alt_moon))
+                hourly_rows.append((h, float(altv), float(azv), cardinal_from_az(float(azv)), max(0.0, prio)))
         if not hourly_rows:
             return
 
@@ -1352,28 +1405,28 @@ def plan_for_site(args):
             continue
         eval_target(d.name, d.ra_deg, d.dec_deg, d.type, d.mag, d.notes)
 
-    # Planets
+    # Planets (vectorized across time for each planet)
     for name in planet_names:
-        alts, azs = [], []
-        for t in ts_minute:
-            alt, az, _ = planet_altaz(eph, t, site, earth, name)
-            alts.append(alt); azs.append(az)
-        alts = np.array(alts); azs = np.array(azs)
-        if not np.any(alts >= args.min_alt_planets):
-            continue
-        idx_best = best_time_in_window(ts_minute, alts)
-        best_local = minute_times_local[idx_best]
-        best_alt = float(alts[idx_best]); best_az = float(azs[idx_best])
-        best_dir = cardinal_from_az(best_az)
+        body = pick_planet_target(eph, name)
 
+        # Minute series
+        alt_min, az_min = altaz_body_series(body, ts_minute, site, earth)
+        if not np.any(alt_min >= args.min_alt_planets):
+            continue
+
+        idx_best = int(np.nanargmax(alt_min))
+        best_local = minute_times_local[idx_best]
+        best_alt   = float(alt_min[idx_best])
+        best_az    = float(az_min[idx_best])
+        best_dir   = cardinal_from_az(best_az)
+
+        # Hour series
+        alt_h, az_h = altaz_body_series(body, t_hours, site, earth)
         hourly_rows = []
-        for h in hours:
-            t_h = ts.from_datetime(h)
-            alt_h, az_h, _ = planet_altaz(eph, t_h, site, earth, name)
-            if alt_h >= args.min_alt_planets:
-                dir_h = cardinal_from_az(az_h)
-                prio = interest_score(name, "Planet", best_alt, alt_now=alt_h)
-                hourly_rows.append((h, float(alt_h), float(az_h), dir_h, prio))
+        for h, altv, azv in zip(hours, alt_h, az_h):
+            if altv >= args.min_alt_planets:
+                prio = interest_score(name, "Planet", best_alt, alt_now=float(altv))
+                hourly_rows.append((h, float(altv), float(azv), cardinal_from_az(float(azv)), prio))
 
         if hourly_rows:
             targets.append({
@@ -1385,30 +1438,25 @@ def plan_for_site(args):
                 "hourly": hourly_rows
             })
 
-    # Moon
-    alts, azs, phases = [], [], []
-    for t in ts_minute:
-        alt, az, phase = moon_altaz_phase(eph, t, site, earth)
-        alts.append(alt); azs.append(az); phases.append(phase)
-    alts = np.array(alts); azs = np.array(azs)
-    if np.any(alts >= args.min_alt_moon):
-        idx_best = best_time_in_window(ts_minute, alts)
+    # Moon (vectorized)
+    if np.any(moon_alt_min >= args.min_alt_moon):
+        idx_best = int(np.nanargmax(moon_alt_min))
         best_local = minute_times_local[idx_best]
-        best_alt = float(alts[idx_best])
+        best_alt   = float(moon_alt_min[idx_best])
+        best_az    = float(moon_az_min[idx_best])
+
         hourly_rows = []
-        for h in hours:
-            t_h = ts.from_datetime(h)
-            alt_h, az_h, phase_h = moon_altaz_phase(eph, t_h, site, earth)
-            if alt_h >= args.min_alt_moon:
-                dir_h = cardinal_from_az(az_h)
-                prio = interest_score("Moon", "Moon", best_alt, alt_now=alt_h)
-                hourly_rows.append((h, float(alt_h), float(az_h), dir_h, prio, float(phase_h)))
+        for h, altv, azv, phasev in zip(hours, moon_alt_hr, moon_az_hr, moon_phase_hr):
+            if altv >= args.min_alt_moon:
+                prio = interest_score("Moon", "Moon", best_alt, alt_now=float(altv))
+                hourly_rows.append((h, float(altv), float(azv), cardinal_from_az(float(azv)), prio, float(phasev)))
+
         if hourly_rows:
             targets.append({
                 "name": "Moon", "type": "Moon", "mag": None, "notes": "",
                 "best_time": best_local, "best_alt": round(best_alt,1),
-                "best_dir": cardinal_from_az(float(azs[idx_best])),
-                "best_az": round(float(azs[idx_best]),1),
+                "best_dir": cardinal_from_az(best_az),
+                "best_az": round(best_az,1),
                 "ra_deg": np.nan, "dec_deg": np.nan,
                 "priority": interest_score("Moon", "Moon", best_alt),
                 "hourly": hourly_rows
@@ -1469,11 +1517,16 @@ def plan_for_site(args):
     # -------- NOW view (2-minute granularity, client-side) --------
     # Build an array of dicts: one entry per 2-minute slot with top N objects
     # Uses same scoring rules (incl. moonlight penalty) as hourly
-    now_data = []
-    top_n_now = args.top_n_per_hour  # reuse the same cap
 
-    # Pre-create light-weight target descriptors we can iterate quickly
-    # We will re-compute alt/az at each 2-min tick (fast enough for typical lists)
+    # Precompute per-minute alt/az for planets (avoid per-tick Skyfield calls)
+    planet_minute_altaz: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
+    for name in planet_names:
+        body = pick_planet_target(eph, name)
+        alt_m, az_m = altaz_body_series(body, ts_minute, site, earth)
+        planet_minute_altaz[name] = (alt_m, az_m)
+
+    # Lightweight target descriptors for NOW view
+    now_data: List[Dict] = []
     simple_targets = []
     for t in targets:
         simple_targets.append({
@@ -1488,40 +1541,46 @@ def plan_for_site(args):
             ),
         })
 
-    # We will reuse illum_frac_night (night-wide), but scale by the *instant* Moon altitude
-    def _altaz_for_target_at(ts_obj, targ):
+    # Optional tiny cache for DSOs so we compute their per-minute tracks once on first use
+    dso_minute_altaz: Dict[str, Tuple[np.ndarray, np.ndarray]] = {}
+
+    def _altaz_for_target_at_index(min_idx: int, targ: Dict) -> Tuple[float, float]:
+        """Lookup per-minute alt/az for a target by index (fast path for NOW view)."""
         typ = (targ["type"] or "").lower()
         if typ == "planet":
-            alt, az, _ = planet_altaz(eph, ts_obj, site, earth, targ["name"])
+            alt_arr, az_arr = planet_minute_altaz[targ["name"]]
+            return float(alt_arr[min_idx]), float(az_arr[min_idx])
         elif typ == "moon":
-            alt, az, _ = moon_altaz_phase(eph, ts_obj, site, earth)
+            return float(moon_alt_min[min_idx]), float(moon_az_min[min_idx])
         else:
-            alt, az = to_altaz(ts_obj, site, earth, targ["ra_deg"], targ["dec_deg"])
-        return float(alt), float(az)
+            # Cache DSOs on first use to avoid recomputing full series per minute
+            key = targ["name"]
+            if key not in dso_minute_altaz:
+                alt_arr, az_arr = altaz_star_series(ts_minute, site, earth, targ["ra_deg"], targ["dec_deg"])
+                dso_minute_altaz[key] = (alt_arr, az_arr)
+            alt_arr, az_arr = dso_minute_altaz[key]
+            return float(alt_arr[min_idx]), float(az_arr[min_idx])
 
-    for dt_local in minute_times_local:
-        ts_tick = ts.from_datetime(dt_local)
+    # Iterate by minute index (no per-tick Time construction)
+    for i, dt_local in enumerate(minute_times_local):
+        rows = []
 
         # Moon altitude for penalty scaling at this instant
-        moon_alt_tick, _, moon_phase_tick = moon_altaz_phase(eph, ts_tick, site, earth)
-        # We keep illumination fraction fixed for the night; if you prefer per-tick,
-        # replace illum_frac_night with lunar_illum_fraction_from_phase_deg(moon_phase_tick).
-        rows = []
+        moon_alt_tick = float(moon_alt_min[i])
+
         for targ in simple_targets:
-            alt, az = _altaz_for_target_at(ts_tick, targ)
+            alt, az = _altaz_for_target_at_index(i, targ)
             if alt < targ["min_alt"]:
                 continue
 
-            # Dir, prio with penalties as needed
             dir_txt = cardinal_from_az(az)
 
-            # Base interest uses 'best_alt' vs 'alt_now'; at "Now" we only have current alt
-            # We can approximate by using alt as both best_alt and alt_now (works well in practice)
+            # Interest at "now": treat current alt as both best_alt and alt_now
             base_prio = interest_score(targ["name"], targ["type"], best_alt=alt, alt_now=alt)
 
-            # Moonlight penalty for diffuse DSOs only (planets/Moon unaffected)
+            # Moonlight penalty for diffuse DSOs only
             prio = base_prio
-            if targ["type"].lower() not in {"planet", "moon"}:
+            if (targ["type"] or "").lower() not in {"planet", "moon"}:
                 prio -= moonlight_penalty_points(
                     targ["type"], illum_frac_night, args.moonlight_penalty_max,
                     moon_alt_deg=moon_alt_tick
@@ -1543,7 +1602,6 @@ def plan_for_site(args):
 
         if rows:
             rows.sort(key=lambda r: (-r["_Priority"], r["Name"]))
-            # Preserve score for client-side sorting/filtering; do NOT slice here
             for r in rows:
                 r["_Score"] = float(r.pop("_Priority", 0.0))
 
