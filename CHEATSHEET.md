@@ -11,11 +11,14 @@ python starparty_planner.py \
   --lat 44.810265 --lon -93.939783 --elev 296 \
   --tz America/Chicago --catalog extended_targets.csv \
   --bsp ./skyfield_data/de440s.bsp \
-  --html starparty.html
+  --html starparty.html \
+  --now_padding_min 10
 ```
 
 - If `--date/--start/--end` omitted: date=today, start≈sunset (rounded), end≈sunrise (hour).
+- Now view uses client-side refresh aligned to 2-minute (or configured) slots.
 - HTML opens with red-on-black UI; tables are searchable; rows open modal previews.
+- Notes and magnitude fields are dynamically linked in modals for quick reference.
 
 ---
 
@@ -25,13 +28,14 @@ python starparty_planner.py \
 python starparty_planner.py \
   --lat 44.810265 --lon -93.939783 --elev 296 \
   --date 2025-08-30 --start 20:00 --end 01:00 --tz America/Chicago \
-  --catalog messier_caldwell.csv --min_alt 20 --moon_sep_min 20 --max_mag 9 \
+  --catalog messier_caldwell.csv --type_weights type_weights.csv --min_alt 20 --moon_sep_min 20 --max_mag 9 \
   --top_n_per_hour 16 --out_prefix starparty \
   --html starparty.html \
   --bsp ./skyfield_data/de440s.bsp \
   --html_ui tabs \
   --min_alt_planets 5 --min_alt_moon 0 \
-  --preview_cache_dir image_cache --preview_fov_deg 0.6 --preview_px 800
+  --preview_cache_dir image_cache --preview_fov_deg 0.6 --preview_px 800 \
+  --now_padding_min 10
 ```
 
 ---
@@ -46,9 +50,11 @@ python starparty_planner.py \
 - `--start HH:MM` · Local start (default≈sunset rounded)
 - `--end HH:MM` · Local end (default=hour of sunrise)
 - `--tz IANA` · Timezone (e.g., `America/Chicago`)
+- `--now_padding_min INT` · Minutes padding around current time for Now view (default 10)
 
 ### Catalog & Filters
 - `--catalog FILE.csv` · DSO catalog with `name,ra_deg,dec_deg,type,mag,notes`
+- `--type_weights FILE.csv` · CSV of type weights with columns `type,weight` to prioritize object types
 - `--min_alt DEG` · Min altitude for DSOs (default 20)
 - `--max_mag MAG` · Max magnitude (fainter=larger) (default 9)
 - `--moon_sep_min DEG` · Min separation from Moon for DSOs (default 15)
@@ -94,7 +100,7 @@ python starparty_planner.py \
 0 9 * * * cd /path/to/star-party-planner && \
   /usr/bin/python3 starparty_planner.py \
   --lat 44.810265 --lon -93.939783 --elev 296 \
-  --tz America/Chicago --catalog messier_caldwell.csv \
+  --tz America/Chicago --catalog messier_caldwell.csv --type_weights type_weights.csv --now_padding_min 10 \
   --bsp ./skyfield_data/de440s.bsp \
   --html /var/www/html/starparty.html \
   --out_prefix /var/www/html/starparty \

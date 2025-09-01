@@ -12,9 +12,10 @@ A daily demo (Minnesota Astronomical Society — Eagle Lake Observatory) lives a
 - Planets + Moon + **custom deep‑sky catalog** (CSV; Messier + Caldwell included)
 - Smart filtering by **minimum altitude**, **maximum magnitude**, and **Moon separation**
 - Assigns an **interest score** so crowd‑pleasers bubble to the top
+- Supports **type_weights.csv** for customizable interest scoring per object type
 - Finds each object’s **best observing time** (peak altitude in your window)
 - **Night‑vision HTML**: dark red theme, mobile‑first, lightweight JS
-- New: **Now view** that auto‑updates in sync with the clock (every ~2 minutes)
+- New: **Now view** that auto‑updates the HTML view in sync with the clock (every 4 minutes)
 - New: **Directional/altitude “obstruction” filters** (up to 5 azimuth ranges)
 - New: **Top‑N limiter** for the Now view (e.g., show top 16 targets only)
 - **Clickable rows** → modal with object details and a preview image
@@ -93,7 +94,9 @@ python starparty_planner.py \
   --bsp ./skyfield_data/de440s.bsp \
   --html_ui tabs \
   --min_alt_planets 5 --min_alt_moon 0 \
-  --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6
+  --preview_cache_dir image_cache --preview_px 800 --preview_fov_deg 0.6 \
+  --type_weights type_weights.csv \
+  --now_padding_min 30
 ```
 
 > ⚠️ First run may spend time fetching previews to the local cache.
@@ -120,6 +123,9 @@ python starparty_planner.py \
 - `--top_n_per_hour` (int, default=16) – Max targets per hour slot
 - `--moonlight_penalty_max` (float, default=18) – Max points subtracted from diffuse targets at full Moon when high in the sky
 
+### Scoring & Weights
+- `--type_weights` (path, optional) – CSV file specifying per-type interest weights to customize scoring. Overrides default scoring weights for object types.
+
 ### Outputs
 - `--out_prefix` (string, default=`starparty`) – Prefix for CSV files  
 - `--html` (string, optional) – Path to save HTML output  
@@ -138,6 +144,9 @@ python starparty_planner.py \
 - `--refresh_previews` – Force re‑download of previews this run  
 - `--clean_preview_cache` – After generation, remove cached images not referenced by this run
 
+### Now View Timing
+- `--now_padding_min` (int, default=0) – Number of minutes before sunset and after sunrise to keep the Now view active (pads the observing window).
+
 > **Note:** These options apply to the **HTML preview images** only. Catalogs and BSPs are not affected.
 
 ---
@@ -152,6 +161,8 @@ python starparty_planner.py \
 ### Now view (auto‑refreshing)
 - Updates in step with the clock (every four minutes).  
 - Renders the **top‑N** targets after filters—configurable in the Filters dialog.  
+- The Now view window can be padded before sunset and after sunrise by specifying `--now_padding_min`.
+- Scoring now incorporates customizable per-type weights from `type_weights.csv` if provided.
 - Click any row to open the modal with details + preview.
 
 ### Filters dialog
@@ -213,12 +224,15 @@ Assume you want the output at `/var/www/star-party/index.html` on a Linux host (
      --lat 44.810265 --lon -93.939783 --elev 296 \
      --tz America/Chicago \
      --catalog messier_caldwell.csv --min_alt 20 --moon_sep_min 20 --max_mag 9 \
+     --type_weights type_weights.csv \
      --top_n_per_hour 16 --out_prefix starparty \
      --html /var/www/star-party/index.html \
      --bsp ./skyfield_data/de440s.bsp \
      --html_ui tabs \
      --min_alt_planets 5 --min_alt_moon 0 \
-     --preview_cache_dir /var/www/star-party/images 
+     --preview_cache_dir /var/www/star-party/images \
+     --preview_px 800 \
+     --now_padding_min 30
    ```
 
    Make it executable:

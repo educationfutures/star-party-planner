@@ -100,6 +100,9 @@ def parse_args():
                    help="Minutes between 'Now' samples (default=4)")
     p.add_argument("--now_padding_min", type=int, default=30,
                    help="Minutes before the observing start to include in the 'Now' view (default=20)")    
+    # Optional CSV mapping object type to weight and moonlight behavior
+    p.add_argument("--type_weights", type=str, default="",
+                   help="CSV of type,weight,diffuse,partial_diffuse to override built-in type weights and moonlight behavior")
 
     p.add_argument("--out_prefix", type=str, default="starparty", help="Output prefix (csv)")
     p.add_argument("--html", type=str, default="", help="Optional HTML output filepath")
@@ -295,10 +298,22 @@ TYPE_BONUS = {
 }
 CROWD_BONUS = {"Saturn": 30, "Jupiter": 25, "Moon": 20, "Mars": 12, "Venus": 10, "Cr 399": 15, "Albireo": 15}
 
+# Optional overrides loaded from CSV at runtime
+TYPE_WEIGHT_OVERRIDE: dict | None = None
+DIFFUSE_TYPES_OVERRIDE: set[str] | None = None
+PARTIALLY_DIFFUSE_TYPES_OVERRIDE: set[str] | None = None
+
 def interest_score(name: str, typ: str, best_alt: float, alt_now: Optional[float] = None) -> float:
+    # Name-based base first (planets, special crowd-pleasers)
     base = INTEREST_BASE.get(name, 0)
     if base == 0:
-        base = TYPE_BONUS.get(typ, 25)
+        # Prefer CSV override if provided; fallback to built-in TYPE_BONUS; then minimal default 25
+        weight = None
+        if isinstance(TYPE_WEIGHT_OVERRIDE, dict):
+            weight = TYPE_WEIGHT_OVERRIDE.get(typ)
+        if weight is None:
+            weight = TYPE_BONUS.get(typ, 25)
+        base = weight
     base += CROWD_BONUS.get(name, 0)
     alt_term = 0.10 * best_alt + 0.15 * (alt_now if alt_now is not None else best_alt)
     return min(200.0, base + alt_term)
@@ -338,11 +353,50 @@ def moonlight_penalty_points(obj_type: str, illum_frac: float, max_penalty: floa
     Illumination sets the ceiling; altitude scales it by visibility.
     """
     t = (obj_type or "").strip()
-    if t in DIFFUSE_TYPES:
+    diffuse_set = DIFFUSE_TYPES_OVERRIDE if DIFFUSE_TYPES_OVERRIDE is not None else DIFFUSE_TYPES
+    partial_set = PARTIALLY_DIFFUSE_TYPES_OVERRIDE if PARTIALLY_DIFFUSE_TYPES_OVERRIDE is not None else PARTIALLY_DIFFUSE_TYPES
+    if t in diffuse_set:
         return illum_frac * max_penalty * moon_alt_scale(moon_alt_deg)
-    if t in PARTIALLY_DIFFUSE_TYPES:
+    if t in partial_set:
         return 0.5 * illum_frac * max_penalty * moon_alt_scale(moon_alt_deg)
     return 0.0
+def _parse_bool(x: str) -> bool:
+    return str(x).strip().lower() in {"1","true","t","yes","y"}
+
+def read_type_weights(path: str):
+    """
+    Read a CSV with columns: type,weight,diffuse,partial_diffuse
+    Returns (weights_map, diffuse_set, partial_diffuse_set).
+    On error or missing file, returns (None, None, None).
+    """
+    try:
+        p = Path(path)
+        if not p.exists():
+            print(f"[type_weights] File not found: {p}")
+            return None, None, None
+        df = pd.read_csv(p)
+        if "type" not in df.columns or "weight" not in df.columns:
+            print(f"[type_weights] Missing required columns in {p}. Need: type, weight, [diffuse], [partial_diffuse]")
+            return None, None, None
+        weights = {}
+        diffuse, partial = set(), set()
+        for _, r in df.iterrows():
+            t = str(r["type"]).strip()
+            if not t:
+                continue
+            try:
+                w = float(r["weight"])
+            except Exception:
+                continue
+            weights[t] = w
+            if "diffuse" in df.columns and _parse_bool(r.get("diffuse", False)):
+                diffuse.add(t)
+            if "partial_diffuse" in df.columns and _parse_bool(r.get("partial_diffuse", False)):
+                partial.add(t)
+        return weights or None, (diffuse or None), (partial or None)
+    except Exception as e:
+        print(f"[type_weights] Error reading {path}: {e}")
+        return None, None, None
 def _round3(v):
     return "" if pd.isna(v) else round(float(v), 3)
 
@@ -1400,6 +1454,16 @@ def pick_planet_target(eph, name: str):
 def plan_for_site(args):
     load, ts, eph = load_ephemeris(args.bsp)
     args = fill_time_defaults(args, ts, eph)
+
+    # Optionally load per-type weights & moonlight flags from CSV
+    if getattr(args, "type_weights", ""):
+        tw_map, diff_set, part_set = read_type_weights(args.type_weights)
+        if tw_map or diff_set or part_set:
+            global TYPE_WEIGHT_OVERRIDE, DIFFUSE_TYPES_OVERRIDE, PARTIALLY_DIFFUSE_TYPES_OVERRIDE
+            TYPE_WEIGHT_OVERRIDE = tw_map
+            DIFFUSE_TYPES_OVERRIDE = diff_set
+            PARTIALLY_DIFFUSE_TYPES_OVERRIDE = part_set
+            print(f"[type_weights] Loaded: weights={bool(tw_map)} diffuse={bool(diff_set)} partial={bool(part_set)}")
 
     earth = eph['earth']
     site = build_observer(load, ts, args.lat, args.lon, args.elev)

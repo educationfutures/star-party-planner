@@ -1,0 +1,24 @@
+type,weight,diffuse,partial_diffuse
+Globular cluster,45,FALSE,FALSE
+Open cluster,33,FALSE,FALSE
+Planetary nebula,40,FALSE,TRUE
+Galaxy cluster,32,TRUE,FALSE
+Emission nebula,40,TRUE,FALSE
+Reflection Nebula,35,TRUE,FALSE
+Dark nebula,30,TRUE,FALSE
+Nebula with cluster,46,TRUE,FALSE
+H II region nebula with cluster,41,TRUE,FALSE
+Spiral galaxy,35,TRUE,FALSE
+Peculiar galaxy,30,TRUE,FALSE
+Elliptical galaxy,30,TRUE,FALSE
+Starburst galaxy,30,TRUE,FALSE
+Galaxy,30,TRUE,FALSE
+Lenticular galaxy,32,TRUE,FALSE
+Supernova remnant,44,TRUE,FALSE
+Milky Way star cloud,38,TRUE,FALSE
+Quasar,25,FALSE,FALSE
+Asterism,47,FALSE,FALSE
+Optical double,50,FALSE,FALSE
+Double star,48,FALSE,FALSE
+Multiple star,47,FALSE,FALSE
+Barred spiral galaxy,35,TRUE,FALSE
