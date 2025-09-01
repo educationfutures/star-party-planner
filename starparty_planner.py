@@ -98,7 +98,7 @@ def parse_args():
     # Sampling cadence for the "Now" view
     p.add_argument("--now_step_min", type=int, default=4,
                    help="Minutes between 'Now' samples (default=4)")
-    p.add_argument("--now_padding_min", type=int, default=20,
+    p.add_argument("--now_padding_min", type=int, default=30,
                    help="Minutes before the observing start to include in the 'Now' view (default=20)")    
 
     p.add_argument("--out_prefix", type=str, default="starparty", help="Output prefix (csv)")
@@ -504,7 +504,28 @@ def cleanup_preview_cache(cache_dir: Path, preview_map: Dict[str, Dict[str, str]
             try: p.unlink()
             except Exception: pass
 
-# ---------------------------- HTML rendering ----------------------------
+
+# ---------------------------- Static Info Map Helper ----------------------------
+def build_static_info_map(master_df: pd.DataFrame) -> Dict[str, Dict[str, str]]:
+    """One-time map for modal fallbacks: Name -> {type, mag, ra, dec, notes}."""
+    info: Dict[str, Dict[str, str]] = {}
+    if master_df is None or master_df.empty:
+        return info
+    for _, r in master_df.iterrows():
+        name = str(r.get("Name", "")).strip()
+        if not name or name in info:
+            continue
+        mag = r.get("Mag", "")
+        ra  = r.get("RA (deg)", "")
+        dec = r.get("Dec (deg)", "")
+        info[name] = {
+            "type":  str(r.get("Type", "")).strip(),
+            "mag":   "" if (pd.isna(mag) or mag == "") else float(mag),
+            "ra":    "" if (pd.isna(ra)  or ra  == "") else round(float(ra),  3),
+            "dec":   "" if (pd.isna(dec) or dec == "") else round(float(dec), 3),
+            "notes": str(r.get("Notes", "")).strip(),
+        }
+    return info
 
 def df_to_html_table(df: pd.DataFrame, id_attr: str = "") -> str:
     if df.empty:
@@ -520,7 +541,8 @@ def _hour_anchor_label(hour_str: str) -> str:
 
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
-               ui_mode: str, preview_map: Dict[str, Dict[str,str]], now_data: List[Dict], now_step_min: int):
+               ui_mode: str, preview_map: Dict[str, Dict[str,str]], now_data: List[Dict], now_step_min: int,
+               static_info: Dict[str, Dict[str, str]]):
     # ---------------- Build hourly lookup + chips ----------------
     hours_lookup = {}
     hour_links = []
@@ -681,6 +703,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     preview_json = json.dumps(preview_map)
     now_json = json.dumps(now_data)
     hours_json = json.dumps(hours_lookup)
+    static_json = json.dumps(static_info)
 
     js_template = """
     <script>
@@ -689,6 +712,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     const NOW_DATA    = __NOW_JSON__;
     const HOURS_HTML  = __HOURS_JSON__;
     const NOW_STEP_MIN = __NOW_STEP_MIN__;
+    const STATIC_INFO = __STATIC_JSON__;
 
     /* ==============================
     Local storage + sector logic
@@ -809,6 +833,27 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     return items.join("");
     }
 
+    // Merge data from table row with static info map
+    function mergeWithStatic(name, data) {
+        const s = (STATIC_INFO && STATIC_INFO[name]) || {};
+        const pick = (k) => {
+            const v = data[k];
+            return (v !== undefined && v !== "" && v != null) ? v : (s[k] ?? "");
+        };
+        return {
+            name,
+            type:  pick("type"),
+            mag:   pick("mag"),
+            bestTime: data.bestTime, // table-derived only
+            dir:   pick("dir"),
+            alt:   pick("alt"),
+            az:    pick("az"),
+            ra:    pick("ra"),
+            dec:   pick("dec"),
+            notes: pick("notes"),
+        };
+    }
+
     function openModalForRow(tr) {
     const tbl = tr.closest('table');
     const headers = [...(tbl.tHead?.rows?.[0]?.cells || [])].map(th => (th.innerText || "").trim());
@@ -827,13 +872,15 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         notes:get("Notes"),
     };
 
+    const merged = mergeWithStatic(data.name, data);
+
     const backdrop = document.getElementById('modal-backdrop');
     const title = document.getElementById('modal-title');
     const meta = document.getElementById('modal-meta');
     const imgbox = document.getElementById('modal-image');
 
-    title.textContent = data.name || "Object";
-    meta.innerHTML = buildMetaHTML(data);
+    title.textContent = merged.name || "Object";
+    meta.innerHTML = buildMetaHTML(merged);
     imgbox.innerHTML = `<p class="small">Loading preview…</p>`;
     backdrop.style.display = 'flex';
     backdrop.setAttribute('aria-hidden', 'false');
@@ -971,16 +1018,23 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
             </tr>
         </thead>
         <tbody>`;
-    const body = rows.map(r => `
+    const body = rows.map(r => {
+        const s = (typeof STATIC_INFO !== 'undefined' && STATIC_INFO && STATIC_INFO[r["Name"]]) || {};
+        const pick = (val, fallbackKey) => (val !== undefined && val !== '' && val != null) ? val : (s[fallbackKey] ?? '');
+        const type  = pick(r["Type"],  "type");
+        const mag   = pick(r["Mag"],   "mag");
+        const notes = pick(r["Notes"], "notes");
+        return `
         <tr>
         <td>${r["Name"] ?? ""}</td>
-        <td>${r["Type"] ?? ""}</td>
-        <td>${r["Mag"] ?? ""}</td>
+        <td>${type}</td>
+        <td>${mag}</td>
         <td>${r["Alt (°)"] ?? ""}</td>
         <td>${r["Az (°)"] ?? ""}</td>
         <td>${r["Dir"] ?? ""}</td>
-        <td>${r["Notes"] ?? ""}</td>
-        </tr>`).join("");
+        <td>${notes}</td>
+        </tr>`;
+    }).join("");
     return '<div class="table-wrap">' + head + body + "</tbody></table></div>";
     }
 
@@ -1141,6 +1195,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
         .replace("__NOW_JSON__", now_json)
         .replace("__HOURS_JSON__", hours_json)
         .replace("__NOW_STEP_MIN__", str(now_step_min))
+        .replace("__STATIC_JSON__", static_json)
     )
 
     # ---------------- HTML skeleton ----------------
@@ -1518,6 +1573,9 @@ def plan_for_site(args):
         master_df.sort_values(by=["_Priority","_BestDT"], ascending=[False, True], inplace=True)
         master_df.drop(columns=["_Priority","_BestDT"], inplace=True)
 
+    # Build static info map for modal fallbacks
+    static_info = build_static_info_map(master_df)
+
     # Hourly tables
     hour_tables = []
     for t in targets:
@@ -1663,7 +1721,8 @@ def plan_for_site(args):
         write_html(args.html, args.lat, args.lon, args.tz,
                    args.date, args.start, args.end,
                    master_df, hourly_df, args.html_ui, preview_map,
-                   now_data=now_data, now_step_min=args.now_step_min)
+                   now_data=now_data, now_step_min=args.now_step_min,
+                   static_info=static_info)
 
     # Console
     print("\n=== MASTER LIST (by interestingness) ===")
