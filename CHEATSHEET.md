@@ -10,6 +10,7 @@ A concise cheat sheet for operators at the scope. For full details, see `README.
 python starparty_planner.py \
   --lat 44.810265 --lon -93.939783 --elev 296 \
   --tz America/Chicago --catalog extended_targets.csv \
+  --type_weights type_weights.csv \
   --bsp ./skyfield_data/de440s.bsp \
   --html starparty.html \
   --now_padding_min 10

@@ -79,6 +79,8 @@ PLANET_TITLE_OVERRIDES = {
 
 def parse_args():
     p = argparse.ArgumentParser(description="Hourly observing list generator")
+    p.add_argument("--html_title", type=str, default="Star Party Planner",
+                   help="Title for HTML output (replaces H1 heading in HTML output)")
     p.add_argument("--lat", type=float, required=True, help="Latitude in decimal degrees (N+)")
     p.add_argument("--lon", type=float, required=True, help="Longitude in decimal degrees (E+)")
     p.add_argument("--elev", type=float, default=0.0, help="Elevation meters (optional)")
@@ -596,7 +598,7 @@ def _hour_anchor_label(hour_str: str) -> str:
 def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, date_str: str,
                start: str, end: str, master_df: pd.DataFrame, hourly_df: pd.DataFrame,
                ui_mode: str, preview_map: Dict[str, Dict[str,str]], now_data: List[Dict], now_step_min: int,
-               static_info: Dict[str, Dict[str, str]]):
+               static_info: Dict[str, Dict[str, str]], html_title: str):
     # ---------------- Build hourly lookup + chips ----------------
     hours_lookup = {}
     hour_links = []
@@ -1279,10 +1281,10 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Star Party Planner – {date_str}</title>
+<title>{html_title} – {date_str}</title>
 {css}
 <div class="container">
-  <h1>Star Party Planner</h1>
+  <h1>{html_title}</h1>
 
   <div class="meta-bar">
     <span class="pill">Date: {date_str}</span>
@@ -1786,7 +1788,7 @@ def plan_for_site(args):
                    args.date, args.start, args.end,
                    master_df, hourly_df, args.html_ui, preview_map,
                    now_data=now_data, now_step_min=args.now_step_min,
-                   static_info=static_info)
+                   static_info=static_info, html_title=args.html_title)
 
     # Console
     print("\n=== MASTER LIST (by interestingness) ===")

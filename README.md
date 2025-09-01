@@ -15,16 +15,16 @@ A daily demo (Minnesota Astronomical Society — Eagle Lake Observatory) lives a
 - Supports **type_weights.csv** for customizable interest scoring per object type
 - Finds each object’s **best observing time** (peak altitude in your window)
 - **Night‑vision HTML**: dark red theme, mobile‑first, lightweight JS
-- New: **Now view** that auto‑updates the HTML view in sync with the clock (every 4 minutes)
-- New: **Directional/altitude “obstruction” filters** (up to 5 azimuth ranges)
-- New: **Top‑N limiter** for the Now view (e.g., show top 16 targets only)
+- **Now view** that auto‑updates the HTML view in sync with the clock (every 4 minutes)
+- **Directional/altitude “obstruction” filters** (up to 5 azimuth ranges)
+- **Top‑N limiter** for the Now view (e.g., show top 16 targets only)
 - **Clickable rows** → modal with object details and a preview image
 - **Local image cache** (DSS2 Red via hips2fits; Wikipedia fallback) to avoid re‑downloading
 
 **Outputs**
 - `*_master.csv` – Master observing list
 - `*_hourly.csv` – Hour‑by‑hour shortlist
-- `*.html` – Night‑vision web page (tabbed UI with Now + Master; hourly chips)
+- `*.html` – Night‑vision web page (tabbed UI with Now + Master; hourly tabs)
 
 ---
 
@@ -94,7 +94,6 @@ Globular cluster,45,FALSE,FALSE
 Open cluster,33,FALSE,FALSE
 Planetary nebula,40,FALSE,TRUE
 Galaxy cluster,32,TRUE,FALSE
-
 ```
 
 Weights act as relative multipliers to the base interest score and work together with other factors such as magnitude, altitude, and moonlight penalty to determine the final priority of each target.
