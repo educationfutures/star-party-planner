@@ -98,6 +98,8 @@ def parse_args():
     # Sampling cadence for the "Now" view
     p.add_argument("--now_step_min", type=int, default=4,
                    help="Minutes between 'Now' samples (default=4)")
+    p.add_argument("--now_padding_min", type=int, default=20,
+                   help="Minutes before the observing start to include in the 'Now' view (default=20)")    
 
     p.add_argument("--out_prefix", type=str, default="starparty", help="Output prefix (csv)")
     p.add_argument("--html", type=str, default="", help="Optional HTML output filepath")
@@ -576,7 +578,7 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     .tab { padding:0.35rem 0.7rem; border:1px solid #500; border-radius:8px; cursor:pointer; user-select:none; color:#f66; background:#0a0000; }
     .tab.active { background:#180000; border-color:#700; color:#f66; }
 
-    .hours { display:flex; gap:0.35rem; flex-wrap:wrap; }
+    .hours { display:flex; gap:0.35rem; flex-wrap:wrap; padding-bottom:0.5rem; }
     .hours a { display:inline-block; padding: 0.25rem 0.55rem; border:1px solid #500; border-radius:6px; text-decoration:none; }
 
     .hidden { display:none; }
@@ -985,7 +987,10 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     function renderNow(forceKey = null) {
     const wrap = document.getElementById("now-table-wrap");
     if (!wrap) return;
-    if (!NOW_KEYS.length) { wrap.innerHTML = '<p class="small">No current data in range.</p>'; return; }
+    if (!NOW_KEYS.length) {
+        wrap.innerHTML = '<p class="small warn">The live “Now” view isn’t available for this plan. Try the <strong>Master List</strong> or pick an hour tab above.</p>';
+        return;
+    }
 
     const firstKey = NOW_KEYS[0], lastKey = NOW_KEYS[NOW_KEYS.length - 1];
     const firstDt = _keyToDate(firstKey), lastDt = _keyToDate(lastKey);
@@ -994,7 +999,8 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     const keyDt = _keyToDate(key);
 
     if (keyDt < firstDt || keyDt > lastDt) {
-        wrap.innerHTML = '<p class="small warn">The current time on this device is outside of the observation window.</p>';
+        const windowMsg = `<p>The live “Now” view appears here from ${firstKey} to ${lastKey} (local).</p>`;
+        wrap.innerHTML = `<div class="small warn"><p>${windowMsg} You’re currently outside the viewing window. View the <strong>Master List</strong> or click an hour tab to preview targets.</p></div>`;
         return;
     }
 
@@ -1352,7 +1358,9 @@ def plan_for_site(args):
     # Build minute grid across the observing window (configurable step)
     minute_times_local = []
     step = max(1, int(args.now_step_min))
-    t_cursor = start_dt
+    # Start a little before the observing window so the Now view is "alive" before sunset
+    minute_start = start_dt - timedelta(minutes=max(0, int(getattr(args, "now_padding_min", 20))))
+    t_cursor = minute_start
     while t_cursor <= end_dt:
         minute_times_local.append(t_cursor)
         t_cursor += timedelta(minutes=step)
@@ -1630,11 +1638,11 @@ def plan_for_site(args):
             rows.sort(key=lambda r: (-r["_Priority"], r["Name"]))
             for r in rows:
                 r["_Score"] = float(r.pop("_Priority", 0.0))
-
-            now_data.append({
-                "time": dt_local.strftime("%Y-%m-%d %H:%M"),
-                "rows": rows
-            })
+        # Always append a slot, even if there are no rows (daytime / before rise).
+        now_data.append({
+            "time": dt_local.strftime("%Y-%m-%d %H:%M"),
+            "rows": rows
+        })
 
     # Save CSVs
     master_csv = f"{args.out_prefix}_master.csv"
