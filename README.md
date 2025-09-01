@@ -136,6 +136,7 @@ python starparty_planner.py \
 
 ### Catalog & Filtering
 - `--catalog` (path, default=`messier_caldwell.csv`) – DSO catalog  
+- `--bsp` (path, default=`./skyfield_data/de440s.bsp`) – Planetary ephemeris  
 - `--min_alt` (float, default=20.0) – Minimum altitude (deg) for DSOs  
 - `--max_mag` (float, default=9.0) – Maximum magnitude (fainter excluded)  
 - `--moon_sep_min` (float, default=15.0) – Minimum separation from the Moon (deg) for DSOs  
@@ -149,7 +150,8 @@ python starparty_planner.py \
 ### Outputs
 - `--out_prefix` (string, default=`starparty`) – Prefix for CSV files  
 - `--html` (string, optional) – Path to save HTML output  
-- `--bsp` (path, default=`./skyfield_data/de440s.bsp`) – Planetary ephemeris  
+- `--html_title` (string, default=`Star Party Planner`) – Heading/title for HTML output  
+
 - `--html_ui` (`tabs` | `accordion`, default=`tabs`) – HTML layout style
 
 ### Per‑Type Altitude Thresholds
@@ -252,7 +254,7 @@ Assume you want the output at `/var/www/star-party/index.html` on a Linux host (
      --min_alt_planets 5 --min_alt_moon 0 \
      --preview_cache_dir /var/www/star-party/images \
      --preview_px 800 \
-     --now_padding_min 30
+     --now_padding_min 30 \
    ```
 
    Make it executable:
