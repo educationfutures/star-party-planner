@@ -80,6 +80,27 @@ This repo includes **`messier_caldwell.csv`** (Messier + Caldwell) and **`extend
 
 ---
 
+## Type Weights
+
+The `type_weights.csv` file allows you to customize how different object types are scored in the prioritization process. Each row should contain a `type` and a corresponding `weight`, where higher weights increase the priority of those object types in the observing list.
+
+The repository includes a default `type_weights.csv` tuned for a 16-inch telescope. You can copy and edit this file to suit your preferences or provide your own via the `--type_weights` command-line argument.
+
+Example `type_weights.csv` snippet:
+
+```
+type,weight,diffuse,partial_diffuse
+Globular cluster,45,FALSE,FALSE
+Open cluster,33,FALSE,FALSE
+Planetary nebula,40,FALSE,TRUE
+Galaxy cluster,32,TRUE,FALSE
+
+```
+
+Weights act as relative multipliers to the base interest score and work together with other factors such as magnitude, altitude, and moonlight penalty to determine the final priority of each target.
+
+---
+
 ## Usage
 
 ### Example (Eagle Lake Observatory, Minnesota)
