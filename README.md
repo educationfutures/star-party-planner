@@ -119,7 +119,7 @@ python starparty_planner.py \
   --now_padding_min 30
 ```
 
-> ⚠️ First run may spend time fetching previews to the local cache.
+> ⚠️ First run may spend a long time fetching previews to the local cache.
 
 ---
 
@@ -161,8 +161,8 @@ python starparty_planner.py \
 ### Preview & Caching (HTML previews)
 - `--no_previews` – Disable image previews entirely  
 - `--preview_cache_dir` (string, default=`image_cache`) – Directory for cached previews  
-- `--preview_px` (int, default=800) – Pixel size for DSS2 images  
-- `--preview_fov_deg` (float, default=0.6) – Field of view for DSS2 images (degrees)  
+- `--preview_px` (int, default=800) – Pixel size for DSS2 preview images  
+- `--preview_fov_deg` (float, default=0.6) – Field of view for DSS2 preview images (degrees)  
 - `--refresh_previews` – Force re‑download of previews this run  
 - `--clean_preview_cache` – After generation, remove cached images not referenced by this run
 

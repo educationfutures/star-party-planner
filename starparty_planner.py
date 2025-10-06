@@ -1123,16 +1123,27 @@ def write_html(output_path: str, site_lat: float, site_lon: float, tzname: str, 
     const settings = loadSettings(16);
     let rows = NOW_INDEX.get(key) || [];
 
+    // Track counts for the info line
+    const totalCandidates = (NOW_INDEX.get(key) || []).length;
+
     // Apply sector filters first
     if (settings.enabled && settings.sectors.length) {
         rows = rows.filter(r => passesSectors(r, settings.sectors));
     }
+    const visibleCount = rows.length;
 
     // Sort by _Score desc, then Name, then slice to TopN
     rows.sort((a, b) => (Number(b._Score||0) - Number(a._Score||0)) || String(a.Name).localeCompare(String(b.Name)));
     rows = rows.slice(0, settings.topN);
+    const shownCount = rows.length;
 
-    wrap.innerHTML = rowsToHTML(rows);
+    // Build a small info line and render the table
+    const filtersOn = !!(settings.enabled && settings.sectors.length);
+    const infoText = `Showing ${shownCount} of ${visibleCount} visible targets at this moment${filtersOn ? " (filters on)" : ""}.`;
+    wrap.innerHTML = `
+        <div class="small" style="margin:.25rem 0 .25rem;" id="now-count-info">${infoText}</div>
+        ${rowsToHTML(rows)}
+    `;
     enableRowModals();
     hideDataColumns();
     }
@@ -1743,8 +1754,11 @@ def plan_for_site(args):
                     targ["type"], illum_frac_night, args.moonlight_penalty_max,
                     moon_alt_deg=moon_alt_tick
                 )
-            if prio <= 0:
-                continue
+            # Do not drop low/negative scores — keep them and clamp at zero so the
+            # "Now" view can still fill up to Top N even under heavy moonlight.
+            if not math.isfinite(prio):
+                prio = 0.0
+            prio = max(0.0, float(prio))
 
             rows.append({
                 "Name": targ["name"],
@@ -1761,7 +1775,8 @@ def plan_for_site(args):
         if rows:
             rows.sort(key=lambda r: (-r["_Priority"], r["Name"]))
             for r in rows:
-                r["_Score"] = float(r.pop("_Priority", 0.0))
+                # Preserve a non-negative score for UI sorting; we've already clamped it.
+                r["_Score"] = max(0.0, float(r.pop("_Priority", 0.0)))
         # Always append a slot, even if there are no rows (daytime / before rise).
         now_data.append({
             "time": dt_local.strftime("%Y-%m-%d %H:%M"),

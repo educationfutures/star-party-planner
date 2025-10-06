@@ -1,185 +1,185 @@
 name,ra_deg,dec_deg,type,mag,notes
-Cr 399 (Coathanger),294.3,20,Asterism,3.6,"Binocular asterism in Vulpecula, resembles a coat hanger"
-M73,314.725,-12.633333,Asterism,9,NGC 6994
-Kemble's Cascade,60,63,Asterism,,Line of stars in Camelopardalis; binocular field
-M83,204.25375,-29.865833,Barred spiral galaxy,7.6,Southern Pinwheel Galaxy NGC 5236
-M65,169.732917,13.092222,Barred spiral galaxy,9.3,Leo Triplet NGC 3623
-M58,189.43125,11.818056,Barred spiral galaxy,9.7,NGC 4579
-M95,160.990417,11.703889,Barred spiral galaxy,9.7,NGC 3351
-M109,179.4,53.374444,Barred spiral galaxy,9.8,Vacuum Cleaner Galaxy NGC 3992
-M108,167.879167,55.674167,Barred spiral galaxy,10,Surfboard Galaxy NGC 3556
-M91,188.86,14.496389,Barred spiral galaxy,10.2,NGC 4548
-Pipe Nebula (B59+B77+B78),257.25,-27.5,Dark nebula,,"Wide-field silhouette; best at 3–5° FOV; includes B59,B77,B78"
-Snake Nebula (B72),258,-23.7,Dark nebula,,Distinct S-shaped lane; wide-field
-M78,86.694583,0.013889,Diffuse nebula,8.3,NGC 2068
-Mizar and Alcor,200.981,54.925,Double star,2.2,Naked-eye double in Ursa Major; binocular showpiece
-Albireo,292.68,27.959,Double star,3.1,Colorful blue/yellow double in Cygnus
-M32,10.674167,40.865278,Elliptical galaxy,8.1,Andromeda Satellite #1 NGC 221
-M49,187.444583,8.000556,Elliptical galaxy,8.4,NGC 4472
-M110,10.092083,41.685278,Elliptical galaxy,8.5,Andromeda Satellite #2 NGC 205
-M87,187.705833,12.391111,Elliptical galaxy,8.6,Virgo A NGC 4486
-M60,190.915,11.5525,Elliptical galaxy,8.8,NGC 4649
-M105,161.956667,12.581667,Elliptical galaxy,9.3,NGC 3379
-M59,190.509583,11.646944,Elliptical galaxy,9.6,NGC 4621
-M89,188.915833,12.556389,Elliptical galaxy,9.8,NGC 4552
-NGC 7000,314.8208,44.5289,Emission nebula,4,North America Nebula (widefield)
-IC 1396 (Elephant's Trunk),323.866,57.4861,Emission nebula,5,Large emission nebula in Cepheus with dark lanes
+Cr 399 (Coathanger),294.3,20,Asterism,3.6,"Binocular asterism in Vulpecula, resembles a coat hanger."
+M73,314.725,-12.633333,Asterism,9,"Constellation: Aquarius. Distance: approx. 2,500 light-years. NGC 6994."
+Kemble's Cascade,60,63,Asterism,,Popular name: Kemble's Cascade. Constellation: Camelopardalis. Fact: Asterism of ~20 stars flowing toward cluster NGC 1502. Line of stars in Camelopardalis; binocular field.
+M83,204.25375,-29.865833,Barred spiral galaxy,7.6,Popular name: Southern Pinwheel. Constellation: Hydra. Distance: approx. 15 million light-years. Fact: Southern Pinwheel; face-on barred spiral. Southern Pinwheel Galaxy NGC 5236.
+M65,169.732917,13.092222,Barred spiral galaxy,9.3,Constellation: Leo. Distance: approx. 35 million light-years. Fact: Member of Leo Triplet with M66 and NGC 3628. Leo Triplet NGC 3623.
+M58,189.43125,11.818056,Barred spiral galaxy,9.7,Constellation: Virgo. Distance: approx. 62 million light-years. NGC 4579.
+M95,160.990417,11.703889,Barred spiral galaxy,9.7,Constellation: Leo. Distance: approx. 33 million light-years. NGC 3351.
+M109,179.4,53.374444,Barred spiral galaxy,9.8,Popular name: Vacuum Cleaner Galaxy. Constellation: Ursa Major. Distance: approx. 83 million light-years. Fact: Barred spiral with faint outer arms. Vacuum Cleaner Galaxy NGC 3992.
+M108,167.879167,55.674167,Barred spiral galaxy,10,Popular name: Surfboard Galaxy. Constellation: Ursa Major. Distance: approx. 45 million light-years. Fact: Edge-on with mottled dust; near M97. Surfboard Galaxy NGC 3556.
+M91,188.86,14.496389,Barred spiral galaxy,10.2,Constellation: Coma Berenices. Distance: approx. 63 million light-years. NGC 4548.
+Pipe Nebula (B59+B77+B78),257.25,-27.5,Dark nebula,,"Constellation: Ophiuchus. Wide-field silhouette; best at 3 deg FOV; includes B59,B77,B78."
+Snake Nebula (B72),258,-23.7,Dark nebula,,Constellation: Ophiuchus. Distinct S-shaped lane; wide-field.
+M78,86.694583,0.013889,Diffuse nebula,8.3,"Constellation: Orion. Distance: approx. 1,350 light-years. NGC 2068."
+Mizar and Alcor,200.981,54.925,Double star,2.2,Constellation: Ursa Major. Naked-eye double in Ursa Major; binocular showpiece.
+Albireo,292.68,27.959,Double star,3.1,Constellation: Cygnus. Colorful blue/yellow double.
+M32,10.674167,40.865278,Elliptical galaxy,8.1,"Constellation: Andromeda. Distance: approx. 2,650,000 light-years. Andromeda Satellite #1 NGC 221."
+M49,187.444583,8.000556,Elliptical galaxy,8.4,Constellation: Virgo. Distance: approx. 56 million light-years. NGC 4472.
+M110,10.092083,41.685278,Elliptical galaxy,8.5,"Constellation: Andromeda. Distance: approx. 2,700,000 light-years. Andromeda Satellite #2 NGC 205."
+M87,187.705833,12.391111,Elliptical galaxy,8.6,Popular name: Virgo A. Constellation: Virgo. Distance: approx. 53 million light-years. Fact: Giant elliptical with relativistic jet; EHT black hole. Virgo A NGC 4486.
+M60,190.915,11.5525,Elliptical galaxy,8.8,Constellation: Virgo. Distance: approx. 55 million light-years. NGC 4649.
+M105,161.956667,12.581667,Elliptical galaxy,9.3,Constellation: Leo. Distance: approx. 32 million light-years. NGC 3379.
+M59,190.509583,11.646944,Elliptical galaxy,9.6,Constellation: Virgo. Distance: approx. 60 million light-years. NGC 4621.
+M89,188.915833,12.556389,Elliptical galaxy,9.8,Constellation: Virgo. Distance: approx. 50 million light-years. NGC 4552.
+NGC 7000,314.8208,44.5289,Emission nebula,4,"Popular name: North America Nebula. Constellation: Cygnus. Distance: approx. 2,600 light-years. Fact: North America Nebula; enormous emission region visible in wide field. North America Nebula (widefield)."
+IC 1396 (Elephant's Trunk),323.866,57.4861,Emission nebula,5,"Popular name: Elephant's Trunk. Constellation: Cepheus. Distance: approx. 2,400 light-years. Fact: Large ionized region with dark globules; embedded young stars. Large emission nebula in Cepheus with dark lanes."
 M17 (Swan/Omega Nebula),275.1083,-16.1767,Emission nebula,6,Shows swan/omega shape; OIII enhances contrast.
-M8,270.75,-24.383,Emission nebula,6,Bright H II region with embedded cluster; UHC/OIII helpful.
-M16,274.5,-13.783,Emission nebula,6.4,Open cluster + nebulosity; 'Pillars' need dark skies.
-NGC 281,13.2471,56.6219,Emission nebula,7.4,Pacman Nebula
-IC 5070,312.7,44.35,Emission nebula,7.5,Pelican Nebula (widefield)
+M8,270.75,-24.383,Emission nebula,6,"Popular name: Lagoon Nebula. Constellation: Sagittarius. Distance: approx. 4,100 light-years. Fact: H II region with dark lane; includes cluster NGC 6530. Bright H II region with embedded cluster; UHC/OIII helpful."
+M16,274.5,-13.783,Emission nebula,6.4,"Popular name: Eagle Nebula. Constellation: Serpens. Distance: approx. 7,000 light-years. Fact: ""Pillars of Creation‚"" star-forming columns (HST). Open cluster + nebulosity; ""Pillars"" need dark skies."
+NGC 281,13.2471,56.6219,Emission nebula,7.4,Pacman Nebula.
+IC 5070,312.7,44.35,Emission nebula,7.5,"Popular name: Pelican Nebula. Constellation: Cygnus. Distance: approx. 2,000 light-years. Fact: Pelican Nebula; complex emission arcs adjacent to North America Nebula. Pelican Nebula (widefield)."
 NGC 2070 (Tarantula Nebula),84.5,-69.1,Emission nebula,8,In LMC; huge H II region; best from southern sites.
-NGC 7635,351,61.2,Emission nebula,8.4,Bubble Nebula
+NGC 7635,351,61.2,Emission nebula,8.4,Bubble Nebula.
 M20 (Trifid Nebula),270.595833,-23.03,Emission nebula,6.3,Distinct dark lanes; use moderate magnification.
 Large Magellanic Cloud,80.75,-69.75,Galaxy,0.9,Dwarf galaxy; multiple embedded clusters/nebulae.
 Small Magellanic Cloud,13,-72.817,Galaxy,2.7,Dwarf galaxy; look for 47 Tuc nearby.
-NGC 253,11.888,-25.288,Galaxy,7.1,Sculptor Galaxy
-IC 342,56.702,68.102,Galaxy,8.4,Hidden Galaxy
-NGC 2403,114.214,65.601,Galaxy,8.9,Camelopardalis
-NGC 7331,339.267,34.415,Galaxy,9.4,Deer Lick
-NGC 3628,170.067,13.588,Galaxy,9.5,Hamburger (Leo Triplet)
-NGC 6946,308.717,60.153,Galaxy,9.6,Fireworks Galaxy
-NGC 2683,133.904,33.422,Galaxy,9.7,UFO Galaxy
-NGC 4631,190.533,32.541,Galaxy,9.8,Whale Galaxy
-NGC 4216,183.989,13.155,Galaxy,10,Virgo Cluster
-NGC 4565,189.086,25.987,Galaxy,10.4,Needle Galaxy
-NGC 7814,0.877,16.146,Galaxy,10.6,Little Sombrero
-NGC 925,36.822,33.579,Galaxy,10.7,Triangulum region
-NGC 891,35.638,42.349,Galaxy,10.8,"Edge-on, Andromeda"
-NGC 2905,143.05,21.5,Galaxy,12,Knot in NGC 2903 arm
-Abell 1656 (Coma Cluster),194.9529,27.9806,Galaxy cluster,,"Coma galaxy cluster, hundreds of galaxies"
-Fornax Cluster,54.5,-35,Galaxy cluster,,Rich cluster of galaxies in Fornax
-Markarian's Chain,190,12.5,Galaxy group,9,Chain of galaxies in Virgo Cluster
+NGC 253,11.888,-25.288,Galaxy,7.1,Sculptor Galaxy.
+IC 342,56.702,68.102,Galaxy,8.4,Constellation: Camelopardalis. Distance: approx. 11 million light-years. Fact: Face-on spiral obscured by Milky Way dust; part of Maffei/IC 342 group. Hidden Galaxy.
+NGC 2403,114.214,65.601,Galaxy,8.9,Camelopardalis.
+NGC 7331,339.267,34.415,Galaxy,9.4,Constellation: Pegasus. Distance: approx. 40 million light-years. Fact: Bright spiral with background ‚“Deer Lick‚” galaxy group. Deer Lick.
+NGC 3628,170.067,13.588,Galaxy,9.5,Popular name: Hamburger Galaxy. Constellation: Leo. Distance: approx. 35 million light-years. Fact: Hamburger Galaxy; edge-on with broad dust lane and tidal tail in deep images. Hamburger (Leo Triplet).
+NGC 6946,308.717,60.153,Galaxy,9.6,Fireworks Galaxy.
+NGC 2683,133.904,33.422,Galaxy,9.7,UFO Galaxy.
+NGC 4631,190.533,32.541,Galaxy,9.8,Whale Galaxy.
+NGC 4216,183.989,13.155,Galaxy,10,Virgo Cluster.
+NGC 4565,189.086,25.987,Galaxy,10.4,Needle Galaxy.
+NGC 7814,0.877,16.146,Galaxy,10.6,Little Sombrero.
+NGC 925,36.822,33.579,Galaxy,10.7,Triangulum region.
+NGC 891,35.638,42.349,Galaxy,10.8,"Edge-on, Andromeda."
+NGC 2905,143.05,21.5,Galaxy,12,Knot in NGC 2903 arm.
+Abell 1656 (Coma Cluster),194.9529,27.9806,Galaxy cluster,,"Constellation: Coma Berenices. Distance: approx. 321 million light-years. Fact: Rich galaxy cluster with thousands of members; strong X-ray emission. Coma galaxy cluster, hundreds of galaxies."
+Fornax Cluster,54.5,-35,Galaxy cluster,,Constellation: Fornax. Distance: approx. 65 million light-years. Fact: Nearby cluster dominated by NGC 1399; includes dwarf galaxy population. Rich cluster of galaxies in Fornax.
+Markarian's Chain,190,12.5,Galaxy group,9,Chain of galaxies in Virgo Cluster.
 NGC 5139 (Omega Centauri),201.5,-47.483,Globular cluster,3.7,Crowded core; best with low power.
-M22,279.099583,-23.90475,Globular cluster,5.1,Great Sagittarius Cluster NGC 6656
-M4,245.896667,-26.52575,Globular cluster,5.6,Spider Globular Cluster NGC 6121
-M5,229.638333,2.081028,Globular cluster,5.6,Rose Cluster NGC 5904
-M13,250.421667,36.459861,Globular cluster,5.8,Great Hercules Cluster NGC 6205
-M15,322.492917,12.167,Globular cluster,6.2,Great Pegasus Cluster NGC 7078
-M3,205.548333,28.377278,Globular cluster,6.2,NGC 5272
-M55,294.99875,-30.96475,Globular cluster,6.3,Specter Cluster NGC 6809
-M92,259.280833,43.135944,Globular cluster,6.4,NGC 6341
-M2,323.3625,-0.82325,Globular cluster,6.5,NGC 7089
-M62,255.3025,-30.112361,Globular cluster,6.5,Flickering Globular NGC 6266
-M10,254.287083,-4.099472,Globular cluster,6.6,NGC 6254
-M12,251.809167,-1.948528,Globular cluster,6.7,NGC 6218
-M19,255.657083,-26.267944,Globular cluster,6.8,NGC 6273
-M28,276.137083,-24.869833,Globular cluster,6.8,NGC 6626
-M30,325.092083,-23.179861,Globular cluster,7.2,Jellyfish Cluster NGC 7099
-M80,244.26,-22.976083,Globular cluster,7.3,NGC 6093
-M14,264.400833,-3.245917,Globular cluster,7.6,NGC 6402
-M53,198.230417,18.168167,Globular cluster,7.6,NGC 5024
-M54,283.76375,-30.479861,Globular cluster,7.6,NGC 6715
-M69,277.84625,-32.348083,Globular cluster,7.6,NGC 6637
-M79,81.044167,-24.52425,Globular cluster,7.7,NGC 1904
-M9,259.799167,-18.51625,Globular cluster,7.7,NGC 6333
-M68,189.866667,-26.744056,Globular cluster,7.8,NGC 4590
-M107,248.132917,-13.053778,Globular cluster,7.9,Crucifix Cluster NGC 6171
-M70,280.803333,-32.292111,Globular cluster,7.9,NGC 6681
-M71,298.44375,18.779194,Globular cluster,8.2,Angelfish Cluster NGC 6838
-M56,289.148333,30.183472,Globular cluster,8.3,NGC 6779
-M75,301.52,-21.921167,Globular cluster,8.5,NGC 6864
-NGC 6934,308.547,7.404,Globular cluster,8.8,Delphinus
-NGC 5466,211.363,28.534,Globular cluster,9.1,High latitude
-M72,313.365417,-12.537306,Globular cluster,9.3,NGC 6981
-NGC 6229,251.744,47.528,Globular cluster,9.4,Hercules
-NGC 2419,114.535,38.881,Globular cluster,10.3,Intergalactic Wanderer
-NGC 7006,315.372,16.187,Globular cluster,10.6,Delphinus
-M42,83.822083,-5.391111,H II region nebula,4,Great Orion Nebula NGC 1976
-M43,83.9,-5.266667,H II region nebula,9,De Mairan's Nebula NGC 1982
-M86,186.54875,12.946111,Lenticular galaxy,8.9,NGC 4406
-M84,186.265417,12.886944,Lenticular galaxy,9.1,NGC 4374
-M85,186.35,18.191111,Lenticular galaxy,9.1,NGC 4382
-M102,226.622917,55.763333,Lenticular galaxy,9.9,Spindle Galaxy NGC 5866
+M22,279.099583,-23.90475,Globular cluster,5.1,"Constellation: Sagittarius. Distance: approx. 10,600 light-years. Fact: Large, bright bulge globular; resolves well in small telescopes. Great Sagittarius Cluster NGC 6656."
+M4,245.896667,-26.52575,Globular cluster,5.6,Constellation: Scorpius. Spider Globular Cluster NGC 6121.
+M5,229.638333,2.081028,Globular cluster,5.6,Constellation: Serpens. Rose Cluster NGC 5904.
+M13,250.421667,36.459861,Globular cluster,5.8,"Popular name: Great Hercules Cluster. Constellation: Hercules. Distance: approx. 22,500 light-years. Fact: Premier northern globular; ‚""propeller"" dark lanes in large apertures. Great Hercules Cluster NGC 6205."
+M15,322.492917,12.167,Globular cluster,6.2,Constellation: Pegasus. Great Pegasus Cluster NGC 7078.
+M3,205.548333,28.377278,Globular cluster,6.2,Constellation: Canes Venatici. NGC 5272.
+M55,294.99875,-30.96475,Globular cluster,6.3,"Constellation: Sagittarius. Distance: approx. 17,500 light-years. Specter Cluster NGC 6809."
+M92,259.280833,43.135944,Globular cluster,6.4,"Constellation: Hercules. Distance: approx. 26,000 light-years. NGC 6341."
+M2,323.3625,-0.82325,Globular cluster,6.5,Constellation: Aquarius. NGC 7089.
+M62,255.3025,-30.112361,Globular cluster,6.5,Constellation: Ophiuchus. Flickering Globular NGC 6266.
+M10,254.287083,-4.099472,Globular cluster,6.6,Constellation: Ophiuchus. NGC 6254.
+M12,251.809167,-1.948528,Globular cluster,6.7,Constellation: Ophiuchus. NGC 6218.
+M19,255.657083,-26.267944,Globular cluster,6.8,Constellation: Ophiuchus. NGC 6273.
+M28,276.137083,-24.869833,Globular cluster,6.8,Constellation: Sagittarius. NGC 6626.
+M30,325.092083,-23.179861,Globular cluster,7.2,Constellation: Capricornus. Jellyfish Cluster NGC 7099.
+M80,244.26,-22.976083,Globular cluster,7.3,"Constellation: Scorpius. Distance: approx. 32,600 light-years. NGC 6093."
+M14,264.400833,-3.245917,Globular cluster,7.6,Constellation: Ophiuchus. NGC 6402.
+M53,198.230417,18.168167,Globular cluster,7.6,"Constellation: Coma Berenices. Distance: approx. 58,000 light-years. NGC 5024."
+M54,283.76375,-30.479861,Globular cluster,7.6,"Constellation: Sagittarius. Distance: approx. 87,000 light-years. NGC 6715."
+M69,277.84625,-32.348083,Globular cluster,7.6,"Constellation: Sagittarius. Distance: approx. 29,800 light-years. NGC 6637."
+M79,81.044167,-24.52425,Globular cluster,7.7,"Constellation: Lepus. Distance: approx. 42,000 light-years. NGC 1904."
+M9,259.799167,-18.51625,Globular cluster,7.7,Constellation: Ophiuchus. NGC 6333.
+M68,189.866667,-26.744056,Globular cluster,7.8,"Constellation: Hydra. Distance: approx. 33,000 light-years. NGC 4590."
+M107,248.132917,-13.053778,Globular cluster,7.9,"Constellation: Ophiuchus. Distance: approx. 20,600 light-years. Crucifix Cluster NGC 6171."
+M70,280.803333,-32.292111,Globular cluster,7.9,"Constellation: Sagittarius. Distance: approx. 29,200 light-years. NGC 6681."
+M71,298.44375,18.779194,Globular cluster,8.2,"Constellation: Sagitta. Distance: approx. 13,000 light-years. Angelfish Cluster NGC 6838."
+M56,289.148333,30.183472,Globular cluster,8.3,"Constellation: Lyra. Distance: approx. 32,600 light-years. NGC 6779."
+M75,301.52,-21.921167,Globular cluster,8.5,"Constellation: Sagittarius. Distance: approx. 67,900 light-years. NGC 6864."
+NGC 6934,308.547,7.404,Globular cluster,8.8,Delphinus.
+NGC 5466,211.363,28.534,Globular cluster,9.1,High latitude.
+M72,313.365417,-12.537306,Globular cluster,9.3,"Constellation: Aquarius. Distance: approx. 54,000 light-years. NGC 6981."
+NGC 6229,251.744,47.528,Globular cluster,9.4,Hercules.
+NGC 2419,114.535,38.881,Globular cluster,10.3,Intergalactic Wanderer.
+NGC 7006,315.372,16.187,Globular cluster,10.6,Delphinus.
+M42,83.822083,-5.391111,H II region nebula,4,"Popular name: Orion Nebula. Constellation: Orion. Distance: approx. 1,344 light-years. Fact: Nearest massive star-forming region; Trapezium stars at core. Great Orion Nebula NGC 1976."
+M43,83.9,-5.266667,H II region nebula,9,"Constellation: Orion. Distance: approx. 1,344 light-years. De Mairan's Nebula NGC 1982."
+M86,186.54875,12.946111,Lenticular galaxy,8.9,Constellation: Virgo. Distance: approx. 52 million light-years. NGC 4406.
+M84,186.265417,12.886944,Lenticular galaxy,9.1,Constellation: Virgo. Distance: approx. 60 million light-years. NGC 4374.
+M85,186.35,18.191111,Lenticular galaxy,9.1,Constellation: Coma Berenices. Distance: approx. 60 million light-years. NGC 4382.
+M102,226.622917,55.763333,Lenticular galaxy,9.9,Constellation: Draco. Distance: approx. 50 million light-years. Spindle Galaxy NGC 5866.
 M24 (Small Sag. Star Cloud),274.25,-18.483,Milky Way star cloud,4.6,Rich star field; sweep with wide-field eyepiece.
-Epsilon Lyrae (Double Double),281.084775,39.670126,Multiple star,5,Near Vega; requires small telescope to split
-Melotte 20 (Alpha Persei Cluster),50.25,48.5667,Open cluster,1.2,Huge naked-eye cluster
-M45,56.85,24.116667,Open cluster,1.6,"Pleiades, Seven Sisters or Subaru"
-Melotte 111 (Coma Berenices Cluster),185,26,Open cluster,1.8,"Large nearby open cluster, visible to naked eye"
-M7,268.463333,-34.792778,Open cluster,3.3,"Large, rich cluster in Scorpius; superb in binoculars."
-M44,130.1,19.983333,Open cluster,3.7,Beehive Cluster or Praesepe NGC 2632
-NGC 2264,100.255,9.896,Open cluster,3.9,Christmas Tree Cone region
-IC 4665,266.6,5.7,Open cluster,4.2,"Large, sparse cluster in Ophiuchus, visible in binoculars"
-M6,265.025,-32.216667,Open cluster,4.2,Striking 'butterfly' shape; best in wide-field views.
-NGC 869,34.78,57.147,Open cluster,4.3,Double Cluster component
-M47,114.15,-14.5,Open cluster,4.4,NGC 2422
-NGC 884,34.8,57.117,Open cluster,4.4,Double Cluster component
-Stock 2,31.8,60.3,Open cluster,4.4,"Loose cluster near Double Cluster, aka 'Muscle Man'"
-M41,101.5,-20.766667,Open cluster,4.5,Little Beehive Cluster NGC 2287
-M25,277.9,-19.25,Open cluster,4.6,IC 4725
-M39,322.925,48.433333,Open cluster,4.6,Pyramid Cluster NGC 7092
-M35,92.275,24.35,Open cluster,5.3,Shoe-Buckle Cluster NGC 2168
-M23,269.2,-19.016667,Open cluster,5.5,NGC 6494
-M34,40.525,42.766667,Open cluster,5.5,Spiral Cluster NGC 1039
-M48,123.425,-5.75,Open cluster,5.5,NGC 2548
-NGC 752,29.287,37.789,Open Cluster,5.7,Sprawling cluster in Andromeda
-M11,282.775,-6.266667,Open cluster,5.8,Wild Duck Cluster NGC 6705
-M50,105.8,-8.333333,Open cluster,5.9,Heart-Shaped Cluster NGC 2323
-M46,115.45,-14.816667,Open cluster,6,NGC 2437
-M93,116.15,-23.866667,Open cluster,6,Critter Cluster NGC 2447
-NGC 2244,97.95,4.95,Open cluster,6,In Rosette Nebula
-M67,132.825,11.816667,Open cluster,6.1,King Cobra or Golden Eye Cluster NGC 2682
-M37,88.075,32.550556,Open cluster,6.2,Salt and Pepper Cluster NGC 2099
-M36,84.05,34.134444,Open cluster,6.3,Pinwheel Cluster NGC 1960
-NGC 457,19.863,58.303,Open cluster,6.4,Owl/ET Cluster
-M21,271.15,-22.5,Open cluster,6.5,Webb's Cross Cluster NGC 6531
-NGC 7789,359.287,56.734,Open cluster,6.7,Caroline's Rose
-M29,305.983333,38.523333,Open cluster,7.1,Cooling Tower Cluster NGC 6913
-NGC 663,26.585,61.214,Open cluster,7.1,Perseus
-M52,351.05,61.583333,Open cluster,7.3,Scorpion Cluster NGC 7654
-M103,23.3,60.7,Open cluster,7.4,NGC 581
-M38,82.175,35.855,Open cluster,7.4,Starfish Cluster NGC 1912
-M18,274.975,-17.133333,Open cluster,7.5,Black Swan Cluster NGC 6613
-M26,281.3,-9.4,Open cluster,8,NGC 6694
-King 10,12.9,61.1,Open cluster,9,"Open cluster in Cassiopeia, faint but interesting"
-M40,185.552083,58.083056,Optical double,8.4,Winnecke 4
-Centaurus A (NGC 5128),201.25,-43.017,Peculiar galaxy,6.8,Dark lane bisects bright core
-M27,299.90125,22.721139,Planetary nebula,7.4,Dumbbell Nebula NGC 6853
-NGC 3242,156.19,-18.643,Planetary nebula,7.8,Ghost of Jupiter
-NGC 7009,316.045,-11.363,Planetary nebula,8,Saturn Nebula
-NGC 6543,269.639,66.633,Planetary nebula,8.1,Cat's Eye
-M57,283.39625,33.029167,Planetary nebula,8.8,Ring Nebula NGC 6720
-NGC 6826,295.67,50.525,Planetary nebula,8.8,Blinking
-NGC 2392,112.288,20.911,Planetary nebula,9.2,Eskimo
-IC 418,82.147,-12.701,Planetary nebula,9.3,Spirograph
-M97,168.69875,55.019028,Planetary nebula,9.9,Owl Nebula NGC 3587
-M76,25.6,51.575278,Planetary nebula,10.1,"Little Dumbbell Nebula NGC 650, NGC 651"
-IC 2149,92.259,46.113,Planetary nebula,10.6,Auriga
-IC 418 (Spirograph Nebula),82,-12.6,Planetary nebula,10.7,"Compact PN in Lepus, bright with filters"
-NGC 40,3.257,72.522,Planetary nebula,10.7,Bow-Tie
-NGC 7008,315.403,54.954,Planetary nebula,10.7,Fetus Nebula
-3C 273,187.2792,2.0525,Quasar,12.9,"Brightest quasar, historically important"
-M31,10.684583,41.269167,Spiral galaxy,3.4,Andromeda Galaxy NGC 224
-M33,23.458333,30.660194,Spiral galaxy,5.7,Triangulum/Pinwheel Galaxy NGC 598
-M81,148.888333,69.065278,Spiral galaxy,6.9,Bode's Galaxy NGC 3031
-M101,210.8025,54.349167,Spiral galaxy,7.9,Pinwheel Galaxy NGC 5457
-M104,189.9975,-11.623056,Spiral galaxy,8,Sombrero Galaxy NGC 4594
-M94,192.72125,41.120556,Spiral galaxy,8.2,Crocodile Eye or Cat's Eye Galaxy NGC 4736
-M106,184.739583,47.303889,Spiral galaxy,8.4,NGC 4258
-M51,202.469583,47.195278,Spiral galaxy,8.4,"Whirlpool Galaxy NGC 5194, NGC 5195"
-M64,194.182083,21.682778,Spiral galaxy,8.5,Black Eye Galaxy NGC 4826
-M63,198.955417,42.029167,Spiral galaxy,8.6,Sunflower Galaxy NGC 5055
-M66,170.0625,12.991667,Spiral galaxy,8.9,Leo Triplet NGC 3627
-M77,40.669583,-0.013333,Spiral galaxy,8.9,Cetus A or Squid Galaxy NGC 1068
-M96,161.690417,11.82,Spiral galaxy,9.2,NGC 3368
-M100,185.72875,15.8225,Spiral galaxy,9.3,Mirror Galaxy NGC 4321
-M74,24.174167,15.783611,Spiral galaxy,9.4,Phantom Galaxy[91] NGC 628
-M90,189.2075,13.162778,Spiral galaxy,9.5,NGC 4569
-M88,187.996667,14.420556,Spiral galaxy,9.6,NGC 4501
-M61,185.47875,4.473611,Spiral galaxy,9.7,Swelling Spiral Galaxy NGC 4303
-M99,184.706667,14.416389,Spiral galaxy,9.9,St. Catherine's Wheel NGC 4254
-M98,183.45125,14.900472,Spiral galaxy,10.1,NGC 4192
-M82,148.9675,69.679722,Starburst galaxy,8.4,Cigar Galaxy NGC 3034
-M1,83.632917,22.0145,Supernova remnant,8.4,Crab Nebula NGC 1952
-NGC 6960,309.392,30.731,Supernova remnant,5,Veil West (Witch's Broom)
-NGC 6992,314.0792,31.7428,Supernova remnant,6,Veil East
-NGC 2024,85.425,-1.9833,Emission nebula,,Flame Nebula near Alnitak
-IC 434/B33,85.25,-2.4333,Dark nebula,,Horsehead Nebula (dark sky challenge)
-NGC 4755,193.425,-60.3667,Open cluster,4.2,"Jewel Box Cluster, colorful open cluster near Beta Crucis"
-NGC 3293,158.9458,-58.2178,Open cluster,4.7,"Gem Cluster in Carina, compact young cluster"
-NGC 3532,166.3875,-58.73,Open cluster,3,"Wishing Well Cluster, sprawling and rich open cluster"
-NGC 6231,253.6,-41.8,Open cluster,2.6,Bright open cluster in Scorpius OB association
-NGC 104,6,-72.1,Globular cluster,4,"47 Tucanae, second brightest globular after Omega Centauri"
-NGC 6752,287.7,-59.9,Globular cluster,5.3,"Very bright southern globular cluster, rivals M13"
-IC 2602,160.7,-64.4,Open cluster,1.9,Southern Pleiades in Carina
+Epsilon Lyrae (Double Double),281.084775,39.670126,Multiple star,5,Constellation: Lyra. Near Vega; requires small telescope to split.
+Melotte 20 (Alpha Persei Cluster),50.25,48.5667,Open cluster,1.2,Huge naked-eye cluster.
+M45,56.85,24.116667,Open cluster,1.6,"Popular name: Pleiades. Constellation: Taurus. Distance: approx. 444 light-years. Fact: Seven Sisters; blue reflection nebulosity in images. Pleiades, Seven Sisters or Subaru."
+Melotte 111 (Coma Berenices Cluster),185,26,Open cluster,1.8,"Large nearby open cluster, visible to naked eye."
+M7,268.463333,-34.792778,Open cluster,3.3,"Constellation: Scorpius. Large, rich cluster in Scorpius; superb in binoculars."
+M44,130.1,19.983333,Open cluster,3.7,Popular name: Beehive Cluster. Constellation: Cancer. Distance: approx. 610 light-years. Fact: Praesepe/ Bee hive; naked-eye glow resolved into dozens of stars. Beehive Cluster or Praesepe NGC 2632.
+NGC 2264,100.255,9.896,Open cluster,3.9,Christmas Tree Cone region.
+IC 4665,266.6,5.7,Open cluster,4.2,"Constellation: Ophiuchus. Distance: approx. 1,400 light-years. Fact: Loose young open cluster; excellent binocular target. Large, sparse cluster in Ophiuchus, visible in binoculars."
+M6,265.025,-32.216667,Open cluster,4.2,Constellation: Scorpius. Striking 'butterfly' shape; best in wide-field views.
+NGC 869,34.78,57.147,Open cluster,4.3,Double Cluster component.
+M47,114.15,-14.5,Open cluster,4.4,"Constellation: Puppis. Distance: approx. 1,600 light-years. NGC 2422."
+NGC 884,34.8,57.117,Open cluster,4.4,Double Cluster component.
+Stock 2,31.8,60.3,Open cluster,4.4,"Loose cluster near Double Cluster, aka 'Muscle Man'."
+M41,101.5,-20.766667,Open cluster,4.5,"Constellation: Canis Major. Distance: approx. 2,300 light-years. Little Beehive Cluster NGC 2287."
+M25,277.9,-19.25,Open cluster,4.6,"Constellation: Sagittarius. Distance: approx. 2,000 light-years. IC 4725."
+M39,322.925,48.433333,Open cluster,4.6,Constellation: Cygnus. Distance: approx. 825 light-years. Pyramid Cluster NGC 7092.
+M35,92.275,24.35,Open cluster,5.3,"Constellation: Gemini. Distance: approx. 2,900 light-years. Shoe-Buckle Cluster NGC 2168."
+M23,269.2,-19.016667,Open cluster,5.5,"Constellation: Sagittarius. Distance: approx. 4,200 light-years. NGC 6494."
+M34,40.525,42.766667,Open cluster,5.5,"Constellation: Perseus. Distance: approx. 1,500 light-years. Spiral Cluster NGC 1039."
+M48,123.425,-5.75,Open cluster,5.5,"Constellation: Hydra. Distance: approx. 1,500 light-years. NGC 2548."
+NGC 752,29.287,37.789,Open Cluster,5.7,Sprawling cluster in Andromeda.
+M11,282.775,-6.266667,Open cluster,5.8,"Popular name: Wild Duck Cluster. Constellation: Scutum. Distance: approx. 6,200 light-years. Fact: One of the richest open clusters; triangular Wild Duck pattern. Wild Duck Cluster NGC 6705."
+M50,105.8,-8.333333,Open cluster,5.9,"Constellation: Monoceros. Distance: approx. 3,000 light-years. Heart-Shaped Cluster NGC 2323."
+M46,115.45,-14.816667,Open cluster,6,"Constellation: Puppis. Distance: approx. 5,400 light-years. NGC 2437."
+M93,116.15,-23.866667,Open cluster,6,"Constellation: Puppis. Distance: approx. 3,400 light-years. Critter Cluster NGC 2447."
+NGC 2244,97.95,4.95,Open cluster,6,Constellation: Monoceros. In Rosette Nebula.
+M67,132.825,11.816667,Open cluster,6.1,"Constellation: Cancer. Distance: approx. 2,700 light-years. King Cobra or Golden Eye Cluster NGC 2682."
+M37,88.075,32.550556,Open cluster,6.2,"Constellation: Auriga. Distance: approx. 4,500 light-years. Salt and Pepper Cluster NGC 2099."
+M36,84.05,34.134444,Open cluster,6.3,"Constellation: Auriga. Distance: approx. 4,300 light-years. Pinwheel Cluster NGC 1960."
+NGC 457,19.863,58.303,Open cluster,6.4,Owl/ET Cluster.
+M21,271.15,-22.5,Open cluster,6.5,Constellation: Scorpius. Webb's Cross Cluster NGC 6531.
+NGC 7789,359.287,56.734,Open cluster,6.7,Caroline's Rose.
+M29,305.983333,38.523333,Open cluster,7.1,Constellation: Cygnus. Cooling Tower Cluster NGC 6913.
+NGC 663,26.585,61.214,Open cluster,7.1,Perseus.
+M52,351.05,61.583333,Open cluster,7.3,"Constellation: Cassiopeia. Distance: approx. 5,000 light-years. Scorpion Cluster NGC 7654."
+M103,23.3,60.7,Open cluster,7.4,"Constellation: Cassiopeia. Distance: approx. 10,000 light-years. NGC 581."
+M38,82.175,35.855,Open cluster,7.4,"Constellation: Auriga. Distance: approx. 4,200 light-years. Starfish Cluster NGC 1912."
+M18,274.975,-17.133333,Open cluster,7.5,Constellation: Sagittarius. Black Swan Cluster NGC 6613.
+M26,281.3,-9.4,Open cluster,8,"Constellation: Scutum. Distance: approx. 5,000 light-years. NGC 6694."
+King 10,12.9,61.1,Open cluster,9,"Open cluster in Cassiopeia, faint but interesting."
+M40,185.552083,58.083056,Optical double,8.4,Constellation: Ursa Major. Winnecke 4.
+Centaurus A (NGC 5128),201.25,-43.017,Peculiar galaxy,6.8,Constellation: Centaurus. Dark lane bisects bright core.
+M27,299.90125,22.721139,Planetary nebula,7.4,"Popular name: Dumbbell Nebula. Constellation: Vulpecula. Distance: approx. 1,360 light-years. Fact: Apple-core planetary nebula; responds to OIII filter. Dumbbell Nebula NGC 6853."
+NGC 3242,156.19,-18.643,Planetary nebula,7.8,Ghost of Jupiter.
+NGC 7009,316.045,-11.363,Planetary nebula,8,Saturn Nebula.
+NGC 6543,269.639,66.633,Planetary nebula,8.1,Cat's Eye.
+M57,283.39625,33.029167,Planetary nebula,8.8,"Popular name: Ring Nebula. Constellation: Lyra. Distance: approx. 2,300 light-years. Fact: Ring structure; central star detectable in large apertures. Ring Nebula NGC 6720."
+NGC 6826,295.67,50.525,Planetary nebula,8.8,"Popular name: Blinking Planetary. Constellation: Cygnus. Distance: approx. 2,200 light-years. Fact: Blinking Planetary: central star causes nebula to ‚“blink‚Äô with direct vs averted vision. Blinking."
+NGC 2392,112.288,20.911,Planetary nebula,9.2,Eskimo.
+IC 418,82.147,-12.701,Planetary nebula,9.3,"Popular name: Spirograph Nebula. Constellation: Lepus. Distance: approx. 3,600 light-years. Fact: ‚ÄúSpirograph‚Äù planetary nebula; intricate internal patterns in images. Spirograph."
+M97,168.69875,55.019028,Planetary nebula,9.9,"Popular name: Owl Nebula. Constellation: Ursa Major. Distance: approx. 2,025 light-years. Fact: Owl-like voids; bright disk planetary nebula. Owl Nebula NGC 3587."
+M76,25.6,51.575278,Planetary nebula,10.1,"Constellation: Perseus. Distance: approx. 2,500 light-years. Little Dumbbell Nebula NGC 650, NGC 651."
+IC 2149,92.259,46.113,Planetary nebula,10.6,"Constellation: Auriga. Distance: approx. 3,600 light-years. Fact: Compact planetary nebula with high surface brightness. Auriga."
+IC 418 (Spirograph Nebula),82,-12.6,Planetary nebula,10.7,"Constellation: Lepus. Compact PN in Lepus, bright with filters."
+NGC 40,3.257,72.522,Planetary nebula,10.7,Bow-Tie.
+NGC 7008,315.403,54.954,Planetary nebula,10.7,Fetus Nebula.
+3C 273,187.2792,2.0525,Quasar,12.9,"Constellation: Virgo. Distance: approx. 2,400 million light-years. Fact: First quasar identified; jet visible in high-resolution images. Brightest quasar, historically important."
+M31,10.684583,41.269167,Spiral galaxy,3.4,"Popular name: Andromeda Galaxy. Constellation: Andromeda. Distance: approx. 2,530,000 light-years. Fact: Nearest large spiral; spans several degrees; companions M32 & M110. Andromeda Galaxy NGC 224."
+M33,23.458333,30.660194,Spiral galaxy,5.7,"Popular name: Triangulum Galaxy. Constellation: Triangulum. Distance: approx. 2,700,000 light-years. Fact: Face-on spiral; H II region NGC 604 is prominent. Triangulum/Pinwheel Galaxy NGC 598."
+M81,148.888333,69.065278,Spiral galaxy,6.9,Constellation: Ursa Major. Distance: approx. 12 million light-years. Bode's Galaxy NGC 3031.
+M101,210.8025,54.349167,Spiral galaxy,7.9,Popular name: Pinwheel Galaxy. Constellation: Ursa Major. Distance: approx. 21 million light-years. Fact: Grand-design spiral with sprawling arms. Pinwheel Galaxy NGC 5457.
+M104,189.9975,-11.623056,Spiral galaxy,8,Popular name: Sombrero Galaxy. Constellation: Virgo. Distance: approx. 29 million light-years. Fact: Sombrero-like bulge and dust lane; rich globular system. Sombrero Galaxy NGC 4594.
+M94,192.72125,41.120556,Spiral galaxy,8.2,Constellation: Canes Venatici. Distance: approx. 16 million light-years. Crocodile Eye or Cat's Eye Galaxy NGC 4736.
+M106,184.739583,47.303889,Spiral galaxy,8.4,Constellation: Canes Venatici. Distance: approx. 24 million light-years. Fact: Seyfert spiral with anomalous arms. NGC 4258.
+M51,202.469583,47.195278,Spiral galaxy,8.4,"Popular name: Whirlpool Galaxy. Constellation: Canes Venatici. Distance: approx. 23,500,000 light-years. Fact: Interacting spiral with NGC 5195; well-defined arms. Whirlpool Galaxy NGC 5194, NGC 5195."
+M64,194.182083,21.682778,Spiral galaxy,8.5,"Popular name: Black Eye Galaxy. Constellation: Coma Berenices. Distance: approx. 17 million light-years. Fact: Dark ‚""black eye‚"" dust lane near core. Black Eye Galaxy NGC 4826."
+M63,198.955417,42.029167,Spiral galaxy,8.6,Popular name: Sunflower Galaxy. Constellation: Canes Venatici. Distance: approx. 29 million light-years. Fact: Flocculent spiral texture. Sunflower Galaxy NGC 5055.
+M66,170.0625,12.991667,Spiral galaxy,8.9,Constellation: Leo. Distance: approx. 36 million light-years. Fact: Asymmetric arms due to interaction; Leo Triplet member. Leo Triplet NGC 3627.
+M77,40.669583,-0.013333,Spiral galaxy,8.9,Constellation: Cetus. Distance: approx. 47 million light-years. Cetus A or Squid Galaxy NGC 1068.
+M96,161.690417,11.82,Spiral galaxy,9.2,Constellation: Leo. Distance: approx. 35 million light-years. NGC 3368.
+M100,185.72875,15.8225,Spiral galaxy,9.3,Constellation: Coma Berenices. Distance: approx. 55 million light-years. Mirror Galaxy NGC 4321.
+M74,24.174167,15.783611,Spiral galaxy,9.4,Constellation: Pisces. Distance: approx. 32 million light-years. Phantom Galaxy[91] NGC 628.
+M90,189.2075,13.162778,Spiral galaxy,9.5,Constellation: Virgo. Distance: approx. 60 million light-years. NGC 4569.
+M88,187.996667,14.420556,Spiral galaxy,9.6,Constellation: Coma Berenices. Distance: approx. 50 million light-years. NGC 4501.
+M61,185.47875,4.473611,Spiral galaxy,9.7,Constellation: Virgo. Distance: approx. 52 million light-years. Swelling Spiral Galaxy NGC 4303.
+M99,184.706667,14.416389,Spiral galaxy,9.9,Constellation: Coma Berenices. Distance: approx. 45 million light-years. St. Catherine's Wheel NGC 4254.
+M98,183.45125,14.900472,Spiral galaxy,10.1,Constellation: Coma Berenices. Distance: approx. 44 million light-years. NGC 4192.
+M82,148.9675,69.679722,Starburst galaxy,8.4,Constellation: Ursa Major. Distance: approx. 12 million light-years. Cigar Galaxy NGC 3034.
+M1,83.632917,22.0145,Supernova remnant,8.4,"Popular name: Crab Nebula. Constellation: Taurus. Distance: approx. 6,500 light-years. Fact: Supernova remnant observed in 1054; contains the Crab Pulsar. Crab Nebula NGC 1952."
+NGC 6960,309.392,30.731,Supernova remnant,5,"Popular name: Veil Nebula (W). Constellation: Cygnus. Distance: approx. 2,400 light-years. Fact: Western Veil filament (Witch's Broom) near 52 Cygni. Veil West (Witch's Broom)."
+NGC 6992,314.0792,31.7428,Supernova remnant,6,"Popular name: Veil Nebula (E). Constellation: Cygnus. Distance: approx. 2,400 light-years. Fact: Eastern Veil; intricate filamentary supernova remnant. Veil East."
+NGC 2024,85.425,-1.9833,Emission nebula,,"Constellation: Orion. Distance: approx. 1,375 light-years. Fact: Flame Nebula; bright emission with dark lanes near Alnitak. Flame Nebula near Alnitak."
+IC 434/B33,85.25,-2.4333,Dark nebula,,"Constellation: Orion. Distance: approx. 1,375 light-years. Fact: Horsehead Nebula silhouette against emission from IC 434; near Alnitak. Horsehead Nebula (dark sky challenge)."
+NGC 4755,193.425,-60.3667,Open cluster,4.2,"Popular name: Jewel Box. Constellation: Crux. Distance: approx. 6,400 light-years. Fact: Jewel Box; compact open cluster with vivid star colors near Beta Crucis. Jewel Box Cluster, colorful open cluster near Beta Crucis."
+NGC 3293,158.9458,-58.2178,Open cluster,4.7,"Constellation: Carina. Distance: approx. 8,800 light-years. Fact: Young open cluster in Carina with red supergiants. Gem Cluster in Carina, compact young cluster."
+NGC 3532,166.3875,-58.73,Open cluster,3,"Constellation: Carina. Distance: approx. 1,300 light-years. Fact: Wishing Well Cluster; extremely rich open cluster in Carina. Wishing Well Cluster, sprawling and rich open cluster."
+NGC 6231,253.6,-41.8,Open cluster,2.6,"Constellation: Scorpius. Distance: approx. 5,900 light-years. Fact: Young open cluster at the core of the Sco OB1 association. Bright open cluster in Scorpius OB association."
+NGC 104,6,-72.1,Globular cluster,4,"Popular name: 47 Tucanae. Constellation: Tucana. Distance: approx. 13,000 light-years. Fact: 47 Tucanae; bright southern globular with dense core. 47 Tucanae, second brightest globular after Omega Centauri."
+NGC 6752,287.7,-59.9,Globular cluster,5.3,"Constellation: Pavo. Distance: approx. 13,000 light-years. Fact: Bright southern globular; easily resolved in medium apertures. Very bright southern globular cluster, rivals M13."
+IC 2602,160.7,-64.4,Open cluster,1.9,"Popular name: Southern Pleiades. Constellation: Carina. Distance: approx. 480 light-years. Fact: Southern Pleiades; bright, wide open cluster near Œ∏ Carinae. Southern Pleiades in Carina."
